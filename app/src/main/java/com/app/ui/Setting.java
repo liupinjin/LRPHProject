@@ -19,7 +19,7 @@ import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.tools.ActivityCollector;
-import com.app.ui.Address.AddressSupervise;
+import com.app.ui.address.AddressSupervise;
 import com.app.utils.DataClearUtil;
 
 import butterknife.Bind;

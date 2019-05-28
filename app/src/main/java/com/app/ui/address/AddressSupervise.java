@@ -1,8 +1,7 @@
-package com.app.ui.Address;
+package com.app.ui.address;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;

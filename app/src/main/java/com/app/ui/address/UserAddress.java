@@ -1,4 +1,4 @@
-package com.app.ui.Address;
+package com.app.ui.address;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -28,7 +28,6 @@ import com.app.R;
 import com.app.http.GetPostUtil;
 import com.app.http.RegexUtils;
 import com.app.http.ToastUtils;
-import com.app.model.Addressitem;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
 import com.app.sip.SipInfo;
