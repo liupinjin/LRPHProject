@@ -1,13 +1,10 @@
 package com.app.ui.Message;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,19 +16,18 @@ import com.app.R;
 import com.app.adapter.SystemNotifyAdapter;
 import com.app.model.MessageEvent;
 import com.app.model.MessageNotify;
-import com.app.sip.SipInfo;
 import com.app.tools.ActivityCollector;
 import com.app.ui.SoftwareIntruct;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -40,11 +36,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static com.app.camera.FileOperateUtil.TAG;
 import static com.app.sip.SipInfo.messageNotifys;
 import static com.app.sip.SipInfo.serverIp;
 
-public class SystemNotify extends Activity {
+public class SystemNotify extends BaseActivity {
 
     private static final String TAG = "SystemNotify";
     @Bind(R.id.rv_systemNotify)

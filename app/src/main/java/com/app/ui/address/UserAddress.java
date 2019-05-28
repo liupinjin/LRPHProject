@@ -1,6 +1,5 @@
 package com.app.ui.address;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -35,6 +34,7 @@ import com.app.tools.ActivityCollector;
 import com.app.views.CleanEditText;
 import com.hengyi.wheelpicker.listener.OnCityWheelComfirmListener;
 import com.hengyi.wheelpicker.ppw.CityWheelPickerPopupWindow;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -45,7 +45,7 @@ import butterknife.OnClick;
 import static com.app.sip.SipInfo.addressList;
 
 
-public class UserAddress extends Activity {
+public class UserAddress extends BaseActivity {
     @Bind(R.id.iv_back1)
     ImageView ivBack1;
     @Bind(R.id.titleset)

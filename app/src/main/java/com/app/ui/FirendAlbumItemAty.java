@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +23,7 @@ import com.app.ftp.Ftp;
 import com.app.ftp.FtpListener;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +39,7 @@ import static com.app.R.id.upload;
  * @Description:朋友圈图片大图Activity
  * @date 2015-1-12 下午5:18:25
  */
-public class FirendAlbumItemAty extends Activity implements OnClickListener, MatrixImageView.OnSingleTapListener
+public class FirendAlbumItemAty extends BaseActivity implements OnClickListener, MatrixImageView.OnSingleTapListener
         , AlbumViewPager.OnPlayVideoListener {
     public final static String TAG = "AlbumDetailAty";
     private String mSaveRoot;

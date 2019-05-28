@@ -1,12 +1,13 @@
 package com.app.friendcircle;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
+
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -15,7 +16,7 @@ import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
 
-public class BitmapCache extends Activity {
+public class BitmapCache extends BaseActivity {
 
 	public Handler h = new Handler();
 	public final String TAG = getClass().getSimpleName();

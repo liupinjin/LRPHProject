@@ -203,7 +203,7 @@
             android:name=".video.H264Sending"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.addressAddActivity"
+            android:name=".ui.AddressAddActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.FriendCallActivity"

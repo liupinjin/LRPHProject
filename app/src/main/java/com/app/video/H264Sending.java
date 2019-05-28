@@ -1,6 +1,5 @@
 package com.app.video;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.ImageFormat;
@@ -27,6 +26,7 @@ import com.app.sip.SipMessageFactory;
 import com.app.tools.AECManager;
 import com.app.tools.ActivityCollector;
 import com.app.tools.AvcEncoder;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -43,7 +43,7 @@ import static com.app.sip.SipInfo.devName;
  * Author chzjy
  * Date 2016/12/19.
  */
-public class H264Sending extends Activity implements SurfaceHolder.Callback, Camera.PreviewCallback {
+public class H264Sending extends BaseActivity implements SurfaceHolder.Callback, Camera.PreviewCallback {
     @Bind(R.id.h264suf)
     SurfaceView h264suf;
 
@@ -530,7 +530,7 @@ public class H264Sending extends Activity implements SurfaceHolder.Callback, Cam
         }
     }
 }
-//public class H264Sending extends Activity implements SurfaceHolder.Callback, Camera.PreviewCallback {
+//public class H264Sending extends BaseActivity implements SurfaceHolder.Callback, Camera.PreviewCallback {
 //    @Bind(R.id.h264suf)
 //    SurfaceView h264suf;
 //

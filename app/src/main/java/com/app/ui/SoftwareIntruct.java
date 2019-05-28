@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -28,18 +27,13 @@ import com.app.R;
 import com.app.ftp.Ftp;
 import com.app.ftp.FtpListener;
 import com.app.model.Constant;
-import com.app.model.MessageEvent;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.tools.ActivityCollector;
 import com.app.tools.VersionXmlParse;
-import com.app.utils.ProviderUtil;
 import com.app.view.CustomProgressDialog;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,7 +47,7 @@ import butterknife.OnClick;
 import static com.app.camera.FileOperateUtil.TAG;
 import static com.app.sip.SipInfo.sipUser;
 
-public class SoftwareIntruct extends Activity {
+public class SoftwareIntruct extends BaseActivity {
 
 
     @Bind(R.id.tv_version)

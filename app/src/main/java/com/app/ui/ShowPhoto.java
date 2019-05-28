@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,13 +8,14 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.app.R;
 import com.app.db.DatabaseInfo;
 import com.app.ftp.Ftp;
 import com.app.ftp.FtpListener;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;
 import com.app.view.CustomProgressDialog;
-import com.app.R;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.File;
 
@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
 /**
  * Created by acer on 2016/11/11.
  */
-public class ShowPhoto extends Activity {
+public class ShowPhoto extends BaseActivity {
     @Bind(R.id.photo)
     ImageView photo;
     private String mPhotoPath;

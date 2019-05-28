@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
@@ -20,7 +19,7 @@ import com.app.http.GetPostUtil;
 import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.tools.ActivityCollector;
-import com.google.gson.JsonObject;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -29,7 +28,7 @@ import butterknife.OnClick;
 import static com.app.model.Constant.isNotify;
 
 
-public class MessageNotify extends Activity {
+public class MessageNotify extends BaseActivity {
 
     @Bind(R.id.btn_switch)
     SwitchCompat btnSwitch;

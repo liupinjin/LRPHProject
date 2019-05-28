@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,9 +12,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.R;
 import com.app.adapter.FileChooserAdapter;
 import com.app.model.FileInfo;
-import com.app.R;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ import static com.app.sip.SipUser.TAG;
  * Date 2016/12/19.
  */
 
-public class FileChooserActivity extends Activity {
+public class FileChooserActivity extends BaseActivity {
     @Bind(R.id.back)
     ImageButton back;
     @Bind(R.id.title)

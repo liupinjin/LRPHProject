@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,6 +27,7 @@ import com.app.model.Constant;
 import com.app.sip.SipInfo;
 import com.app.tools.ActivityCollector;
 import com.app.views.CleanEditText;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,7 +39,7 @@ import cn.smssdk.EventHandler;
  * Date 2016/12/19.
  */
 
-public class ChangePassword extends Activity implements View.OnClickListener {
+public class ChangePassword extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "ChangepasswordActivity";
     @Bind(R.id.iv_back1)
     ImageView ivBack1;

@@ -1,19 +1,18 @@
 package com.app.ui;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.os.Bundle;
 import android.text.TextPaint;
 import android.util.Log;
 import android.view.Display;
@@ -42,6 +41,7 @@ import com.app.sip.SipMessageFactory;
 import com.app.tools.ActivityCollector;
 import com.app.view.CustomProgressDialog;
 import com.app.zxing.android.CaptureActivity;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -52,7 +52,7 @@ import static com.app.sip.SipInfo.devName;
 import static com.app.sip.SipInfo.paduserid;
 import static com.app.sip.SipInfo.sipUser;
 
-public class SaomaActivity extends Activity implements View.OnClickListener {
+public class SaomaActivity extends BaseActivity implements View.OnClickListener {
     private CustomProgressDialog registering;
     private static final int REQUEST_CODE_SCAN1 = 0x0000;
     private static final String DECODED_CONTENT_KEY = "codedContent";

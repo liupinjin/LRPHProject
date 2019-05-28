@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +32,7 @@ import com.app.views.CleanEditText;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mob.MobSDK;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -40,7 +40,7 @@ import butterknife.OnClick;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
-public class ChangePassword1 extends Activity {
+public class ChangePassword1 extends BaseActivity {
     private static final String TAG = "Changepassword1Activity";
     private EventHandler eventHandler;
     private VerifyCodeManager1 codeManager1;

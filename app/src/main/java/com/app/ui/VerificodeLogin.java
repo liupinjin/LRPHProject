@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -53,6 +52,7 @@ import com.app.views.CleanEditText;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mob.MobSDK;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -76,7 +76,7 @@ import static com.app.model.Constant.groupid1;
 import static com.app.model.Constant.res;
 import static java.lang.Thread.sleep;
 
-public class VerificodeLogin extends Activity {
+public class VerificodeLogin extends BaseActivity {
     private Context mContext;
     @Bind(R.id.num_input4)
     CleanEditText numInput4;

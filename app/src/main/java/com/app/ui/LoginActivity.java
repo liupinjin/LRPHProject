@@ -58,6 +58,7 @@ import com.app.tools.ActivityCollector;
 import com.app.tools.PermissionUtils;
 import com.app.view.CustomProgressDialog;
 import com.app.views.CleanEditText;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -80,13 +81,11 @@ import static com.amap.api.mapcore2d.p.i;
 import static com.app.groupvoice.GroupInfo.wakeLock;
 import static com.app.model.Constant.avatar;
 import static com.app.model.Constant.devid1;
-import static com.app.model.Constant.devid2;
-import static com.app.model.Constant.devid3;
 import static com.app.model.Constant.groupid1;
 import static com.app.model.Constant.res;
 import static java.lang.Thread.sleep;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends BaseActivity {
     private static final String TAG ="LoginActivity";
 
 //    private String[] groupname = new String[3];

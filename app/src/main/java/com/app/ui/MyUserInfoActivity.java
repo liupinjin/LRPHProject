@@ -2,18 +2,15 @@ package com.app.ui;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,7 +27,6 @@ import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -53,26 +49,23 @@ import com.app.sip.SipMessageFactory;
 import com.app.tools.ActivityCollector;
 import com.app.utils.ProviderUtil;
 import com.app.view.CircleImageView;
+import com.punuo.sys.app.activity.BaseActivity;
 
-import org.w3c.dom.Text;
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
 
 import java.io.File;
-import java.io.PrintStream;
-import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.app.model.Constant.URL_updateSex;
 import static com.app.model.Constant.id;
 import static com.app.model.Constant.sex;
 import static com.app.sip.SipInfo.devName;
 
 @SuppressLint("SdCardPath")
-public class MyUserInfoActivity extends Activity implements View.OnClickListener {
+public class MyUserInfoActivity extends BaseActivity implements View.OnClickListener {
 
 //    private static class MyHandler extends Handler{
 //        private final WeakReference<MyUserInfoActivity> mActivity;

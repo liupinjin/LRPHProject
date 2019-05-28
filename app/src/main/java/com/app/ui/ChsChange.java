@@ -1,7 +1,6 @@
 package com.app.ui;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -19,7 +18,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,9 +39,9 @@ import com.app.sip.SipUser;
 import com.app.tools.MyToast;
 import com.app.video.H264SendingManager;
 import com.app.video.VideoInfo;
-import com.app.videoAndPictureUpload.Image;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -77,8 +75,8 @@ import static com.app.sip.SipUser.list;
  * Date 2016/12/19.
  * 集群呼叫
  */
-//public class ChsChange extends Activity implements View.OnTouchListener {
-public class ChsChange extends Activity implements SipUser.QinliaoUpdateListener {
+//public class ChsChange extends BaseActivity implements View.OnTouchListener {
+public class ChsChange extends BaseActivity implements SipUser.QinliaoUpdateListener {
     //    @Bind(R.id.b1)
 //    Button b1;
     @Bind(R.id.picture_recycler_view)

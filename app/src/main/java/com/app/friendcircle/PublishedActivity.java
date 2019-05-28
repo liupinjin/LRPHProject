@@ -2,12 +2,10 @@ package com.app.friendcircle;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -54,8 +52,8 @@ import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
 import com.app.tools.ActivityCollector;
-import com.app.ui.MyUserInfoActivity;
 import com.app.utils.ProviderUtil;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -68,7 +66,7 @@ import java.util.concurrent.Executors;
 
 import static com.app.friendcircle.Bimp.drr;
 
-public class PublishedActivity extends Activity {
+public class PublishedActivity extends BaseActivity {
 
     private GridView noScrollgridview;
     private GridAdapter adapter;

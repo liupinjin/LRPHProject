@@ -1,7 +1,6 @@
 package com.app.ui;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,9 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.media.AudioManager;
-import android.net.sip.SipAudioCall;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
@@ -34,6 +31,7 @@ import com.app.sip.SipUser;
 import com.app.tools.H264decoder;
 import com.app.video.H264SendingManager;
 import com.app.video.VideoInfo;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.zoolu.sip.message.Message;
@@ -45,14 +43,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.app.R.id.mute;
-import static com.app.R.id.speakerMode;
-
 /**
  * Author chzjy
  * Date 2016/12/19.
  */
-public class VideoCallActivity extends Activity implements SipUser.StopMonitor {
+public class VideoCallActivity extends BaseActivity implements SipUser.StopMonitor {
     public static final String TAG = "VideoCallActivity";
     @Bind(R.id.mute)
     ImageView mute;

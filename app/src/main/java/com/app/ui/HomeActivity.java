@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -33,7 +32,7 @@ import com.app.ui.fragment.CommunityFragment;
 import com.app.ui.fragment.LaoRenFragment;
 import com.app.ui.fragment.MessageFragment;
 import com.app.ui.fragment.PersonFragment;
-//import com.punuo.sys.app.util.IntentUtil;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -43,13 +42,15 @@ import static com.app.sip.SipInfo.running;
 import static com.app.sip.SipInfo.sipDev;
 import static com.app.sip.SipInfo.sipUser;
 
+//import com.punuo.sys.app.util.IntentUtil;
+
 /**
  * Author chzjy
  * Date 2016/12/19.
  * 主界面
  */
 
-public class HomeActivity extends Activity implements View.OnClickListener, SipUser.LoginNotifyListener {
+public class HomeActivity extends BaseActivity implements View.OnClickListener, SipUser.LoginNotifyListener {
     private final String TAG = getClass().getSimpleName();
     @Bind(R.id.network_layout)
     LinearLayout networkLayout;

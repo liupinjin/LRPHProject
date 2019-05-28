@@ -1,7 +1,6 @@
 package com.app.ui;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -23,8 +22,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.app.model.Farmilymember;
-
 import com.app.R;
 import com.app.adapter.PhoneRecyclerViewAdapter;
 import com.app.db.MyDatabaseHelper;
@@ -32,6 +29,7 @@ import com.app.model.Farmilymember;
 import com.app.model.MessageEvent;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -40,12 +38,11 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.jar.Manifest;
 
 import static com.app.sip.SipInfo.farmilymemberList;
 
 
-public class FriendCallActivity extends Activity {
+public class FriendCallActivity extends BaseActivity {
     private String TAG = "FriendCallActivity";
     private RecyclerView rv;
     private List<String> images = new ArrayList<>();//图片地址
@@ -220,7 +217,7 @@ public class FriendCallActivity extends Activity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(FriendCallActivity.this, addressAddActivity.class));
+                startActivity(new Intent(FriendCallActivity.this, AddressAddActivity.class));
             }
         });
     }

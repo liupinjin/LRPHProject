@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,6 +31,7 @@ import com.app.views.CleanEditText;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mob.MobSDK;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,7 +39,7 @@ import butterknife.OnClick;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
-public class NumberBind extends Activity {
+public class NumberBind extends BaseActivity {
     @Bind(R.id.iv_back1)
     ImageView ivBack1;
     @Bind(R.id.textView4)

@@ -46,6 +46,7 @@ import com.app.views.CleanEditText;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -65,10 +66,9 @@ import butterknife.OnClick;
 
 import static com.app.model.Constant.id;
 import static com.app.sip.SipInfo.dbHelper;
-import static com.app.sip.SipInfo.finish;
 
 
-public class addressAddActivity extends Activity implements View.OnClickListener {
+public class AddressAddActivity extends BaseActivity implements View.OnClickListener {
 
 
     @Bind(R.id.add)
@@ -127,7 +127,7 @@ public class addressAddActivity extends Activity implements View.OnClickListener
         pref= PreferenceManager.getDefaultSharedPreferences(this);
         titleset.setText("修改信息");
 //        String vatar_temp=pref.getString("name","");
-        String vatar_temp = LocalUserInfo.getInstance(addressAddActivity.this)
+        String vatar_temp = LocalUserInfo.getInstance(AddressAddActivity.this)
                 .getUserInfo("avatar");
         mSharedPreferences = getSharedPreferences("com.jredu.setting", Activity.MODE_PRIVATE);
 //        mToast = Toast.makeText(this,"", Toast.LENGTH_SHORT);
@@ -370,7 +370,7 @@ public class addressAddActivity extends Activity implements View.OnClickListener
         tv_quxiao.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastUtils.makeShortText("取消",addressAddActivity.this);
+                ToastUtils.makeShortText("取消",AddressAddActivity.this);
             }
         });
     }

@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.app.R;
 import com.app.camera.FileOperateUtil;
 import com.app.camera.album.view.FilterImageView;
 import com.app.camera.camera.view.CameraContainer;
@@ -32,7 +33,7 @@ import com.app.ftp.FtpListener;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;
 import com.app.tools.ActivityCollector;
-import com.app.R;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +49,7 @@ import butterknife.ButterKnife;
  * Created by acer on 2016/11/14.
  */
 
-public class MyCamera extends Activity implements View.OnClickListener, CameraContainer.TakePictureListener
+public class MyCamera extends BaseActivity implements View.OnClickListener, CameraContainer.TakePictureListener
         , SensorEventListener {
     @Bind(R.id.btn_thumbnail)
     FilterImageView btnThumbnail;

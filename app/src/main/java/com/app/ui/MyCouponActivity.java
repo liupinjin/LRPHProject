@@ -1,8 +1,6 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextPaint;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,12 +8,13 @@ import android.widget.TextView;
 
 import com.app.R;
 import com.app.tools.ActivityCollector;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MyCouponActivity extends Activity {
+public class MyCouponActivity extends BaseActivity {
 
     @Bind(R.id.iv_back1)
     ImageView ivBack1;

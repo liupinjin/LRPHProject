@@ -1,7 +1,6 @@
 package com.app.ui;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -13,16 +12,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.app.LoadPicture;
 import com.app.R;
 import com.app.model.Constant;
@@ -31,14 +29,13 @@ import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.tools.ActivityCollector;
-import com.app.videoAndPictureUpload.Video;
 import com.app.view.CircleImageView;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.zoolu.sip.address.NameAddress;
-
 import org.zoolu.sip.address.SipURL;
 import org.zoolu.sip.message.Message;
 
@@ -48,7 +45,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-
 import static com.app.camera.FileOperateUtil.TAG;
 import static com.app.model.Constant.id;
 import static com.app.sip.SipInfo.devName;
@@ -57,7 +53,7 @@ import static com.app.sip.SipInfo.devName;
  * Created by maojianhui on 2018/6/27.
  */
 
-public class VideoConnect extends Activity implements View.OnClickListener {
+public class VideoConnect extends BaseActivity implements View.OnClickListener {
     private SharedPreferences.Editor editor;
     private SharedPreferences pref;
     private SoundPool soundPool;

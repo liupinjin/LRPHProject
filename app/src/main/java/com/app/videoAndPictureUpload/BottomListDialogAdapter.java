@@ -20,14 +20,14 @@ import java.util.Map;
 /**
  * Created by Wxcily on 15/11/6.
  */
-public class SelectVideoActivity_BottomListDialogAdapter extends BaseAdapter {
+public class BottomListDialogAdapter extends BaseAdapter {
 
     private Context context;
     Map<String, List<Video>> AllList;
 
     private int selected = 0;
 
-    public SelectVideoActivity_BottomListDialogAdapter(Context context, Map<String, List<Video>> AllList) {
+    public BottomListDialogAdapter(Context context, Map<String, List<Video>> AllList) {
         this.context = context;
         this.AllList = AllList;
 

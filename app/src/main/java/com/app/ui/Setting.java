@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -21,6 +20,7 @@ import com.app.sip.SipMessageFactory;
 import com.app.tools.ActivityCollector;
 import com.app.ui.address.AddressSupervise;
 import com.app.utils.DataClearUtil;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,7 +30,7 @@ import static com.app.model.Constant.groupid1;
 import static com.app.sip.SipInfo.sipUser;
 
 
-public class Setting extends Activity {
+public class Setting extends BaseActivity {
 
 
     @Bind(R.id.re_psds)

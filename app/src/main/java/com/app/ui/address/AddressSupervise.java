@@ -1,6 +1,5 @@
 package com.app.ui.address;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,16 +28,21 @@ import com.app.sip.SipInfo;
 import com.app.tools.ActivityCollector;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.punuo.sys.app.activity.BaseActivity;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 import static com.app.sip.SipInfo.addressList;
 
-public class AddressSupervise extends Activity {
+public class AddressSupervise extends BaseActivity {
     @Bind(R.id.iv_back1)
     ImageView ivBack1;
     @Bind(R.id.titleset)
