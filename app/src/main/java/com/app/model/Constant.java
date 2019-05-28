@@ -2,20 +2,16 @@ package com.app.model;
 
 import com.app.sip.SipInfo;
 
-import java.text.Format;
-
 /**
  * Created by acer on 2016/9/5.
  */
 public class Constant {
-    public static final int MESSAGE=1;
-    public static final int CONTACT=2;
-    public static final int Person=3;
-    public static final int OLD=4;
-    public static final int SHOP=5;
-    public static final int NOTICE=6;
-    public static final int FILESHARE=7;
-    public static final int COMMUNITY=8;
+    //HomeActivity
+    public static final int HOME = 0;
+    public static final int SHOP = 1;
+    public static final int COMMUNITY = 2;
+    public static final int MESSAGE = 3;
+    public static final int PERSON = 4;
 
     public static final int ALLAPP=1;
     public static final int PET=2;

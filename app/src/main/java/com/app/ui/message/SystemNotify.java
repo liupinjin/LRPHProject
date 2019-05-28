@@ -1,4 +1,4 @@
-package com.app.ui.Message;
+package com.app.ui.message;
 
 import android.content.Intent;
 import android.os.Build;

@@ -1,12 +1,8 @@
 package com.app.ui.fragment;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,21 +10,21 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-
 import com.alibaba.fastjson.JSON;
+import com.app.R;
 import com.app.friendCircleMain.custonListView.CustomListView;
 import com.app.friendCircleMain.domain.UserFromGroup;
 import com.app.friendCircleMain.domain.UserList;
+import com.app.http.GetPostUtil;
 import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.model.Friend;
@@ -36,7 +32,6 @@ import com.app.model.MessageEvent;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.http.GetPostUtil;
 import com.app.ui.FamilyCircle;
 import com.app.ui.FriendCallActivity;
 import com.app.ui.ShopActivity;
@@ -47,21 +42,20 @@ import com.app.video.SendActivePacket;
 import com.app.video.VideoInfo;
 import com.app.view.CircleImageView;
 import com.app.view.CustomProgressDialog;
+import com.punuo.sys.app.util.StatusBarUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
-import com.app.R;
 
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+
 import static com.amap.api.mapcore2d.p.i;
 import static com.app.model.Constant.devid1;
-
-import com.app.model.Constant;
 
 
 public class LaoRenFragment extends Fragment implements View.OnClickListener {
@@ -79,6 +73,7 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
     private ImageView camera;
     private RelativeLayout re_background;
     private RelativeLayout re_funcation;
+    private View mStatusBar;
     //private static String res="";//json数据
 
 
@@ -94,46 +89,13 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            //透明状态栏
-//            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//            //透明导航栏
-//            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-//        }
-        //得到当前界面的装饰视图
-        if(Build.VERSION.SDK_INT >= 21) {
-            View decorView = getActivity().getWindow().getDecorView();
-            //设置让应用主题内容占据状态栏和导航栏
-            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-            decorView.setSystemUiVisibility(option);
-            //设置状态栏和导航栏颜色为透明
-            getActivity().getWindow().setStatusBarColor(Color.TRANSPARENT);
-            getActivity().getWindow().setNavigationBarColor(Color.TRANSPARENT);
-        }
-
-
         init();
-        int color = getResources().getColor(R.color.reset1);
-        Window window = getActivity().getWindow();
-        //如果系统5.0以上
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(color);
+        mStatusBar = getView().findViewById(R.id.status_bar);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mStatusBar.setVisibility(View.VISIBLE);
+            mStatusBar.getLayoutParams().height = StatusBarUtil.getStatusBarHeight(getActivity());
+            mStatusBar.requestLayout();
         }
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//5.0及以上
-//            View decorView = getActivity().getWindow().getDecorView();
-//            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-//            decorView.setSystemUiVisibility(option);
-//            getActivity().getWindow().setStatusBarColor(Color.TRANSPARENT);
-//        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//4.4到5.0
-//            WindowManager.LayoutParams localLayoutParams = getActivity().getWindow().getAttributes();
-//            localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
-//
-//        }
-//        changStatusIconCollor(true);
-//        StatusBarUtil.statusBarLightMode(getActivity());
-//        changeStatusBarTextColor(true);
 
     }
 

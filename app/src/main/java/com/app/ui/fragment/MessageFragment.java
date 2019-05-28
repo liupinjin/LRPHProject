@@ -1,8 +1,8 @@
 package com.app.ui.fragment;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.app.R;
 import com.app.ui.FamilyCircle;
-import com.app.ui.Message.SystemNotify;
+import com.app.ui.message.SystemNotify;
 import com.app.view.CircleImageView;
 
 import butterknife.Bind;

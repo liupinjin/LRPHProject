@@ -17,7 +17,6 @@ import com.app.model.MessageNotify;
 import com.app.model.TaskInfo;
 import com.app.service.SipService;
 import com.app.ui.MakeSmallVideo;
-import com.app.ui.Message.SystemNotify;
 import com.app.ui.MovieRecord;
 import com.app.ui.MyCamera;
 
@@ -27,7 +26,6 @@ import org.zoolu.sip.message.Message;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * Author chzjy
