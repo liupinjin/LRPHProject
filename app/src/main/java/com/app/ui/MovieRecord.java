@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
@@ -17,9 +16,10 @@ import android.view.SurfaceView;
 import android.widget.Chronometer;
 import android.widget.Toast;
 
+import com.app.R;
 import com.app.camera.FileOperateUtil;
 import com.app.sip.SipInfo;
-import com.app.R;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -36,7 +36,7 @@ import butterknife.ButterKnife;
  * Date 2016/12/19.
  */
 
-public class MovieRecord extends Activity implements SurfaceHolder.Callback {
+public class MovieRecord extends BaseActivity implements SurfaceHolder.Callback {
 
     // 显示视频预览的SurfaceView
     @Bind(R.id.surface_video)

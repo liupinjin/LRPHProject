@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
+
 android {
     useLibrary 'org.apache.http.legacy'
     signingConfigs {
@@ -35,13 +35,6 @@ android {
             signingConfig signingConfigs.PunuoClient
         }
     }
-
-    //如果所有得.so文件夹都放在lib下了，需要加下面代码
-//    sourceSets {
-//        main {
-//            jniLibs.srcDirs = ['libs']
-//        }
-//    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -52,10 +45,13 @@ android {
         }
     }
     productFlavors {
+
     }
-} lintOptions {
-    checkReleaseBuilds false
-    abortOnError false
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
 }
 
 dependencies {

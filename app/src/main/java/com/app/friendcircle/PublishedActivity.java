@@ -2,12 +2,10 @@ package com.app.friendcircle;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -53,9 +51,8 @@ import com.app.http.GetPostUtil;
 import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
-import com.app.tools.ActivityCollector;
-import com.app.ui.MyUserInfoActivity;
 import com.app.utils.ProviderUtil;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -68,7 +65,7 @@ import java.util.concurrent.Executors;
 
 import static com.app.friendcircle.Bimp.drr;
 
-public class PublishedActivity extends Activity {
+public class PublishedActivity extends BaseActivity {
 
     private GridView noScrollgridview;
     private GridAdapter adapter;
@@ -81,7 +78,6 @@ public class PublishedActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selectimg);
-        ActivityCollector.addActivity(this);
         Init();
         /*设置系统状态栏颜色
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
@@ -192,11 +188,8 @@ public class PublishedActivity extends Activity {
                 Bimp.max = 0;
                 FileUtils.deleteDir();
                 dialog.dismiss();
-                ActivityCollector.removeActivity(PublishedActivity.this);
                 finish();
 
-//                ActivityCollector.finishToMain();
-//                ActivityCollector.finishToFirstView();
             } else if (msg.what == 0x222) {
                 ToastUtils.showShort(PublishedActivity.this, "状态上传失败请重试");
                 dialog.dismiss();
@@ -452,7 +445,6 @@ public class PublishedActivity extends Activity {
         Bimp.drr.clear();
         Bimp.max = 0;
         FileUtils.deleteDir();
-        ActivityCollector.removeActivity(this);
         super.onDestroy();
     }
 }

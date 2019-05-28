@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -47,12 +46,12 @@ import com.app.sip.SipDev;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.sip.SipUser;
-import com.app.tools.ActivityCollector;
 import com.app.view.CustomProgressDialog;
 import com.app.views.CleanEditText;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mob.MobSDK;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -76,7 +75,7 @@ import static com.app.model.Constant.groupid1;
 import static com.app.model.Constant.res;
 import static java.lang.Thread.sleep;
 
-public class VerificodeLogin extends Activity {
+public class VerificodeLogin extends BaseActivity {
     private Context mContext;
     @Bind(R.id.num_input4)
     CleanEditText numInput4;
@@ -119,7 +118,6 @@ public class VerificodeLogin extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_verificode_login);
         mContext=this;
         ButterKnife.bind(this);
@@ -640,7 +638,6 @@ public class VerificodeLogin extends Activity {
             registering.dismiss();
         }
         SMSSDK.unregisterEventHandler(eventHandler);
-        ActivityCollector.removeActivity(this);
     }
 
     private boolean checkInput(String phone,  String code) {

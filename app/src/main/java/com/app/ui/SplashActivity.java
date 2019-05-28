@@ -2,13 +2,14 @@ package com.app.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.WindowManager;
 
 import com.app.R;
-import com.app.tools.ActivityCollector;
+import com.app.process.ProcessTasks;
 import com.app.when_page.PageFrameLayout;
+import com.punuo.sys.app.PnApplication;
 
 public class SplashActivity extends FragmentActivity {
     private PageFrameLayout contentFrameLayout;
@@ -17,7 +18,7 @@ public class SplashActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
+        ProcessTasks.commonLaunchTasks(PnApplication.getInstance());
         init();
     }
     public void init(){
@@ -41,7 +42,6 @@ public class SplashActivity extends FragmentActivity {
             Intent intent=new Intent();
             intent.setClass(SplashActivity.this,LoginActivity.class);
             startActivity(intent);
-            ActivityCollector.removeActivity(this);
             finish();
         }
     }

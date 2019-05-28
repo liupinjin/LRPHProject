@@ -4,18 +4,19 @@ package com.app.ui.fragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextPaint;
@@ -42,7 +43,6 @@ import com.app.model.Constant;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.ActivityCollector;
 import com.app.tools.VersionXmlParse;
 import com.app.ui.FamilyCircle;
 import com.app.ui.MyCouponActivity;
@@ -53,6 +53,8 @@ import com.app.ui.UploadPictureActivity;
 import com.app.videoAndPictureUpload.SelectVideoActivity;
 import com.app.view.CircleImageView;
 import com.app.view.CustomProgressDialog;
+import com.punuo.sys.app.activity.ActivityCollector;
+import com.punuo.sys.app.util.StatusBarUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,6 +72,7 @@ public class PersonFragment extends Fragment implements View.OnClickListener{
 
 private CircleImageView iv_avatar;
     private TextView tv_name;
+    private View mStatusBar;
     TextView tv_fxid;
     TextView title;
     //手机内存卡路径
@@ -160,12 +163,12 @@ private CircleImageView iv_avatar;
         re_collection.setOnClickListener(this);
         re_settings.setOnClickListener(this);
 
-//        Window window = getActivity().getWindow();
-//        //如果系统5.0以上
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-//            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//            window.setStatusBarColor(getResources().getColor(R.color.white));
-//        }
+        mStatusBar = getView().findViewById(R.id.status_bar);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mStatusBar.setVisibility(View.VISIBLE);
+            mStatusBar.getLayoutParams().height = StatusBarUtil.getStatusBarHeight(getActivity());
+            mStatusBar.requestLayout();
+        }
     }
 
     public static void verifyStoragePermissions(Activity activity) {

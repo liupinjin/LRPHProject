@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
 import android.os.StrictMode;
-import android.support.annotation.Size;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -20,8 +19,7 @@ import com.app.sip.SipInfo;
 import com.app.tools.AECManager;
 import com.app.tools.AvcEncoder;
 import com.app.tools.AvcEncoder1;
-import com.app.tools.LogUtil;
-import com.app.utils.LogUtils;
+import com.punuo.sys.app.util.LogUtil;
 
 import java.io.IOException;
 import java.util.List;

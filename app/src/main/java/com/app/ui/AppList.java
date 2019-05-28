@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,13 +11,14 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.app.R;
 import com.app.adapter.AppAdapter;
 import com.app.db.DatabaseInfo;
 import com.app.ftp.Ftp;
 import com.app.ftp.FtpListener;
 import com.app.model.App;
 import com.app.sip.SipInfo;
-import com.app.R;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.File;
 
@@ -33,7 +33,7 @@ import static com.app.model.Constant.FTP_DOWN_SUCCESS;
  * Date 2016/12/19.
  */
 
-public class AppList extends Activity {
+public class AppList extends BaseActivity {
     @Bind(R.id.title)
     TextView title;
     @Bind(R.id.applist)

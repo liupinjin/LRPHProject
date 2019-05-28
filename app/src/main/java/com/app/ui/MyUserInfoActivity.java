@@ -2,24 +2,19 @@ package com.app.ui;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -30,7 +25,6 @@ import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -47,32 +41,32 @@ import com.app.R;
 import com.app.http.GetPostUtil;
 import com.app.http.ToastUtils;
 import com.app.model.Constant;
+import com.app.model.UploadAvatarResult;
+import com.app.request.UploadAvatarRequest;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.ActivityCollector;
 import com.app.utils.ProviderUtil;
 import com.app.view.CircleImageView;
+import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.httplib.HttpManager;
+import com.punuo.sys.app.httplib.RequestListener;
 
-import org.w3c.dom.Text;
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
 
 import java.io.File;
-import java.io.PrintStream;
-import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.app.model.Constant.URL_updateSex;
 import static com.app.model.Constant.id;
 import static com.app.model.Constant.sex;
 import static com.app.sip.SipInfo.devName;
 
 @SuppressLint("SdCardPath")
-public class MyUserInfoActivity extends Activity implements View.OnClickListener {
+public class MyUserInfoActivity extends BaseActivity implements View.OnClickListener {
 
 //    private static class MyHandler extends Handler{
 //        private final WeakReference<MyUserInfoActivity> mActivity;
@@ -134,7 +128,6 @@ public class MyUserInfoActivity extends Activity implements View.OnClickListener
         setContentView(R.layout.activity_myinfo);
         avatarLoader = new LoadPicture(this, avaPath);
         initView();
-        ActivityCollector.addActivity(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -193,7 +186,6 @@ public class MyUserInfoActivity extends Activity implements View.OnClickListener
                 showChooseDialog();
                 break;
             case R.id.iv_back9:
-                ActivityCollector.removeActivity(this);
                 finish();
                 break;
             default:
@@ -465,81 +457,70 @@ public class MyUserInfoActivity extends Activity implements View.OnClickListener
         }
     }
 
-    Handler myhandle = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg.what == 111) {
-                dialog.dismiss();
-                ToastUtils.showShort(MyUserInfoActivity.this, "头像上传成功");
-                String devId = SipInfo.paddevId;
-                SipURL sipURL = new SipURL(devId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
-                SipInfo.toDev = new NameAddress(devName, sipURL);
-                org.zoolu.sip.message.Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
-                        SipInfo.user_from, BodyFactory.createListUpdate("addsuccess"));
-                SipInfo.sipUser.sendMessage(query);
-                finish();
-            } else if (msg.what == 222) {
-                dialog.dismiss();
-                ToastUtils.showShort(MyUserInfoActivity.this, "头像上传失败");
-//                return;
-            }
-        }
-    };
-
     @SuppressLint("SdCardPath")
     private void updateAvatarInServer(final String image) {
         dialog = new ProgressDialog(MyUserInfoActivity.this);
         dialog.setMessage("正在更新...");
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.show();
-        new Thread() {
+        uploadAvatar();
+    }
+    private UploadAvatarRequest mUploadAvatarRequest;
+    private void uploadAvatar() {
+        if (mUploadAvatarRequest != null && !mUploadAvatarRequest.isFinish()) {
+            return;
+        }
+        mUploadAvatarRequest = new UploadAvatarRequest();
+        mUploadAvatarRequest.addEntityParam("pic", new File(avaPath + imageName));
+        mUploadAvatarRequest.addEntityParam("avatar",
+                LocalUserInfo.getInstance(MyUserInfoActivity.this).getUserInfo("avatar"));
+        mUploadAvatarRequest.addEntityParam("id", Constant.id);
+        mUploadAvatarRequest.setRequestListener(new RequestListener<UploadAvatarResult>() {
             @Override
-            public void run() {
-                //httpurlconnection简单封装版
-                response = GetPostUtil.uploadFile(Constant.URL_UPDATE_Avatar, avaPath + imageName, id,
-                        LocalUserInfo.getInstance(MyUserInfoActivity.this).getUserInfo("avatar"));
+            public void onComplete() {
 
-                 /*okhttp的封装可以有选择的使用
-                 try {
-                 response= OkHttpUtils.post().addFile("pic",imageName,new File(avaPath + imageName)).
-                 addParams("id",id).
-                 addParams("avatar",LocalUserInfo.getInstance(MyUserInfoActivity.this).getUserInfo("avatar")).
-                 url(Constant.URL_UPDATE_Avatar).
-                 build().
-                 execute().body().string();
-                 } catch (IOException e) {
-                 e.printStackTrace();
-                 }*/
+            }
 
-
-                Log.i("jonsresponse", response);
-                JSONObject obj = JSON.parseObject(response);
-                String msg = obj.getString("msg");
-                String tip = obj.getString("tip");
-                if (msg.equals("success") && tip.equals("ok")) {
-                    String avatarname = obj.getString("avatar");
-                    Log.w("qqq.....", "上传后的avatar为" + avatarname);
-
+            @Override
+            public void onSuccess(UploadAvatarResult result) {
+                if (result == null) {
+                    return;
+                }
+                if (result.isSuccess()) {
                     LocalUserInfo.getInstance(MyUserInfoActivity.this)
-                            .setUserInfo("avatar", avatarname);
+                            .setUserInfo("avatar", result.avatar);
 
+                    //这块代码的意义值得考虑
                     File oldfile = new File(avaPath + imageName);
-                    File newfile = new File(SdCard + "/fanxin/Files/Camera/Image/" + avatarname);
+                    File newfile = new File(SdCard + "/fanxin/Files/Camera/Image/" + result.avatar);
                     oldfile.renameTo(newfile);
                     //这个广播的目的就是更新图库，发了这个广播进入相册就可以找到你保存的图片了！，记得要传你更新的file哦
                     Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                     Uri uri = Uri.fromFile(newfile);
                     intent.setData(uri);
-                    getApplicationContext().sendBroadcast(intent);
-                    myhandle.sendEmptyMessage(111);
+                    sendBroadcast(intent);
+
+                    dialog.dismiss();
+                    ToastUtils.showShort(MyUserInfoActivity.this, "头像上传成功");
+                    String devId = SipInfo.paddevId;
+                    SipURL sipURL = new SipURL(devId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
+                    SipInfo.toDev = new NameAddress(devName, sipURL);
+                    org.zoolu.sip.message.Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+                            SipInfo.user_from, BodyFactory.createListUpdate("addsuccess"));
+                    SipInfo.sipUser.sendMessage(query);
+                    finish();
                 } else {
-                    myhandle.sendEmptyMessage(222);
+                    dialog.dismiss();
+                    ToastUtils.showShort(MyUserInfoActivity.this, "头像上传失败");
                 }
             }
-        }.start();
 
-
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+            }
+        });
+        HttpManager.addRequest(mUploadAvatarRequest);
     }
 
     private void requestCameraPermission(){

@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,11 +26,11 @@ import com.app.http.ToastUtils;
 import com.app.http.VerifyCodeManager;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;
-import com.app.tools.ActivityCollector;
 import com.app.views.CleanEditText;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mob.MobSDK;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,7 +38,7 @@ import butterknife.OnClick;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
-public class NumberBind extends Activity {
+public class NumberBind extends BaseActivity {
     @Bind(R.id.iv_back1)
     ImageView ivBack1;
     @Bind(R.id.textView4)
@@ -67,7 +66,6 @@ public class NumberBind extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_number_bind);
         ButterKnife.bind(this);
-        ActivityCollector.addActivity(this);
         initView();
         codeManager = new VerifyCodeManager(this, tvPhone, btnSendVerifiCode);
         currentphone.setText(SipInfo.userAccount);
@@ -115,7 +113,6 @@ public class NumberBind extends Activity {
     public void onDestroy() {
         super.onDestroy();
         SMSSDK.unregisterEventHandler(eventHandler);
-        ActivityCollector.removeActivity(this);
     }
 
     private void commit() {
@@ -181,7 +178,6 @@ public class NumberBind extends Activity {
                     SMSSDK.submitVerificationCode("86", phone, code);
                 }
             case R.id.iv_back1:
-                ActivityCollector.removeActivity(this);
                 finish();
             default:
                 break;

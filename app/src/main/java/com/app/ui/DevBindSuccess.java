@@ -1,8 +1,6 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,7 +25,7 @@ import com.app.model.Constant;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.ActivityCollector;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -41,7 +39,7 @@ import static com.app.model.Constant.groupid1;
 import static com.app.sip.SipInfo.devName;
 
 
-public class DevBindSuccess extends Activity {
+public class DevBindSuccess extends BaseActivity {
 
     @Bind(R.id.iv_bindsuccess)
     ImageView ivBindsuccess;
@@ -64,7 +62,6 @@ public class DevBindSuccess extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dev_bind_success);
         ButterKnife.bind(this);
-        ActivityCollector.addActivity(this);
         changStatusIconCollor(true);
         TextPaint tp=textView4.getPaint();
         tp.setFakeBoldText(true);
@@ -102,7 +99,6 @@ public class DevBindSuccess extends Activity {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back8:
-                ActivityCollector.removeActivity(this);
                 finish();
             case R.id.bt_unbind1:
                 AlertDialog dialog = new AlertDialog.Builder(this)

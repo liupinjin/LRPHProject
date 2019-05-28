@@ -1,9 +1,7 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,8 +12,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,14 +19,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.app.LocalUserInfo;
 import com.app.R;
+import com.app.http.GetPostUtil;
+import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.ActivityCollector;
-import com.app.http.GetPostUtil;
-import com.app.http.ToastUtils;
 import com.app.views.CleanEditText;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -38,13 +34,12 @@ import org.zoolu.sip.address.SipURL;
 import static com.app.sip.SipInfo.devName;
 
 
-public class UpdateNickActivity extends Activity {
+public class UpdateNickActivity extends BaseActivity {
     String response;
     ProgressDialog dialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        ActivityCollector.addActivity(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_nick);
         final String nick = LocalUserInfo.getInstance(UpdateNickActivity.this).getUserInfo("nick");
@@ -147,7 +142,6 @@ public class UpdateNickActivity extends Activity {
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
     }
 }
 

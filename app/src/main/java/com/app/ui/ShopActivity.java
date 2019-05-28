@@ -1,8 +1,6 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
@@ -10,8 +8,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.app.R;
+import com.punuo.sys.app.activity.BaseActivity;
 
-public class ShopActivity extends Activity {
+public class ShopActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

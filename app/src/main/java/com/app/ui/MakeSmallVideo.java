@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
@@ -21,10 +20,10 @@ import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.app.R;
 import com.app.camera.FileOperateUtil;
 import com.app.sip.SipInfo;
-import com.app.tools.ActivityCollector;
-import com.app.R;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -39,7 +38,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MakeSmallVideo extends Activity implements SurfaceHolder.Callback {
+public class MakeSmallVideo extends BaseActivity implements SurfaceHolder.Callback {
 
     @Bind(R.id.surface_video)
     SurfaceView surfaceVideo;
@@ -88,7 +87,6 @@ public class MakeSmallVideo extends Activity implements SurfaceHolder.Callback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
         SipInfo.instance=this;
         setContentView(R.layout.activity_make_small_video);
         ButterKnife.bind(this);
@@ -319,7 +317,6 @@ public class MakeSmallVideo extends Activity implements SurfaceHolder.Callback {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
         closeCamera();
         SipInfo.flag=true;
 

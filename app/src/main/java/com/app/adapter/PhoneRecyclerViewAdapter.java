@@ -19,7 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.app.ui.addressAddActivity;
+import com.app.ui.AddressAddActivity;
 import com.app.view.CircleImageView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -94,7 +94,7 @@ public class PhoneRecyclerViewAdapter extends RecyclerView.Adapter<PhoneRecycler
                         String avatorurl=farmilymemberList.get(i).getAvatorurl();
                         String name=farmilymemberList.get(i).getName();
                         String phonenumber=farmilymemberList.get(i).getPhonenumber();
-                        Intent intent=new Intent(mContext,addressAddActivity.class);
+                        Intent intent=new Intent(mContext,AddressAddActivity.class);
                         intent.putExtra("extra_avatorurl",avatorurl);
                         intent.putExtra("extra_name",name);
                         intent.putExtra("extra_phonenumber",phonenumber);
@@ -138,7 +138,7 @@ public class PhoneRecyclerViewAdapter extends RecyclerView.Adapter<PhoneRecycler
 //                                        String avatorurl=farmilymemberList.get(i).getAvatorurl();
 //                                        String name=farmilymemberList.get(i).getName();
 //                                        String phonenumber=farmilymemberList.get(i).getPhonenumber();
-//                                        Intent intent=new Intent(mContext,addressAddActivity.class);
+//                                        Intent intent=new Intent(mContext,AddressAddActivity.class);
 //                                        intent.putExtra("extra_avatorurl",avatorurl);
 //                                        intent.putExtra("extra_name",name);
 //                                        intent.putExtra("extra_phonenumber",phonenumber);

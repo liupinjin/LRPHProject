@@ -35,13 +35,13 @@ import com.app.model.FileType;
 import com.app.model.Msg;
 import com.app.model.MyFile;
 import com.app.sip.SipInfo;
-import com.app.tools.FileSizeUtil;
 import com.app.tools.PopupList;
 import com.app.ui.ShowLocation;
 import com.app.ui.ShowPhoto;
 import com.app.ui.SmallVideoPlay;
 import com.app.view.CircleImageView;
 import com.bumptech.glide.Glide;
+import com.punuo.sys.app.util.FileSizeUtil;
 import com.tb.emoji.EmojiUtil;
 
 import java.io.File;

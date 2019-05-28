@@ -1,14 +1,14 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.app.view.FullScreenVideoView;
 import com.app.R;
+import com.app.view.FullScreenVideoView;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.File;
 
@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
  * Created by acer on 2016/10/12.
  */
 
-public class SmallVideoPlay extends Activity {
+public class SmallVideoPlay extends BaseActivity {
     @Bind(R.id.play)
     FullScreenVideoView play;
 

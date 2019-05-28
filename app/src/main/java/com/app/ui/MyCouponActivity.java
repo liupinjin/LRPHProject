@@ -1,21 +1,19 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextPaint;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.R;
-import com.app.tools.ActivityCollector;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MyCouponActivity extends Activity {
+public class MyCouponActivity extends BaseActivity {
 
     @Bind(R.id.iv_back1)
     ImageView ivBack1;
@@ -30,7 +28,6 @@ public class MyCouponActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_coupon);
-        ActivityCollector.addActivity(this);
         ButterKnife.bind(this);
         init();
     }
@@ -46,7 +43,6 @@ public class MyCouponActivity extends Activity {
     public void onClick(View v){
         switch (v.getId()){
             case R.id.iv_back1:
-                ActivityCollector.removeActivity(this);
                 finish();
                 break;
             case R.id.tv_use:

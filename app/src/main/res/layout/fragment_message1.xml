@@ -5,6 +5,13 @@
     android:layout_height="match_parent"
     android:background="@color/newbackground1">
 
+    <View
+        android:id="@+id/status_bar"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="@color/newbackground"
+        android:visibility="gone" />
+
     <include layout="@layout/fragment_title" />
 
     <RelativeLayout

@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -29,9 +28,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.app.R;
 import com.app.service.SipService;
 import com.app.sip.SipInfo;
-import com.app.R;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -45,7 +45,7 @@ import static com.app.sip.SipInfo.sipService;
  * Date 2016/12/19.
  */
 
-public class PhoneCall extends Activity implements SipService.AudioCallListener {
+public class PhoneCall extends BaseActivity implements SipService.AudioCallListener {
     @Bind(R.id.phoneNum)
     TextView phoneNum;
     @Bind(R.id.status)

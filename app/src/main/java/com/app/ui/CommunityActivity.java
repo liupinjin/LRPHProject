@@ -1,8 +1,6 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
@@ -10,14 +8,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.app.R;
-import com.app.tools.ActivityCollector;
+import com.punuo.sys.app.activity.BaseActivity;
 
-public class CommunityActivity extends Activity {
+public class CommunityActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_community);
 
         WebView webView=(WebView)findViewById(R.id.web_view);
@@ -35,6 +32,5 @@ public class CommunityActivity extends Activity {
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
     }
 }

@@ -14,11 +14,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.R;
 import com.app.db.DatabaseInfo;
 import com.app.model.App;
 import com.app.sip.SipInfo;
-import com.app.tools.FileSizeUtil;
-import com.app.R;
+import com.punuo.sys.app.util.FileSizeUtil;
 
 import java.io.File;
 import java.io.FileInputStream;

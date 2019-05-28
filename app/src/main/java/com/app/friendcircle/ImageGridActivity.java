@@ -1,6 +1,5 @@
 package com.app.friendcircle;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -21,13 +20,14 @@ import android.widget.Toast;
 
 import com.app.R;
 import com.app.friendcircle.ImageGridAdapter.TextCallback;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-public class ImageGridActivity extends Activity {
+public class ImageGridActivity extends BaseActivity {
 	public static final String EXTRA_IMAGE_LIST = "imagelist";
 
 	// ArrayList<Entity> dataList;//用来装载数据源的列表

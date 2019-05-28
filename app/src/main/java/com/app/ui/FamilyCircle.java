@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,17 +8,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -28,12 +23,12 @@ import com.app.friendCircleMain.adapter.MyListAdapter;
 import com.app.friendCircleMain.custonListView.CustomListView;
 import com.app.friendCircleMain.domain.FirendMicroList;
 import com.app.friendCircleMain.domain.FirendMicroListDatas;
-import com.app.friendCircleMain.domain.FirendsMicro;
+import com.app.friendCircleMain.domain.FriendsMicro;
 import com.app.friendcircle.PublishedActivity;
 import com.app.http.GetPostUtil;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
-import com.app.tools.ActivityCollector;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -46,10 +41,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.app.R.id.view;
 import static com.app.model.Constant.devid1;
 
-public class FamilyCircle extends Activity implements MyListAdapter.PositionListener{
+public class FamilyCircle extends BaseActivity implements MyListAdapter.PositionListener{
 
     @Bind(R.id.iv_back7)
     ImageView ivBack7;
@@ -76,7 +70,6 @@ public class FamilyCircle extends Activity implements MyListAdapter.PositionList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
         EventBus.getDefault().register(this);
         setContentView(R.layout.activity_family_circle);
         ButterKnife.bind(this);
@@ -230,7 +223,6 @@ public class FamilyCircle extends Activity implements MyListAdapter.PositionList
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
         EventBus.getDefault().unregister(this);
     }
 
@@ -245,7 +237,7 @@ public class FamilyCircle extends Activity implements MyListAdapter.PositionList
             return;
         }
 
-        FirendsMicro fm = JSON.parseObject(Constant.res, FirendsMicro.class);
+        FriendsMicro fm = JSON.parseObject(Constant.res, FriendsMicro.class);
         //FirendMicroList fList=fm.getFriendPager();
         FirendMicroList fList = fm.getPostList();
         //if("0".equals(fm.getError())){

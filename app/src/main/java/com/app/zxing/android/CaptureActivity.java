@@ -1,6 +1,5 @@
 package com.app.zxing.android;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,26 +15,23 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.app.R;
-import com.app.groupvoice.GroupInfo;
-import com.app.sip.SipInfo;
+import com.app.zxing.camera.CameraManager;
+import com.app.zxing.view.ViewfinderView;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.Result;
-import com.app.zxing.camera.CameraManager;
-import com.app.zxing.view.ViewfinderView;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
-
-import static com.app.R.id.devid;
 
 /**
  * 这个activity打开相机，在后台线程做常规的扫描；它绘制了一个结果view来帮助正确地显示条形码，在扫描的时候显示反馈信息，
  * 然后在扫描成功的时候覆盖扫描结果
  * 
  */
-public final class CaptureActivity extends Activity implements
+public final class CaptureActivity extends BaseActivity implements
 		SurfaceHolder.Callback {
 
 	private static final String TAG = CaptureActivity.class.getSimpleName();

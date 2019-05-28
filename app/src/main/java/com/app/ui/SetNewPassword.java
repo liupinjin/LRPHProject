@@ -1,16 +1,10 @@
 package com.app.ui;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -18,23 +12,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.app.R;
-import com.app.http.GetPostUtil;
 import com.app.http.RegexUtils;
 import com.app.http.ToastUtils;
-import com.app.model.Constant;
 import com.app.sip.SipInfo;
-import com.app.tools.ActivityCollector;
 import com.app.views.CleanEditText;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.smssdk.SMSSDK;
 
-public class SetNewPassword extends Activity {
+public class SetNewPassword extends BaseActivity {
 
     String response;
 
@@ -58,7 +48,6 @@ public class SetNewPassword extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_set_new_password);
         ButterKnife.bind(this);
 
@@ -115,7 +104,6 @@ public class SetNewPassword extends Activity {
                 }
                 break;
             case R.id.iv_back4:
-                ActivityCollector.removeActivity(this);
                 finish();
                 break;
         }

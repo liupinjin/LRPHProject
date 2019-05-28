@@ -1,6 +1,5 @@
 package com.app.friendcircle;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -14,11 +13,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.app.R;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhotoActivity extends Activity {
+public class PhotoActivity extends BaseActivity {
 
 	private ArrayList<View> listViews = null;
 	private ViewPager pager;
