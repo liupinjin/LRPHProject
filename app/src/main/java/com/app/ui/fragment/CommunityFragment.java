@@ -1,7 +1,6 @@
 package com.app.ui.fragment;
 
 
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,12 +10,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.app.R;
 import com.maogousoft.ytwebview.YTWebView;
 import com.maogousoft.ytwebview.interf.OnRefreshWebViewListener;
+import com.punuo.sys.app.util.StatusBarUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,6 +25,8 @@ import butterknife.ButterKnife;
 public class CommunityFragment extends Fragment {
     @Bind(R.id.ytWebView)
     YTWebView ytWebView;
+    @Bind(R.id.status_bar)
+    View mStatusBar;
 //    @Bind(R.id.ytWebView)
 
 
@@ -48,31 +48,11 @@ public class CommunityFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            //透明状态栏
-//            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//            //透明导航栏
-//            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-//        }
-        //得到当前界面的装饰视图
-        if (Build.VERSION.SDK_INT >= 21) {
-            View decorView = getActivity().getWindow().getDecorView();
-            //设置让应用主题内容占据状态栏和导航栏
-            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-            decorView.setSystemUiVisibility(option);
-            //设置状态栏和导航栏颜色为透明
-            getActivity().getWindow().setStatusBarColor(Color.TRANSPARENT);
-            getActivity().getWindow().setNavigationBarColor(Color.TRANSPARENT);
-        }
-
-
         init();
-        int color = getResources().getColor(R.color.reset1);
-        Window window = getActivity().getWindow();
-        //如果系统5.0以上
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(color);
+            mStatusBar.setVisibility(View.VISIBLE);
+            mStatusBar.getLayoutParams().height = StatusBarUtil.getStatusBarHeight(getActivity());
+            mStatusBar.requestLayout();
         }
     }
 

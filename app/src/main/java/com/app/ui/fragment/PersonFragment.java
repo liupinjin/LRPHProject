@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -53,6 +54,7 @@ import com.app.ui.UploadPictureActivity;
 import com.app.videoAndPictureUpload.SelectVideoActivity;
 import com.app.view.CircleImageView;
 import com.app.view.CustomProgressDialog;
+import com.punuo.sys.app.util.StatusBarUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,6 +72,7 @@ public class PersonFragment extends Fragment implements View.OnClickListener{
 
 private CircleImageView iv_avatar;
     private TextView tv_name;
+    private View mStatusBar;
     TextView tv_fxid;
     TextView title;
     //手机内存卡路径
@@ -160,12 +163,12 @@ private CircleImageView iv_avatar;
         re_collection.setOnClickListener(this);
         re_settings.setOnClickListener(this);
 
-//        Window window = getActivity().getWindow();
-//        //如果系统5.0以上
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-//            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//            window.setStatusBarColor(getResources().getColor(R.color.white));
-//        }
+        mStatusBar = getView().findViewById(R.id.status_bar);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mStatusBar.setVisibility(View.VISIBLE);
+            mStatusBar.getLayoutParams().height = StatusBarUtil.getStatusBarHeight(getActivity());
+            mStatusBar.requestLayout();
+        }
     }
 
     public static void verifyStoragePermissions(Activity activity) {
