@@ -1,6 +1,6 @@
 package com.app.friendCircleMain.domain;
 
-public class FirendsMicro {
+public class FriendsMicro {
 
 //	private FirendMicroList friendPager;
 //	private String error;

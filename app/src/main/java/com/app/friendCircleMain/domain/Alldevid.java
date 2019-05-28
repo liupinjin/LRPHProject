@@ -8,7 +8,7 @@ import java.util.List;
  */
 
 public class Alldevid extends MyBaseBean{
-    List<String> devid=new ArrayList<String>();
+    public List<String> devid = new ArrayList<String>();
 
     public List<String> getDevid() {
         return devid;

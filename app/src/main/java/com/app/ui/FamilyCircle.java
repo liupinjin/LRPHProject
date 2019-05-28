@@ -23,7 +23,7 @@ import com.app.friendCircleMain.adapter.MyListAdapter;
 import com.app.friendCircleMain.custonListView.CustomListView;
 import com.app.friendCircleMain.domain.FirendMicroList;
 import com.app.friendCircleMain.domain.FirendMicroListDatas;
-import com.app.friendCircleMain.domain.FirendsMicro;
+import com.app.friendCircleMain.domain.FriendsMicro;
 import com.app.friendcircle.PublishedActivity;
 import com.app.http.GetPostUtil;
 import com.app.model.Constant;
@@ -237,7 +237,7 @@ public class FamilyCircle extends BaseActivity implements MyListAdapter.Position
             return;
         }
 
-        FirendsMicro fm = JSON.parseObject(Constant.res, FirendsMicro.class);
+        FriendsMicro fm = JSON.parseObject(Constant.res, FriendsMicro.class);
         //FirendMicroList fList=fm.getFriendPager();
         FirendMicroList fList = fm.getPostList();
         //if("0".equals(fm.getError())){

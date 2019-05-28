@@ -18,6 +18,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -32,23 +33,26 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.app.LocalUserInfo;
 import com.app.R;
 import com.app.db.DatabaseInfo;
 import com.app.db.MyDatabaseHelper;
 import com.app.db.SQLiteManager;
 import com.app.friendCircleMain.domain.Alldevid;
+import com.app.friendCircleMain.domain.FriendsMicro;
 import com.app.friendCircleMain.domain.Group;
-import com.app.friendCircleMain.domain.GroupList;
 import com.app.friendCircleMain.domain.UserFromGroup;
 import com.app.friendCircleMain.domain.UserList;
 import com.app.groupvoice.GroupInfo;
-import com.app.http.GetPostUtil;
 import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.model.Friend;
+import com.app.model.PNUserInfo;
+import com.app.request.GetAllGroupFromUserRequest;
+import com.app.request.GetAllUserFromGroupRequest;
+import com.app.request.GetDevIdFromIdRequest;
+import com.app.request.GetPostListFromGroupRequest;
+import com.app.request.GetUserInfoRequest;
 import com.app.sip.KeepAlive;
 import com.app.sip.SipDev;
 import com.app.sip.SipInfo;
@@ -58,6 +62,8 @@ import com.app.tools.PermissionUtils;
 import com.app.view.CustomProgressDialog;
 import com.app.views.CleanEditText;
 import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.httplib.HttpManager;
+import com.punuo.sys.app.httplib.RequestListener;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -76,12 +82,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static com.amap.api.mapcore2d.p.i;
 import static com.app.groupvoice.GroupInfo.wakeLock;
-import static com.app.model.Constant.avatar;
-import static com.app.model.Constant.devid1;
-import static com.app.model.Constant.groupid1;
-import static com.app.model.Constant.res;
 import static java.lang.Thread.sleep;
 
 public class LoginActivity extends BaseActivity {
@@ -326,191 +327,259 @@ public class LoginActivity extends BaseActivity {
 //                        SipInfo.sipUser.sendMessage(SipMessageFactory.createSubscribeRequest(SipInfo.sipUser,
 //                                SipInfo.user_to, SipInfo.user_from, BodyFactory.createAppsQueryBody()));
                         //启动设备注册线程
-                        new Thread(getuserinfo).start();
+//                        new Thread(getuserinfo).start();
+                        getUserInfo();
                     }
                 }
             }
         }
     };
-    //获取用户数据线程
-    String response = "";
-    private Runnable    getuserinfo = new Runnable() {
-        @Override
-        public void run() {
-            response = GetPostUtil.sendGet1111(Constant.URL_GetUserInfo, "userid=" + SipInfo.userId);
-//        LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("tiezi",
-//                Constant.res);
-            Log.i("jonsresponse...........", response);
-            if ((response != null) && !("".equals(response))) {
-                JSONObject obj = JSON.parseObject(response);
-                String msg = obj.getString("msg");
-                if ("success".equals(msg)) {
-                    JSONObject user = obj.getJSONObject("user");
-                    Constant.nick = user.getString("nickname");
-                    Constant.avatar = user.getString("avatar");
-                    Constant.id = user.getString("id");
-                    Constant.phone = user.getString("name");
-                    Constant.sex=user.getString("gender");
-                    Constant.isNotify=user.getString("notify");
-                    Log.e("msg.........", "获取用户数据成功   " + Constant.nick + "    " + avatar);
+    private GetUserInfoRequest mGetUserInfoRequest;
+    //获取用户信息
+    private void getUserInfo() {
+        if (mGetUserInfoRequest != null && !mGetUserInfoRequest.isFinish()) {
+            return;
+        }
+        mGetUserInfoRequest = new GetUserInfoRequest();
+        mGetUserInfoRequest.addUrlParam("userid", SipInfo.userId);
+        mGetUserInfoRequest.setRequestListener(new RequestListener<PNUserInfo>() {
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSuccess(PNUserInfo result) {
+                if (result != null && result.isSuccess()) {
+                    setUserInfo(result.userInfo);
                     SipInfo.friends.clear();
-                    new Thread(getgroupinfo).start();
+                    getGroupInfo();
                 } else {
-                    Looper.prepare();
                     ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
                     registering.dismiss();
-                    Looper.loop();
                 }
-            } else {
-                Looper.prepare();
+            }
+
+            @Override
+            public void onError(Exception e) {
                 ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
                 registering.dismiss();
-                Looper.loop();
             }
-        }
-    };
+        });
+        HttpManager.addRequest(mGetUserInfoRequest);
+
+    }
+
+    //临时，后面需要统一管理用户信息
+    private void setUserInfo(PNUserInfo.UserInfo userInfo) {
+        Constant.nick = userInfo.nickname;
+        Constant.avatar = userInfo.avatar;
+        Constant.id = userInfo.id;
+        Constant.phone = userInfo.name;
+        Constant.sex = userInfo.gender;
+        Constant.isNotify = userInfo.isNotify;
+    }
+    //获取用户数据线程
+    String response = "";
     //群组获取线程
-    private Runnable getgroupinfo = new Runnable() {
-        @Override
-        public void run() {
-            response = GetPostUtil.sendGet1111(Constant.URL_InquireGroup, "id=" + Constant.id);
-            Log.i("jonsresponse...........", response);
-            if ((response != null) && !("".equals(response))) {
-                Group group = JSON.parseObject(response, Group.class);
-                List<GroupList> groupList = group.getGroupList();
-                groupname=null;
-                groupid=null;
-                appdevid=null;
-                for (i = 0; i < groupList.size(); i++) {
-                    groupname= groupList.get(i).getGroup_name();
-                    groupid = groupList.get(i).getGroupid();
-                }
-                devid1 = groupname;
-                Constant.groupid1 = groupid;
-                Constant.groupid = groupid1;
-                if ((groupid1 != null) && !("".equals(groupid1))) {
-                    SipInfo.paddevId = devid1;
-//                    response = GetPostUtil.sendGet1111(Constant.URL_getallDevidfromid, "id=" + Constant.id);
-//                    Log.i("jonsresponse...........", response);
-                    new Thread(getalldevid).start();
+    private GetAllGroupFromUserRequest mGetAllGroupFromUserRequest;
+    //获取组信息
+    private void getGroupInfo() {
+        if (mGetAllGroupFromUserRequest != null && !mGetAllGroupFromUserRequest.isFinish()) {
+            return;
+        }
+        groupname = null;
+        groupid = null;
+        appdevid = null;
+        mGetAllGroupFromUserRequest = new GetAllGroupFromUserRequest();
+        mGetAllGroupFromUserRequest.addUrlParam("id", Constant.id);
+        mGetAllGroupFromUserRequest.setRequestListener(new RequestListener<Group>() {
+            @Override
+            public void onComplete() {
 
+            }
+
+            @Override
+            public void onSuccess(Group result) {
+                if (result != null) {
+                   if (result.groupList != null && !result.groupList.isEmpty()) {
+                       //重构疑问：这个循环的意义
+                       for (int i = 0; i < result.groupList.size(); i++) {
+                           groupname= result.groupList.get(i).getGroup_name();
+                           groupid = result.groupList.get(i).getGroupid();
+                       }
+                       Constant.devid1 = groupname;
+                       Constant.groupid1 = groupid;
+                       Constant.groupid = Constant.groupid1;
+                       if (!TextUtils.isEmpty(Constant.groupid1)) {
+                           SipInfo.paddevId = Constant.devid1;
+                           getDevIdInfo();
+                       } else {
+                           Constant.res = "";
+                           LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("avatar",
+                                   Constant.avatar);
+                           LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("nick",
+                                   Constant.nick);
+                           LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
+                                   Constant.id);
+                           registering.dismiss();
+                           startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                       }
+                   }
                 } else {
-                    Constant.res = "";
-                    LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("avatar",
-                            Constant.avatar);
-                    LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("nick",
-                            Constant.nick);
-                    LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
-                            Constant.id);
+                    ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
                     registering.dismiss();
-                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                 }
-            } else {
-                Looper.prepare();
+            }
+
+            @Override
+            public void onError(Exception e) {
                 ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
                 registering.dismiss();
-                Looper.loop();
             }
+        });
+        HttpManager.addRequest(mGetAllGroupFromUserRequest);
+    }
+
+    private GetAllUserFromGroupRequest mGetAllUserFromGroupRequest;
+    //获取组内用户
+    private void getAllUserFormGroup() {
+        if (mGetAllUserFromGroupRequest != null && !mGetAllUserFromGroupRequest.isFinish()) {
+            return;
         }
-    };
+        mGetAllUserFromGroupRequest = new GetAllUserFromGroupRequest();
+        mGetAllUserFromGroupRequest.addUrlParam("groupid", Constant.groupid);
+        mGetAllUserFromGroupRequest.setRequestListener(new RequestListener<UserFromGroup>() {
+            @Override
+            public void onComplete() {
 
-    //群组用户信息获取
-    private Runnable getuserfromgroup = new Runnable() {
-        @Override
-        public void run() {
-            response = GetPostUtil.sendGet1111(Constant.URL_InquireUser, "groupid=" + Constant.groupid);
-            Log.i("jonsresponse...........", response);
-            if ((response != null) && !("".equals(response))) {
-                UserFromGroup userFromGroup = JSON.parseObject(response, UserFromGroup.class);
-
-                List<UserList> userList = userFromGroup.getUserList();
-
-                for (i = 0; i < userList.size(); i++) {
-                    Friend friend = new Friend();
-                    friend.setNickName (userList.get(i).getNickname());
-                    friend.setPhoneNum(userList.get(i).getName());
-                    friend.setUserId(userList.get(i).getUserid());
-                    friend.setId(userList.get(i).getId());
-                    friend.setAvatar(userList.get(i).getAvatar());
-                    SipInfo.friends.add(friend);
-                }
-                new Thread(getpostinfo).start();
-            } else {
-                Looper.prepare();
-                ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
-                registering.dismiss();
-                Looper.loop();
             }
-        }
-    };
 
-    //帖子获取线程
-    private Runnable getpostinfo = new Runnable() {
-        @Override
-        public void run() {
-            Constant.res = GetPostUtil.sendGet1111(Constant.URL_getPostList, "id=" + Constant.id + "&currentPage=1" + "&groupid=" + Constant.groupid);
-            Log.i("jonsresponse...........", Thread.currentThread().getName() + Constant.res + "");
-            if ((Constant.res != null) && !("".equals(res))) {
-                GroupInfo.groupNum = "7000";
-                //String peer = peerElement.getFirstChild().getNodeValue();
-                GroupInfo.ip = "101.69.255.134";
-//                GroupInfo.port = 7000;
-                GroupInfo.level = "1";
-                SipInfo.devName = Constant.nick;
-//
-                LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("avatar",
-                        Constant.avatar);
-                LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("nick",
-                        Constant.nick);
-                LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
-                        Constant.id);
-                registering.dismiss();
-                startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-            } else {
-                Looper.prepare();
-                ToastUtils.makeShortText("获取用户帖子失败请重试", LoginActivity.this);
-                registering.dismiss();
-                Looper.loop();
-            }
-        }
-    };
-    //获取所有devid
-    private Runnable getalldevid = new Runnable() {
-        @Override
-        public void run() {
-            response = GetPostUtil.sendGet1111(Constant.URL_getallDevidfromid, "id=" + Constant.id);
-            Log.i("jonsresponse...........", response);
-            if ((response != null) && !("".equals(response))) {
-                JSONObject jsonObject = JSONObject.parseObject(response);
-                Alldevid alldevid = JSON.parseObject(response, Alldevid.class);
-                List<String> list = alldevid.getDevid();
-                if(list.size()==0){
-                    Looper.prepare();
-                    ToastUtils.showShort(LoginActivity.this, "获取设备id失败");
-                    startActivity(new Intent(LoginActivity.this,HomeActivity.class));
-                    Looper.loop();
-                }else {
-                    appdevid = list.get(0);
-                    Constant.appdevid1 = appdevid;
-                    if (appdevid != null && !("".equals(appdevid))) {
+            @Override
+            public void onSuccess(UserFromGroup result) {
+                if (result != null) {
+                    if (result.userList != null && !result.userList.isEmpty()) {
+                        for (int i = 0; i < result.userList.size(); i++) {
+                            UserList userList = result.userList.get(i);
+                            Friend friend = new Friend();
+                            friend.setNickName (userList.getNickname());
+                            friend.setPhoneNum(userList.getName());
+                            friend.setUserId(userList.getUserid());
+                            friend.setId(userList.getId());
+                            friend.setAvatar(userList.getAvatar());
+                            SipInfo.friends.add(friend);
+                        }
+                        //建议不在这里请求
+                        getPostList();
 
-                        SipInfo.devId = appdevid;
-                        Log.i("qwe",SipInfo.devId);
-                        SipURL local_dev = new SipURL(SipInfo.devId, SipInfo.serverIp, SipInfo.SERVER_PORT_DEV);
-                        SipInfo.dev_from = new NameAddress(SipInfo.devId, local_dev);
-                        new Thread(devConnecting).start();
+                        GroupInfo.groupNum = "7000";
+//                        String peer = peerElement.getFirstChild().getNodeValue();
+                        GroupInfo.ip = "101.69.255.134";
+//                        GroupInfo.port = 7000;
+                        GroupInfo.level = "1";
+                        SipInfo.devName = Constant.nick;
+
+                        LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("avatar",
+                                Constant.avatar);
+                        LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("nick",
+                                Constant.nick);
+                        LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
+                                Constant.id);
+                        registering.dismiss();
+                        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                    } else {
+                        ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
+                        registering.dismiss();
                     }
-
-                    new Thread(getuserfromgroup).start();
+                } else {
+                    ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
+                    registering.dismiss();
                 }
-            } else {
-                Looper.prepare();
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+        HttpManager.addRequest(mGetAllUserFromGroupRequest);
+    }
+
+    private GetPostListFromGroupRequest mGetPostListFromGroupRequest;
+    private void getPostList() {
+        if (mGetPostListFromGroupRequest != null && !mGetPostListFromGroupRequest.isFinish()) {
+            return;
+        }
+        mGetPostListFromGroupRequest = new GetPostListFromGroupRequest();
+        mGetPostListFromGroupRequest.addUrlParam("id", Constant.id);
+        mGetPostListFromGroupRequest.addUrlParam("currentPage", 1);
+        mGetPostListFromGroupRequest.addUrlParam("groupid", Constant.groupid);
+        mGetPostListFromGroupRequest.setRequestListener(new RequestListener<FriendsMicro>() {
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSuccess(FriendsMicro result) {
+
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+        HttpManager.addRequest(mGetPostListFromGroupRequest);
+    }
+
+    private GetDevIdFromIdRequest mGetDevIdFromIdRequest;
+    //获取用户设备信息
+    private void getDevIdInfo() {
+        if (mGetDevIdFromIdRequest != null && !mGetDevIdFromIdRequest.isFinish()) {
+            return;
+        }
+        mGetDevIdFromIdRequest = new GetDevIdFromIdRequest();
+        mGetDevIdFromIdRequest.addUrlParam("id", Constant.id);
+        mGetDevIdFromIdRequest.setRequestListener(new RequestListener<Alldevid>() {
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSuccess(Alldevid result) {
+                if (result != null) {
+                    List<String> devIdLists = result.devid;
+                    if (devIdLists.isEmpty()) {
+                        ToastUtils.showShort(LoginActivity.this, "获取设备id失败");
+                        startActivity(new Intent(LoginActivity.this,HomeActivity.class));
+                    } else {
+                        appdevid = devIdLists.get(0);
+                        Constant.appdevid1 = appdevid;
+                        if (!TextUtils.isEmpty(appdevid)) {
+                            SipInfo.devId = appdevid;
+                            SipURL local_dev = new SipURL(SipInfo.devId, SipInfo.serverIp, SipInfo.SERVER_PORT_DEV);
+                            SipInfo.dev_from = new NameAddress(SipInfo.devId, local_dev);
+                            new Thread(devConnecting).start();
+                        }
+                        //获取组内用户
+                        getAllUserFormGroup();
+                    }
+                } else {
+                    ToastUtils.makeShortText("获取用户devid失败请重试", LoginActivity.this);
+                    registering.dismiss();
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
                 ToastUtils.makeShortText("获取用户devid失败请重试", LoginActivity.this);
                 registering.dismiss();
-                Looper.loop();
             }
-        }
-    };
+        });
+        HttpManager.addRequest(mGetDevIdFromIdRequest);
+    }
     //设备注册线程
     private Runnable devConnecting = new Runnable() {
         @Override
@@ -638,16 +707,6 @@ public class LoginActivity extends BaseActivity {
         }
 
         return false;
-    }
-
-
-    private void showTip(final String message) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.util.List;
  */
 
 public class UserFromGroup {
-    List<UserList> userList;
+    public List<UserList> userList;
 
     public void setUserList(List<UserList> userList) {
         this.userList = userList;

@@ -7,7 +7,7 @@ import java.util.List;
  */
 
 public class Group extends MyBaseBean{
-    private List<GroupList> groupList;
+    public List<GroupList> groupList;
 
     public List<GroupList> getGroupList() {
         return groupList;
