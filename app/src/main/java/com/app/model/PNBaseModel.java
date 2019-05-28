@@ -15,4 +15,7 @@ public class PNBaseModel {
     public boolean isSuccess() {
         return TextUtils.equals("success", msg);
     }
+
+    @SerializedName("tip")
+    public String tip;
 }

@@ -15,8 +15,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -43,12 +41,16 @@ import com.app.R;
 import com.app.http.GetPostUtil;
 import com.app.http.ToastUtils;
 import com.app.model.Constant;
+import com.app.model.UploadAvatarResult;
+import com.app.request.UploadAvatarRequest;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.utils.ProviderUtil;
 import com.app.view.CircleImageView;
 import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.httplib.HttpManager;
+import com.punuo.sys.app.httplib.RequestListener;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -455,81 +457,70 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
         }
     }
 
-    Handler myhandle = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg.what == 111) {
-                dialog.dismiss();
-                ToastUtils.showShort(MyUserInfoActivity.this, "头像上传成功");
-                String devId = SipInfo.paddevId;
-                SipURL sipURL = new SipURL(devId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
-                SipInfo.toDev = new NameAddress(devName, sipURL);
-                org.zoolu.sip.message.Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
-                        SipInfo.user_from, BodyFactory.createListUpdate("addsuccess"));
-                SipInfo.sipUser.sendMessage(query);
-                finish();
-            } else if (msg.what == 222) {
-                dialog.dismiss();
-                ToastUtils.showShort(MyUserInfoActivity.this, "头像上传失败");
-//                return;
-            }
-        }
-    };
-
     @SuppressLint("SdCardPath")
     private void updateAvatarInServer(final String image) {
         dialog = new ProgressDialog(MyUserInfoActivity.this);
         dialog.setMessage("正在更新...");
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.show();
-        new Thread() {
+        uploadAvatar();
+    }
+    private UploadAvatarRequest mUploadAvatarRequest;
+    private void uploadAvatar() {
+        if (mUploadAvatarRequest != null && !mUploadAvatarRequest.isFinish()) {
+            return;
+        }
+        mUploadAvatarRequest = new UploadAvatarRequest();
+        mUploadAvatarRequest.addEntityParam("pic", new File(avaPath + imageName));
+        mUploadAvatarRequest.addEntityParam("avatar",
+                LocalUserInfo.getInstance(MyUserInfoActivity.this).getUserInfo("avatar"));
+        mUploadAvatarRequest.addEntityParam("id", Constant.id);
+        mUploadAvatarRequest.setRequestListener(new RequestListener<UploadAvatarResult>() {
             @Override
-            public void run() {
-                //httpurlconnection简单封装版
-                response = GetPostUtil.uploadFile(Constant.URL_UPDATE_Avatar, avaPath + imageName, id,
-                        LocalUserInfo.getInstance(MyUserInfoActivity.this).getUserInfo("avatar"));
+            public void onComplete() {
 
-                 /*okhttp的封装可以有选择的使用
-                 try {
-                 response= OkHttpUtils.post().addFile("pic",imageName,new File(avaPath + imageName)).
-                 addParams("id",id).
-                 addParams("avatar",LocalUserInfo.getInstance(MyUserInfoActivity.this).getUserInfo("avatar")).
-                 url(Constant.URL_UPDATE_Avatar).
-                 build().
-                 execute().body().string();
-                 } catch (IOException e) {
-                 e.printStackTrace();
-                 }*/
+            }
 
-
-                Log.i("jonsresponse", response);
-                JSONObject obj = JSON.parseObject(response);
-                String msg = obj.getString("msg");
-                String tip = obj.getString("tip");
-                if (msg.equals("success") && tip.equals("ok")) {
-                    String avatarname = obj.getString("avatar");
-                    Log.w("qqq.....", "上传后的avatar为" + avatarname);
-
+            @Override
+            public void onSuccess(UploadAvatarResult result) {
+                if (result == null) {
+                    return;
+                }
+                if (result.isSuccess()) {
                     LocalUserInfo.getInstance(MyUserInfoActivity.this)
-                            .setUserInfo("avatar", avatarname);
+                            .setUserInfo("avatar", result.avatar);
 
+                    //这块代码的意义值得考虑
                     File oldfile = new File(avaPath + imageName);
-                    File newfile = new File(SdCard + "/fanxin/Files/Camera/Image/" + avatarname);
+                    File newfile = new File(SdCard + "/fanxin/Files/Camera/Image/" + result.avatar);
                     oldfile.renameTo(newfile);
                     //这个广播的目的就是更新图库，发了这个广播进入相册就可以找到你保存的图片了！，记得要传你更新的file哦
                     Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                     Uri uri = Uri.fromFile(newfile);
                     intent.setData(uri);
-                    getApplicationContext().sendBroadcast(intent);
-                    myhandle.sendEmptyMessage(111);
+                    sendBroadcast(intent);
+
+                    dialog.dismiss();
+                    ToastUtils.showShort(MyUserInfoActivity.this, "头像上传成功");
+                    String devId = SipInfo.paddevId;
+                    SipURL sipURL = new SipURL(devId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
+                    SipInfo.toDev = new NameAddress(devName, sipURL);
+                    org.zoolu.sip.message.Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+                            SipInfo.user_from, BodyFactory.createListUpdate("addsuccess"));
+                    SipInfo.sipUser.sendMessage(query);
+                    finish();
                 } else {
-                    myhandle.sendEmptyMessage(222);
+                    dialog.dismiss();
+                    ToastUtils.showShort(MyUserInfoActivity.this, "头像上传失败");
                 }
             }
-        }.start();
 
-
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+            }
+        });
+        HttpManager.addRequest(mUploadAvatarRequest);
     }
 
     private void requestCameraPermission(){
