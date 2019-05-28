@@ -54,7 +54,6 @@ import com.app.sip.SipDev;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.sip.SipUser;
-import com.app.tools.ActivityCollector;
 import com.app.tools.PermissionUtils;
 import com.app.view.CustomProgressDialog;
 import com.app.views.CleanEditText;
@@ -137,7 +136,6 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_login1);
         ButterKnife.bind(this);
         pref = PreferenceManager.getDefaultSharedPreferences(this);

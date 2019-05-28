@@ -51,7 +51,6 @@ import com.app.http.GetPostUtil;
 import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
-import com.app.tools.ActivityCollector;
 import com.app.utils.ProviderUtil;
 import com.punuo.sys.app.activity.BaseActivity;
 
@@ -79,7 +78,6 @@ public class PublishedActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selectimg);
-        ActivityCollector.addActivity(this);
         Init();
         /*设置系统状态栏颜色
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
@@ -190,11 +188,8 @@ public class PublishedActivity extends BaseActivity {
                 Bimp.max = 0;
                 FileUtils.deleteDir();
                 dialog.dismiss();
-                ActivityCollector.removeActivity(PublishedActivity.this);
                 finish();
 
-//                ActivityCollector.finishToMain();
-//                ActivityCollector.finishToFirstView();
             } else if (msg.what == 0x222) {
                 ToastUtils.showShort(PublishedActivity.this, "状态上传失败请重试");
                 dialog.dismiss();
@@ -450,7 +445,6 @@ public class PublishedActivity extends BaseActivity {
         Bimp.drr.clear();
         Bimp.max = 0;
         FileUtils.deleteDir();
-        ActivityCollector.removeActivity(this);
         super.onDestroy();
     }
 }

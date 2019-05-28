@@ -17,9 +17,9 @@ import com.app.R;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.ActivityCollector;
 import com.app.ui.address.AddressSupervise;
 import com.app.utils.DataClearUtil;
+import com.punuo.sys.app.activity.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
 
 import butterknife.Bind;
@@ -63,7 +63,6 @@ public class Setting extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         ButterKnife.bind(this);
-        ActivityCollector.addActivity(this);
         titleset.setText("设置");
         tvBuff.setText(DataClearUtil.getTotalCacheSize(this));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
@@ -134,7 +133,6 @@ public class Setting extends BaseActivity {
                 startActivity(new Intent(this, MessageNotify.class));
                 break;
             case R.id.iv_back1:
-                ActivityCollector.removeActivity(this);
                 finish();
             default:
                 break;
@@ -144,6 +142,5 @@ public class Setting extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
     }
 }

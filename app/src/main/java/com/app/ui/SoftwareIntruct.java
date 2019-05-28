@@ -30,9 +30,9 @@ import com.app.model.Constant;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.ActivityCollector;
 import com.app.tools.VersionXmlParse;
 import com.app.view.CustomProgressDialog;
+import com.punuo.sys.app.activity.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.File;
@@ -132,7 +132,6 @@ public class SoftwareIntruct extends BaseActivity {
                 new Thread(checkVersion).start();
                 break;
             case R.id.iv_back1:
-                ActivityCollector.removeActivity(this);
                 finish();
         }
     }
@@ -221,7 +220,6 @@ public class SoftwareIntruct extends BaseActivity {
     public void onDestroy() {
         super.onDestroy();
 //        EventBus.getDefault().unregister(this);
-        ActivityCollector.removeActivity(this);
     }
 
     private void showVersionDialog(String currentVersion, final String FtpVersion, final String result) {

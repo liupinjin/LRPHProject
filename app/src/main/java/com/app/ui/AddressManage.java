@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.R;
-import com.app.tools.ActivityCollector;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -29,7 +28,6 @@ public class AddressManage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address_manage);
         ButterKnife.bind(this);
-        ActivityCollector.addActivity(this);
         init();
     }
 
@@ -46,7 +44,6 @@ public class AddressManage extends AppCompatActivity {
                 startActivity(new Intent(this,AddressManage.class));
                 break;
             case R.id.iv_back1:
-                ActivityCollector.removeActivity(this);
                 finish();
         }
     }

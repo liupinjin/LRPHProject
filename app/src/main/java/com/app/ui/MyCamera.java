@@ -32,7 +32,6 @@ import com.app.ftp.Ftp;
 import com.app.ftp.FtpListener;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;
-import com.app.tools.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.File;
@@ -121,7 +120,6 @@ public class MyCamera extends BaseActivity implements View.OnClickListener, Came
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SipInfo.myCamera=this;
-        ActivityCollector.addActivity(this);
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
         setContentView(R.layout.mycamera);
         ButterKnife.bind(this);
@@ -196,7 +194,6 @@ public class MyCamera extends BaseActivity implements View.OnClickListener, Came
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
         mSensorManager.unregisterListener(this, mSensor);
         SipInfo.flag=true;
     }

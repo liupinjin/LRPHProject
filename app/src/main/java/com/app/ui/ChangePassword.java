@@ -25,7 +25,6 @@ import com.app.http.GetPostUtil;
 import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;
-import com.app.tools.ActivityCollector;
 import com.app.views.CleanEditText;
 import com.punuo.sys.app.activity.BaseActivity;
 
@@ -60,7 +59,6 @@ public class ChangePassword extends BaseActivity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_frogetpwd);
         ButterKnife.bind(this);
         initViews();
@@ -96,7 +94,6 @@ public class ChangePassword extends BaseActivity implements View.OnClickListener
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
     }
 
     Handler myhandle = new Handler() {
@@ -178,7 +175,6 @@ public class ChangePassword extends BaseActivity implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back1:
-                ActivityCollector.removeActivity(this);
                 finish();
                 break;
             case R.id.btn_revise:

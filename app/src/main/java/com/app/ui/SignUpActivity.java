@@ -31,7 +31,6 @@ import com.app.http.VerifyCodeManager;
 import com.app.http.VerifyCodeManager1;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;
-import com.app.tools.ActivityCollector;
 import com.app.views.CleanEditText;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -75,7 +74,6 @@ public class SignUpActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up1);
-        ActivityCollector.addActivity(this);
         ButterKnife.bind(this);
         initViews();
         codeManager1 = new VerifyCodeManager1(this, numInput, getVerificode);
@@ -172,7 +170,6 @@ public class SignUpActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
     }
 
     private boolean checkInput(String phone, String password, String code) {
@@ -218,12 +215,10 @@ public class SignUpActivity extends BaseActivity {
                 commit();
                 break;
             case R.id.goto_login:
-                ActivityCollector.removeActivity(this);
                 finish();
                 startActivity(new Intent(this,LoginActivity.class));
                 break;
             case R.id.iv_back6:
-                ActivityCollector.removeActivity(this);
                 finish();
                 break;
         }

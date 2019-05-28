@@ -23,7 +23,6 @@ import android.widget.Toast;
 import com.app.R;
 import com.app.camera.FileOperateUtil;
 import com.app.sip.SipInfo;
-import com.app.tools.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.BufferedOutputStream;
@@ -88,7 +87,6 @@ public class MakeSmallVideo extends BaseActivity implements SurfaceHolder.Callba
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
         SipInfo.instance=this;
         setContentView(R.layout.activity_make_small_video);
         ButterKnife.bind(this);
@@ -319,7 +317,6 @@ public class MakeSmallVideo extends BaseActivity implements SurfaceHolder.Callba
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
         closeCamera();
         SipInfo.flag=true;
 

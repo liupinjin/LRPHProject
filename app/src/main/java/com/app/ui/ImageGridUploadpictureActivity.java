@@ -23,7 +23,6 @@ import com.app.ftp.Ftp;
 import com.app.ftp.FtpListener;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;
-import com.app.tools.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.File;
@@ -105,7 +104,6 @@ public class ImageGridUploadpictureActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Log.i("sasa","sasaa");
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_imagegriduploadpicture);
 
         helper = AlbumHelper.getHelper();
@@ -213,7 +211,6 @@ public class ImageGridUploadpictureActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        ActivityCollector.removeActivity(this);
         super.onDestroy();
     }
 }

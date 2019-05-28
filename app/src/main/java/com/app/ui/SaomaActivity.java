@@ -38,9 +38,9 @@ import com.app.model.Constant;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.ActivityCollector;
 import com.app.view.CustomProgressDialog;
 import com.app.zxing.android.CaptureActivity;
+import com.punuo.sys.app.activity.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
 
 import org.zoolu.sip.address.NameAddress;
@@ -79,7 +79,6 @@ public class SaomaActivity extends BaseActivity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_saoma2);
-        ActivityCollector.addActivity(this);
         TextView title=(TextView) findViewById(R.id.tv_binddev);
         TextPaint tp=title.getPaint();
         tp.setFakeBoldText(true);
@@ -123,7 +122,6 @@ public class SaomaActivity extends BaseActivity implements View.OnClickListener 
 
 
         if ((devid1 != null) && !("".equals(devid1))){
-            ActivityCollector.removeActivity(this);
             finish();
          startActivity(new Intent(this,DevBindSuccess.class));
         }
@@ -376,7 +374,6 @@ public class SaomaActivity extends BaseActivity implements View.OnClickListener 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
     }
 
     private void boolOpenCarmer(){

@@ -39,7 +39,6 @@ import com.app.adapter.MyRecyclerViewAdapter;
 import com.app.db.MyDatabaseHelper;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
-import com.app.tools.ActivityCollector;
 import com.app.utils.ToastUtils;
 import com.app.view.CircleImageView;
 import com.app.views.CleanEditText;
@@ -113,7 +112,6 @@ public class AddressAddActivity extends BaseActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addressadd);
-        ActivityCollector.addActivity(this);
         ButterKnife.bind(this);
         mContext = this;
         initview();
@@ -221,7 +219,6 @@ public class AddressAddActivity extends BaseActivity implements View.OnClickList
                 String number = "请输入号码";
                 break;
             case R.id.iv_back1:
-                ActivityCollector.removeActivity(this);
                 finish();
                 break;
         }
@@ -288,7 +285,6 @@ public class AddressAddActivity extends BaseActivity implements View.OnClickList
 //            String number = "请输入号码";
 //        }
 //        else if(id==R.id.iv_back1){
-//            ActivityCollector.removeActivity(this);
 //            finish();
 //        }
 //    }

@@ -27,7 +27,6 @@ import com.app.http.VerifyCodeManager;
 import com.app.http.VerifyCodeManager1;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;
-import com.app.tools.ActivityCollector;
 import com.app.views.CleanEditText;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -60,7 +59,6 @@ public class ChangePassword1 extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_change_password1);
         ButterKnife.bind(this);
         initViews();
@@ -107,7 +105,6 @@ public class ChangePassword1 extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         SMSSDK.unregisterEventHandler(eventHandler);
-        ActivityCollector.removeActivity(this);
     }
 
     @OnClick({R.id.verificode_get,R.id.btn_nextstep,R.id.iv_back3})
@@ -122,7 +119,6 @@ public class ChangePassword1 extends BaseActivity {
                 startActivity(new Intent(this,SetNewPassword.class));
                 break;
             case R.id.iv_back3:
-                ActivityCollector.removeActivity(this);
                 finish();
                 break;
         }

@@ -46,7 +46,6 @@ import com.app.sip.SipDev;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.sip.SipUser;
-import com.app.tools.ActivityCollector;
 import com.app.view.CustomProgressDialog;
 import com.app.views.CleanEditText;
 import com.google.gson.JsonObject;
@@ -119,7 +118,6 @@ public class VerificodeLogin extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_verificode_login);
         mContext=this;
         ButterKnife.bind(this);
@@ -640,7 +638,6 @@ public class VerificodeLogin extends BaseActivity {
             registering.dismiss();
         }
         SMSSDK.unregisterEventHandler(eventHandler);
-        ActivityCollector.removeActivity(this);
     }
 
     private boolean checkInput(String phone,  String code) {

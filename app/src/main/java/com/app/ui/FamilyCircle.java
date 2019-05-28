@@ -28,7 +28,6 @@ import com.app.friendcircle.PublishedActivity;
 import com.app.http.GetPostUtil;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
-import com.app.tools.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -71,7 +70,6 @@ public class FamilyCircle extends BaseActivity implements MyListAdapter.Position
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
         EventBus.getDefault().register(this);
         setContentView(R.layout.activity_family_circle);
         ButterKnife.bind(this);
@@ -225,7 +223,6 @@ public class FamilyCircle extends BaseActivity implements MyListAdapter.Position
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
         EventBus.getDefault().unregister(this);
     }
 

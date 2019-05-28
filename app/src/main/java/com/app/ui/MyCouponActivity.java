@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.R;
-import com.app.tools.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
 
 import butterknife.Bind;
@@ -29,7 +28,6 @@ public class MyCouponActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_coupon);
-        ActivityCollector.addActivity(this);
         ButterKnife.bind(this);
         init();
     }
@@ -45,7 +43,6 @@ public class MyCouponActivity extends BaseActivity {
     public void onClick(View v){
         switch (v.getId()){
             case R.id.iv_back1:
-                ActivityCollector.removeActivity(this);
                 finish();
                 break;
             case R.id.tv_use:

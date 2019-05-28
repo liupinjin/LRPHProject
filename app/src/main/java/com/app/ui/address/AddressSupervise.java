@@ -25,7 +25,6 @@ import com.app.model.Addressitem;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
 import com.app.sip.SipInfo;
-import com.app.tools.ActivityCollector;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.punuo.sys.app.activity.BaseActivity;
@@ -68,7 +67,6 @@ public class AddressSupervise extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address_supervise);
-        ActivityCollector.addActivity(this);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         init();
@@ -169,7 +167,6 @@ public class AddressSupervise extends BaseActivity {
                 startActivity(new Intent(this, UserAddress.class));
                 break;
             case R.id.iv_back1:
-                ActivityCollector.removeActivity(this);
                 finish();
                 break;
 //            case R.id.iv_addressEdit:

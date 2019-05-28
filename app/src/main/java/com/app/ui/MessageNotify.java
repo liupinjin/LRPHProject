@@ -18,7 +18,6 @@ import com.app.R;
 import com.app.http.GetPostUtil;
 import com.app.http.ToastUtils;
 import com.app.model.Constant;
-import com.app.tools.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
 
 import butterknife.Bind;
@@ -42,7 +41,6 @@ public class MessageNotify extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_notify);
-        ActivityCollector.addActivity(this);
         ButterKnife.bind(this);
         titleset.setText("新消息通知");
         if("1".equals(isNotify)) {
@@ -137,7 +135,6 @@ public class MessageNotify extends BaseActivity {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back1:
-                ActivityCollector.removeActivity(this);
                 finish();
                 break;
         }

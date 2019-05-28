@@ -25,7 +25,6 @@ import com.app.model.Constant;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.ActivityCollector;
 import com.app.views.CleanEditText;
 import com.punuo.sys.app.activity.BaseActivity;
 
@@ -41,7 +40,6 @@ public class UpdateNickActivity extends BaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        ActivityCollector.addActivity(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_nick);
         final String nick = LocalUserInfo.getInstance(UpdateNickActivity.this).getUserInfo("nick");
@@ -144,7 +142,6 @@ public class UpdateNickActivity extends BaseActivity {
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
     }
 }
 

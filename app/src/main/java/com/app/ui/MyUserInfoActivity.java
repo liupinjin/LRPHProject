@@ -46,7 +46,6 @@ import com.app.model.Constant;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.ActivityCollector;
 import com.app.utils.ProviderUtil;
 import com.app.view.CircleImageView;
 import com.punuo.sys.app.activity.BaseActivity;
@@ -127,7 +126,6 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
         setContentView(R.layout.activity_myinfo);
         avatarLoader = new LoadPicture(this, avaPath);
         initView();
-        ActivityCollector.addActivity(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -186,7 +184,6 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
                 showChooseDialog();
                 break;
             case R.id.iv_back9:
-                ActivityCollector.removeActivity(this);
                 finish();
                 break;
             default:

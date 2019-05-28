@@ -30,7 +30,6 @@ import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
 import com.app.sip.SipInfo;
-import com.app.tools.ActivityCollector;
 import com.app.views.CleanEditText;
 import com.hengyi.wheelpicker.listener.OnCityWheelComfirmListener;
 import com.hengyi.wheelpicker.ppw.CityWheelPickerPopupWindow;
@@ -74,7 +73,6 @@ public class UserAddress extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_address);
-        ActivityCollector.addActivity(this);
         ButterKnife.bind(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
@@ -160,7 +158,6 @@ public class UserAddress extends BaseActivity {
                 dialog.show();
                 break;
             case R.id.iv_back1:
-                ActivityCollector.removeActivity(this);
                 finish();
                 break;
         }
@@ -250,7 +247,6 @@ public class UserAddress extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
     }
 
     private boolean checkInput(String userAddress, String detailAddress, String userName, String userPhoneNum) {

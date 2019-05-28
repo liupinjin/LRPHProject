@@ -43,7 +43,6 @@ import com.app.model.Constant;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.ActivityCollector;
 import com.app.tools.VersionXmlParse;
 import com.app.ui.FamilyCircle;
 import com.app.ui.MyCouponActivity;
@@ -54,6 +53,7 @@ import com.app.ui.UploadPictureActivity;
 import com.app.videoAndPictureUpload.SelectVideoActivity;
 import com.app.view.CircleImageView;
 import com.app.view.CustomProgressDialog;
+import com.punuo.sys.app.activity.ActivityCollector;
 import com.punuo.sys.app.util.StatusBarUtil;
 
 import java.io.File;

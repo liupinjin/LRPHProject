@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.WindowManager;
 
 import com.app.R;
-import com.app.tools.ActivityCollector;
 import com.app.when_page.PageFrameLayout;
 
 public class SplashActivity extends FragmentActivity {
@@ -17,7 +16,6 @@ public class SplashActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
         init();
     }
     public void init(){
@@ -41,7 +39,6 @@ public class SplashActivity extends FragmentActivity {
             Intent intent=new Intent();
             intent.setClass(SplashActivity.this,LoginActivity.class);
             startActivity(intent);
-            ActivityCollector.removeActivity(this);
             finish();
         }
     }

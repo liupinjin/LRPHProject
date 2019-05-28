@@ -28,7 +28,6 @@ import com.app.model.MessageEvent;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.ActivityCollector;
 import com.app.view.CircleImageView;
 import com.punuo.sys.app.activity.BaseActivity;
 
@@ -101,7 +100,6 @@ public class VideoConnect extends BaseActivity implements View.OnClickListener {
                 });
 
         init();
-        ActivityCollector.addActivity(this);
         //改变状态栏颜色
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
             Window window = getWindow();
@@ -152,7 +150,6 @@ public class VideoConnect extends BaseActivity implements View.OnClickListener {
         stopSound(streamId);
         super.onDestroy();
         // 注销订阅者
-        ActivityCollector.removeActivity(this);
         EventBus.getDefault().unregister(this);
     }
     @Override
@@ -171,7 +168,6 @@ public class VideoConnect extends BaseActivity implements View.OnClickListener {
                         SipInfo.user_from, BodyFactory.createCallReply("refuse"));
                 SipInfo.sipUser.sendMessage(response2);
                 finish();
-                ActivityCollector.removeActivity(this);
                 break;
             default:
                 Log.i("response", "error ");

@@ -16,7 +16,6 @@ import com.app.R;
 import com.app.http.RegexUtils;
 import com.app.http.ToastUtils;
 import com.app.sip.SipInfo;
-import com.app.tools.ActivityCollector;
 import com.app.views.CleanEditText;
 import com.punuo.sys.app.activity.BaseActivity;
 
@@ -49,7 +48,6 @@ public class SetNewPassword extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_set_new_password);
         ButterKnife.bind(this);
 
@@ -106,7 +104,6 @@ public class SetNewPassword extends BaseActivity {
                 }
                 break;
             case R.id.iv_back4:
-                ActivityCollector.removeActivity(this);
                 finish();
                 break;
         }

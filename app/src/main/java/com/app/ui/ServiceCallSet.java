@@ -20,7 +20,6 @@ import com.app.R;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
 
 import org.zoolu.sip.address.NameAddress;
@@ -81,7 +80,6 @@ public class ServiceCallSet extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_servicecall1);
         ButterKnife.bind(this);
-        ActivityCollector.addActivity(this);
         titleset.setText("服务电话");
         TextPaint tp=titleset.getPaint();
         tp.setFakeBoldText(true);
@@ -197,7 +195,6 @@ public class ServiceCallSet extends BaseActivity {
                 }
                 break;
             case R.id.iv_back1:
-                ActivityCollector.removeActivity(this);
                 finish();
                 break;
             default:

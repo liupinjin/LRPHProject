@@ -25,7 +25,6 @@ import com.app.model.Constant;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
 
 import org.zoolu.sip.address.NameAddress;
@@ -63,7 +62,6 @@ public class DevBindSuccess extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dev_bind_success);
         ButterKnife.bind(this);
-        ActivityCollector.addActivity(this);
         changStatusIconCollor(true);
         TextPaint tp=textView4.getPaint();
         tp.setFakeBoldText(true);
@@ -101,7 +99,6 @@ public class DevBindSuccess extends BaseActivity {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back8:
-                ActivityCollector.removeActivity(this);
                 finish();
             case R.id.bt_unbind1:
                 AlertDialog dialog = new AlertDialog.Builder(this)

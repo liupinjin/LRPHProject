@@ -32,6 +32,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.R;
 import com.app.adapter.AppGridViewAdapter;
 import com.app.adapter.ApplicationAdapter;
 import com.app.ftp.Ftp;
@@ -41,10 +42,9 @@ import com.app.model.MyApplicationInfo;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.ActivityCollector;
 import com.app.tools.VersionXmlParse;
 import com.app.view.CustomProgressDialog;
-import com.app.R;
+import com.punuo.sys.app.activity.ActivityCollector;
 
 import java.io.File;
 import java.io.FileInputStream;

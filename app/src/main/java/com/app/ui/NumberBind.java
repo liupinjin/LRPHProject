@@ -26,7 +26,6 @@ import com.app.http.ToastUtils;
 import com.app.http.VerifyCodeManager;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;
-import com.app.tools.ActivityCollector;
 import com.app.views.CleanEditText;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -67,7 +66,6 @@ public class NumberBind extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_number_bind);
         ButterKnife.bind(this);
-        ActivityCollector.addActivity(this);
         initView();
         codeManager = new VerifyCodeManager(this, tvPhone, btnSendVerifiCode);
         currentphone.setText(SipInfo.userAccount);
@@ -115,7 +113,6 @@ public class NumberBind extends BaseActivity {
     public void onDestroy() {
         super.onDestroy();
         SMSSDK.unregisterEventHandler(eventHandler);
-        ActivityCollector.removeActivity(this);
     }
 
     private void commit() {
@@ -181,7 +178,6 @@ public class NumberBind extends BaseActivity {
                     SMSSDK.submitVerificationCode("86", phone, code);
                 }
             case R.id.iv_back1:
-                ActivityCollector.removeActivity(this);
                 finish();
             default:
                 break;
