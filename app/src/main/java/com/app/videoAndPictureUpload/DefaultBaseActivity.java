@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
-import com.app.friendCircleMain.adapter.AppApplication;
+import com.punuo.sys.app.util.CommonUtil;
 
 
 /**
@@ -29,8 +29,8 @@ public abstract class DefaultBaseActivity extends BaseActivity {
         super.onBefore();
         this.context = this;
         this.activity = this;
-        screenWidth = AppApplication.getInstance().getScreenWidth();
-        screenHeight = AppApplication.getInstance().getScreenHeight();
+        screenWidth = CommonUtil.getWidth();
+        screenHeight = CommonUtil.getHeight();
     }
 
 

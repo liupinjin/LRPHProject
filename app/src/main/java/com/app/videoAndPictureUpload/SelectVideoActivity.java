@@ -17,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.R;
-import com.app.friendCircleMain.adapter.AppApplication;
 import com.app.ftp.Ftp;
 import com.app.ftp.FtpListener;
 import com.app.model.Constant;
@@ -26,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.punuo.sys.app.util.CommonUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -182,7 +182,7 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
 
                     bottomListDialog = new BottomListDialog.Builder(activity
                             , bottomListDialogAdapter,
-                            AppApplication.getInstance().getScreenHeight() - actionbar.getHeight() - StatusBarHeightUtil.getStatusBarHeight(context)
+                            CommonUtil.getHeight() - actionbar.getHeight() - StatusBarHeightUtil.getStatusBarHeight(context)
                     ).setOnItemClickListener(new BottomListDialog.OnItemClickListener() {
                         @Override
                         public void onClick(Dialog dialog, int which) {
@@ -287,7 +287,7 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
 
             helper.setText(R.id.text_duration, hms);
             ImageView simpleDraweeView = AdapterUtils.getAdapterView(helper.getConvertView(), R.id.simpleDraweeView);
-            int width = (AppApplication.getInstance().getScreenWidth() - 4) / 4;
+            int width = (CommonUtil.getWidth() - 4) / 4;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, width);
             simpleDraweeView.setLayoutParams(layoutParams);
              final ImageView selected = AdapterUtils.getAdapterView(helper.getConvertView(), R.id.isselected);
