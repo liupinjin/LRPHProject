@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.app.R;
-import com.app.http.RegexUtils;
+import com.punuo.sys.app.util.RegexUtils;
 import com.app.sip.SipInfo;
 import com.app.views.CleanEditText;
 import com.punuo.sys.app.activity.BaseActivity;

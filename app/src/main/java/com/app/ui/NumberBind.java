@@ -21,7 +21,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.app.R;
 import com.app.http.GetPostUtil;
-import com.app.http.RegexUtils;
+import com.punuo.sys.app.util.RegexUtils;
 import com.app.http.VerifyCodeManager;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;

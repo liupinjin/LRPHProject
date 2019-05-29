@@ -48,7 +48,7 @@ import com.app.model.Constant;
 import com.app.model.MessageEvent;
 import com.app.model.PNBaseModel;
 import com.app.request.UploadPostRequest;
-import com.app.utils.ProviderUtil;
+import com.punuo.sys.app.util.ProviderUtil;
 import com.punuo.sys.app.activity.BaseActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;

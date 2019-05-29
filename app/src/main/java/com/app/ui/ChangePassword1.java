@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.R;
-import com.app.http.RegexUtils;
+import com.punuo.sys.app.util.RegexUtils;
 import com.app.http.VerifyCodeManager;
 import com.app.http.VerifyCodeManager1;
 import com.app.model.PNBaseModel;

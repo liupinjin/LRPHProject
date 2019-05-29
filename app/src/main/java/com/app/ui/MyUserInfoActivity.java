@@ -45,7 +45,7 @@ import com.app.request.UploadAvatarRequest;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.utils.ProviderUtil;
+import com.punuo.sys.app.util.ProviderUtil;
 import com.app.view.CircleImageView;
 import com.punuo.sys.app.activity.BaseActivity;
 import com.punuo.sys.app.httplib.HttpManager;
