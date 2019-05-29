@@ -14,10 +14,10 @@ import android.widget.Toast;
 
 import com.app.R;
 import com.app.http.RegexUtils;
-import com.app.http.ToastUtils;
 import com.app.sip.SipInfo;
 import com.app.views.CleanEditText;
 import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.util.ToastUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -113,18 +113,17 @@ public class SetNewPassword extends BaseActivity {
 
     private boolean checkInput(String phone, String password, String code, String again) {
         if (TextUtils.isEmpty(phone)) { // 电话号码为空
-            ToastUtils.showShort(this, R.string.tip_phone_can_not_be_empty);
+            ToastUtils.showToast(R.string.tip_phone_can_not_be_empty);
         } else {
             if (!RegexUtils.checkMobile(phone)) { // 电话号码格式有误
-                ToastUtils.showShort(this, R.string.tip_phone_regex_not_right);
+                ToastUtils.showToast(R.string.tip_phone_regex_not_right);
             } else if (TextUtils.isEmpty(code)) { // 验证码不正确
-                ToastUtils.showShort(this, R.string.tip_please_input_code);
+                ToastUtils.showToast(R.string.tip_please_input_code);
             } else if (password.length() < 6 || password.length() > 32
                     || TextUtils.isEmpty(password)) { // 密码格式
-                ToastUtils.showShort(this,
-                        R.string.tip_please_input_6_32_password);
+                ToastUtils.showToast(R.string.tip_please_input_6_32_password);
             } else if (!password.equals(again)) {
-                ToastUtils.showShort(this, "两次密码不一致");
+                ToastUtils.showToast("两次密码不一致");
             } else {
                 return true;
             }

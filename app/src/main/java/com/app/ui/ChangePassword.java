@@ -15,7 +15,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.app.R;
-import com.app.http.ToastUtils;
 import com.app.model.PNBaseModel;
 import com.app.request.ChangePwdRequest;
 import com.app.sip.SipInfo;
@@ -23,6 +22,7 @@ import com.app.views.CleanEditText;
 import com.punuo.sys.app.activity.BaseActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;
+import com.punuo.sys.app.util.ToastUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -117,11 +117,11 @@ public class ChangePassword extends BaseActivity implements View.OnClickListener
             @Override
             public void onSuccess(PNBaseModel result) {
                 if (result.isSuccess()) {
-                    ToastUtils.showShort(ChangePassword.this, "密码修改成功");
+                    ToastUtils.showToast("密码修改成功");
                     startActivity(new Intent(ChangePassword.this, LoginActivity.class));
                 } else {
                     if (!TextUtils.isEmpty(result.msg)) {
-                        ToastUtils.showShort(ChangePassword.this, result.msg);
+                        ToastUtils.showToast(result.msg);
                     }
                 }
             }
@@ -139,22 +139,20 @@ public class ChangePassword extends BaseActivity implements View.OnClickListener
         if (SipInfo.isVericodeLogin){
             if (password.length()<6||password.length()>32
                     || TextUtils.isEmpty(password)){
-                ToastUtils.showShort(this,
-                        R.string.tip_please_input_6_32_password);
+                ToastUtils.showToast(R.string.tip_please_input_6_32_password);
             }else if (!password.equals(again)) {
-                ToastUtils.showShort(this, "两次密码不一致");
+                ToastUtils.showToast("两次密码不一致");
             } else {
                 return true;
             }
         }
         else if (!(old.equals(SipInfo.passWord))) { // 旧密码输入错误
-            ToastUtils.showShort(this, R.string.tip_password_not_same);
+            ToastUtils.showToast( R.string.tip_password_not_same);
         } else if (password.length() < 6 || password.length() > 32
                 || TextUtils.isEmpty(password)) { // 密码格式
-            ToastUtils.showShort(this,
-                    R.string.tip_please_input_6_32_password);
+            ToastUtils.showToast(R.string.tip_please_input_6_32_password);
         } else if (!password.equals(again)) {
-            ToastUtils.showShort(this, "两次密码不一致");
+            ToastUtils.showToast("两次密码不一致");
         } else {
             return true;
         }

@@ -44,7 +44,6 @@ import com.app.friendCircleMain.domain.Group;
 import com.app.friendCircleMain.domain.UserFromGroup;
 import com.app.friendCircleMain.domain.UserList;
 import com.app.groupvoice.GroupInfo;
-import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.model.Friend;
 import com.app.model.PNUserInfo;
@@ -64,6 +63,7 @@ import com.app.views.CleanEditText;
 import com.punuo.sys.app.activity.BaseActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;
+import com.punuo.sys.app.util.ToastUtils;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -355,14 +355,14 @@ public class LoginActivity extends BaseActivity {
                     SipInfo.friends.clear();
                     getGroupInfo();
                 } else {
-                    ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
+                    ToastUtils.showToastShort("获取用户数据失败请重试");
                     registering.dismiss();
                 }
             }
 
             @Override
             public void onError(Exception e) {
-                ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
+                ToastUtils.showToastShort("获取用户数据失败请重试");
                 registering.dismiss();
             }
         });
@@ -427,14 +427,14 @@ public class LoginActivity extends BaseActivity {
                        }
                    }
                 } else {
-                    ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
+                    ToastUtils.showToastShort("获取用户数据失败请重试");
                     registering.dismiss();
                 }
             }
 
             @Override
             public void onError(Exception e) {
-                ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
+                ToastUtils.showToastShort("获取用户数据失败请重试");
                 registering.dismiss();
             }
         });
@@ -488,11 +488,11 @@ public class LoginActivity extends BaseActivity {
                         registering.dismiss();
                         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     } else {
-                        ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
+                        ToastUtils.showToastShort("获取用户数据失败请重试");
                         registering.dismiss();
                     }
                 } else {
-                    ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
+                    ToastUtils.showToastShort("获取用户数据失败请重试");
                     registering.dismiss();
                 }
             }
@@ -552,7 +552,7 @@ public class LoginActivity extends BaseActivity {
                 if (result != null) {
                     List<String> devIdLists = result.devid;
                     if (devIdLists.isEmpty()) {
-                        ToastUtils.showShort(LoginActivity.this, "获取设备id失败");
+                        ToastUtils.showToast("获取设备id失败");
                         startActivity(new Intent(LoginActivity.this,HomeActivity.class));
                     } else {
                         appdevid = devIdLists.get(0);
@@ -567,14 +567,14 @@ public class LoginActivity extends BaseActivity {
                         getAllUserFormGroup();
                     }
                 } else {
-                    ToastUtils.makeShortText("获取用户devid失败请重试", LoginActivity.this);
+                    ToastUtils.showToast("获取用户devid失败请重试");
                     registering.dismiss();
                 }
             }
 
             @Override
             public void onError(Exception e) {
-                ToastUtils.makeShortText("获取用户devid失败请重试", LoginActivity.this);
+                ToastUtils.showToastShort("获取用户devid失败请重试");
                 registering.dismiss();
             }
         });
@@ -614,7 +614,7 @@ public class LoginActivity extends BaseActivity {
                 } else {
                     Log.e(TAG, "设备注册失败!");
                     Looper.prepare();
-                    ToastUtils.makeShortText("设备注册失败请重新登录", LoginActivity.this);
+                    ToastUtils.showToastShort("设备注册失败请重新登录");
                     registering.dismiss();
                     Looper.loop();
                 }

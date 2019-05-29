@@ -36,7 +36,6 @@ import com.app.friendCircleMain.domain.UserList;
 import com.app.groupvoice.GroupInfo;
 import com.app.http.GetPostUtil;
 import com.app.http.RegexUtils;
-import com.app.http.ToastUtils;
 import com.app.http.VerifyCodeManager;
 import com.app.http.VerifyCodeManager1;
 import com.app.model.Constant;
@@ -52,6 +51,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mob.MobSDK;
 import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.util.ToastUtils;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -419,13 +419,13 @@ public class VerificodeLogin extends BaseActivity {
                     new Thread(getgroupinfo).start();
                 } else {
                     Looper.prepare();
-                    ToastUtils.makeShortText("获取用户数据失败请重试", VerificodeLogin.this);
+                    ToastUtils.showToastShort("获取用户数据失败请重试");
                     registering.dismiss();
                     Looper.loop();
                 }
             } else {
                 Looper.prepare();
-                ToastUtils.makeShortText("获取用户数据失败请重试", VerificodeLogin.this);
+                ToastUtils.showToastShort("获取用户数据失败请重试");
                 registering.dismiss();
                 Looper.loop();
             }
@@ -486,7 +486,7 @@ public class VerificodeLogin extends BaseActivity {
                 }
             } else {
                 Looper.prepare();
-                ToastUtils.makeShortText("获取用户数据失败请重试", VerificodeLogin.this);
+                ToastUtils.showToastShort("获取用户数据失败请重试");
                 registering.dismiss();
                 Looper.loop();
             }
@@ -516,7 +516,7 @@ public class VerificodeLogin extends BaseActivity {
                 new Thread(getpostinfo).start();
             } else {
                 Looper.prepare();
-                ToastUtils.makeShortText("获取用户数据失败请重试", VerificodeLogin.this);
+                ToastUtils.showToastShort("获取用户数据失败请重试");
                 registering.dismiss();
                 Looper.loop();
             }
@@ -547,7 +547,7 @@ public class VerificodeLogin extends BaseActivity {
                 startActivity(new Intent(VerificodeLogin.this, HomeActivity.class));
             } else {
                 Looper.prepare();
-                ToastUtils.makeShortText("获取用户帖子失败请重试", VerificodeLogin.this);
+                ToastUtils.showToastShort("获取用户帖子失败请重试");
                 registering.dismiss();
                 Looper.loop();
             }
@@ -582,7 +582,7 @@ public class VerificodeLogin extends BaseActivity {
 
             } else {
                 Looper.prepare();
-                ToastUtils.makeShortText("获取用户devid失败请重试", VerificodeLogin.this);
+                ToastUtils.showToastShort("获取用户devid失败请重试");
                 registering.dismiss();
                 Looper.loop();
             }
@@ -623,7 +623,7 @@ public class VerificodeLogin extends BaseActivity {
                 } else {
                     Log.e(TAG, "设备注册失败!");
                     Looper.prepare();
-                    ToastUtils.makeShortText("设备注册失败请重新登录", VerificodeLogin.this);
+                    ToastUtils.showToastShort("设备注册失败请重新登录");
                     registering.dismiss();
                     Looper.loop();
                 }
@@ -642,12 +642,12 @@ public class VerificodeLogin extends BaseActivity {
 
     private boolean checkInput(String phone,  String code) {
         if (TextUtils.isEmpty(phone)) { // 电话号码为空
-            ToastUtils.showShort(this, R.string.tip_phone_can_not_be_empty);
+            ToastUtils.showToast(R.string.tip_phone_can_not_be_empty);
         } else {
             if (!RegexUtils.checkMobile(phone)) { // 电话号码格式有误
-                ToastUtils.showShort(this, R.string.tip_phone_regex_not_right);
+                ToastUtils.showToast(R.string.tip_phone_regex_not_right);
             } else if (TextUtils.isEmpty(code)) { // 验证码不正确
-                ToastUtils.showShort(this, R.string.tip_please_input_code);
+                ToastUtils.showToast(R.string.tip_please_input_code);
             } else {
                 return true;
             }

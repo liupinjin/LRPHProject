@@ -4,10 +4,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -17,21 +15,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.app.R;
-import com.app.http.GetPostUtil;
 import com.app.http.RegexUtils;
-import com.app.http.ToastUtils;
 import com.app.http.VerifyCodeManager;
 import com.app.http.VerifyCodeManager1;
-import com.app.model.Constant;
+import com.app.model.PNBaseModel;
+import com.app.request.ChangePwdRequest;
 import com.app.sip.SipInfo;
+import com.punuo.sys.app.util.ToastUtils;
 import com.app.views.CleanEditText;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mob.MobSDK;
 import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.httplib.HttpManager;
+import com.punuo.sys.app.httplib.RequestListener;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -69,19 +67,6 @@ public class ChangePassword1 extends BaseActivity {
             window.setStatusBarColor(getResources().getColor(R.color.newbackground));
         }
     }
-
-    Handler myhandle = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg.what == 1) {
-                startActivity(new Intent(ChangePassword1.this, LoginActivity.class));
-            }
-//            else if(msg.what==2){
-//                startActivity(new Intent(ChangePassword1.this,ChangePassword1.class));
-//            }
-        }
-    };
 
     private void initViews() {
         numInput3.setImeOptions(EditorInfo.IME_ACTION_NEXT);
@@ -126,12 +111,12 @@ public class ChangePassword1 extends BaseActivity {
 
     private boolean checkInput(String phone, String code) {
         if (TextUtils.isEmpty(phone)) { // 电话号码为空
-            ToastUtils.showShort(this, R.string.tip_phone_can_not_be_empty);
+            ToastUtils.showToast(R.string.tip_phone_can_not_be_empty);
         } else {
             if (!RegexUtils.checkMobile(phone)) { // 电话号码格式有误
-                ToastUtils.showShort(this, R.string.tip_phone_regex_not_right);
+                ToastUtils.showToast(R.string.tip_phone_regex_not_right);
             } else if (TextUtils.isEmpty(code)) { // 验证码不正确
-                ToastUtils.showShort(this, R.string.tip_please_input_code);
+                ToastUtils.showToast(R.string.tip_please_input_code);
             } else {
                 return true;
             }
@@ -139,26 +124,16 @@ public class ChangePassword1 extends BaseActivity {
         return false;
     }
 
-    Handler handler = new Handler() {
-
-        public void handleMessage(android.os.Message msg) {
+    private Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
             int event = msg.arg1;
             int result = msg.arg2;
             Object data = msg.obj;
-            Log.e("event", "event=" + event);
-            Log.e("result", "result=" + result);
             // 短信注册成功后，返回LoginActivity,然后提示
             if (result == SMSSDK.RESULT_COMPLETE) {
                 if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {// 提交验证码成功
-//                    Toast.makeText(SignUpActivity.this, "验证成功",
-//                            Toast.LENGTH_SHORT).show();
-//                    final String phone = numInput3.getText().toString().trim();
-//                    String code = verificodeInput1.getText().toString().trim();
-//                    if (checkInput(phone, code)) {
-                        commit();
-//                    } else {
-//                        Toast.makeText(ChangePassword1.this, "填写信息格式不正确", Toast.LENGTH_SHORT).show();
-//                    }
+                    commit();
                 } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
                     Toast.makeText(getApplicationContext(), "验证码已经发送",
                             Toast.LENGTH_SHORT).show();
@@ -171,43 +146,47 @@ public class ChangePassword1 extends BaseActivity {
                 int status = obj.get("status").getAsInt();//错误代码
                 if (status > 0 && !TextUtils.isEmpty(des)) {
                     Toast.makeText(ChangePassword1.this, des, Toast.LENGTH_SHORT).show();
-//                    myhandle.sendEmptyMessage(2);
-                    return;
                 }
             }
+            return true;
         }
-    };
+    });
 
     private void commit() {
-//        Toast.makeText(this,"hahah",Toast.LENGTH_SHORT).show();
-            // TODO:请求服务端注册账号
-            new Thread() {
-                @Override
-                public void run() {
-                    response = GetPostUtil.sendGet1111(Constant.URL_ChPaw, "tel_num=" + SipInfo.userAccount2 + "&" + "password=" + SipInfo.passWord2);
-                    Log.i("jonsresponse", response);
-                    if ((response != null) && !("".equals(response))) {
-                        JSONObject obj = JSON.parseObject(response);
-                        String msg = obj.getString("msg");
-                        if (msg.equals("success")) {
-                            Looper.prepare();
-                            ToastUtils.showShort(ChangePassword1.this, "密码修改成功");
-                            myhandle.sendEmptyMessage(1);
-                            Looper.loop();
-                            return;
-                        } else {
-                            ToastUtils.showShort(ChangePassword1.this, msg);
-                            return;
-                        }
+        changePwd(SipInfo.userAccount2, SipInfo.passWord2);
+    }
 
-                    } else {
-                        Looper.prepare();
-                        ToastUtils.makeShortText("请求无响应请重试",ChangePassword1.this);
-                        Looper.loop();
+    private ChangePwdRequest mChangePwdRequest;
+    private void changePwd(String telNum, String newPwd) {
+        if (mChangePwdRequest != null && !mChangePwdRequest.isFinish()) {
+            return;
+        }
+        mChangePwdRequest = new ChangePwdRequest();
+        mChangePwdRequest.addUrlParam("tel_num", telNum);
+        mChangePwdRequest.addUrlParam("password", newPwd);
+        mChangePwdRequest.setRequestListener(new RequestListener<PNBaseModel>() {
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSuccess(PNBaseModel result) {
+                if (result.isSuccess()) {
+                    ToastUtils.showToast("密码修改成功");
+                    startActivity(new Intent(ChangePassword1.this, LoginActivity.class));
+                } else {
+                    if (!TextUtils.isEmpty(result.msg)) {
+                        ToastUtils.showToast(result.msg);
                     }
                 }
-            }.start();
+            }
 
+            @Override
+            public void onError(Exception e) {
 
+            }
+        });
+        HttpManager.addRequest(mChangePwdRequest);
     }
 }

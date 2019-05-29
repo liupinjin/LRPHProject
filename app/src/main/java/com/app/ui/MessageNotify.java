@@ -16,9 +16,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.app.R;
 import com.app.http.GetPostUtil;
-import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.util.ToastUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -115,7 +115,7 @@ public class MessageNotify extends BaseActivity {
         });
     }
 
-    private Runnable  updateNotify=new Runnable(){
+    private Runnable updateNotify=new Runnable(){
         @Override
         public void run()
         {
@@ -125,9 +125,9 @@ public class MessageNotify extends BaseActivity {
                 JSONObject  obj= JSON.parseObject("msg");
                 String msg=obj.toString();
                 if(msg.equals("success"))
-                    ToastUtils.makeShortText("成功",getApplicationContext());
+                    ToastUtils.showToastShort("成功");
             }
-            ToastUtils.makeShortText("开",getApplicationContext());
+            ToastUtils.showToastShort("开");
         }
     };
 

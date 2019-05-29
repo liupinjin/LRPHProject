@@ -39,7 +39,6 @@ import com.app.LoadPicture.ImageDownloadedCallBack;
 import com.app.LocalUserInfo;
 import com.app.R;
 import com.app.http.GetPostUtil;
-import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.model.UploadAvatarResult;
 import com.app.request.UploadAvatarRequest;
@@ -51,6 +50,7 @@ import com.app.view.CircleImageView;
 import com.punuo.sys.app.activity.BaseActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;
+import com.punuo.sys.app.util.ToastUtils;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -501,7 +501,7 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
                     sendBroadcast(intent);
 
                     dialog.dismiss();
-                    ToastUtils.showShort(MyUserInfoActivity.this, "头像上传成功");
+                    ToastUtils.showToast( "头像上传成功");
                     String devId = SipInfo.paddevId;
                     SipURL sipURL = new SipURL(devId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
                     SipInfo.toDev = new NameAddress(devName, sipURL);
@@ -511,7 +511,7 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
                     finish();
                 } else {
                     dialog.dismiss();
-                    ToastUtils.showShort(MyUserInfoActivity.this, "头像上传失败");
+                    ToastUtils.showToast("头像上传失败");
                 }
             }
 

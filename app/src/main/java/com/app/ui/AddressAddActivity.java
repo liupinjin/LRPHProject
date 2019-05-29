@@ -39,7 +39,7 @@ import com.app.adapter.MyRecyclerViewAdapter;
 import com.app.db.MyDatabaseHelper;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
-import com.app.utils.ToastUtils;
+import com.punuo.sys.app.util.ToastUtils;
 import com.app.view.CircleImageView;
 import com.app.views.CleanEditText;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -366,7 +366,7 @@ public class AddressAddActivity extends BaseActivity implements View.OnClickList
         tv_quxiao.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastUtils.makeShortText("取消",AddressAddActivity.this);
+                ToastUtils.showToast("取消");
             }
         });
     }

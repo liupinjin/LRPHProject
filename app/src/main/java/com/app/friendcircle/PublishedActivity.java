@@ -44,7 +44,6 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.app.R;
-import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
 import com.app.model.PNBaseModel;
@@ -53,6 +52,7 @@ import com.app.utils.ProviderUtil;
 import com.punuo.sys.app.activity.BaseActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;
+import com.punuo.sys.app.util.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -156,7 +156,7 @@ public class PublishedActivity extends BaseActivity {
     private UploadPostRequest mUploadPostRequest;
     private void uploadPost(String content, List<String> list) {
         if (TextUtils.isEmpty(content)) {
-            ToastUtils.showShort(PublishedActivity.this,"发送的内容不能为空");
+            ToastUtils.showToast("发送的内容不能为空");
             return;
         }
         if (mUploadPostRequest != null && !mUploadPostRequest.isFinish()) {
@@ -184,7 +184,7 @@ public class PublishedActivity extends BaseActivity {
             @Override
             public void onSuccess(PNBaseModel result) {
                 if (result.isSuccess()) {
-                    ToastUtils.showShort(PublishedActivity.this, "状态上传成功");
+                    ToastUtils.showToast("状态上传成功");
                     EventBus.getDefault().post(new MessageEvent("刷新"));
                     Bimp.bmp.clear();
                     Bimp.drr.clear();
@@ -193,7 +193,7 @@ public class PublishedActivity extends BaseActivity {
                     dialog.dismiss();
                     finish();
                 } else {
-                    ToastUtils.showShort(PublishedActivity.this, "状态上传失败请重试");
+                    ToastUtils.showToast("状态上传失败请重试");
                     dialog.dismiss();
                 }
             }
