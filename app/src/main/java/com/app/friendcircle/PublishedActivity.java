@@ -16,7 +16,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -44,15 +43,16 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.app.R;
-import com.app.http.GetPostUtil;
 import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
+import com.app.model.PNBaseModel;
+import com.app.request.UploadPostRequest;
 import com.app.utils.ProviderUtil;
 import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.httplib.HttpManager;
+import com.punuo.sys.app.httplib.RequestListener;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -136,70 +136,75 @@ public class PublishedActivity extends BaseActivity {
                 // 高清的压缩图片全部就在  list 路径里面了
                 // 高清的压缩过的 bmp 对象  都在 Bimp.bmp里面
                 // 完成上传服务器后 .........
-                 pool.execute(new Runnable() {
-                     @Override
-                     public void run() {
-                         String dongTai = dongtai.getText().toString();
-                         List<String> list = new ArrayList<String>();
-                         for (int i = 0; i < drr.size(); i++) {
-                             String Str = drr.get(i).substring(
-                                     drr.get(i).lastIndexOf("/") + 1,
-                                     drr.get(i).lastIndexOf("."));
-                             list.add(FileUtils.SDPATH + Str + ".JPEG");
-                         }
-                         if((drr.size()==0)& TextUtils.isEmpty(dongTai)){
-                             Looper.prepare();
-                             myhandler.sendEmptyMessage(0x333);
-                         }else{
-                             Looper.prepare();
-                             dialog = new ProgressDialog(PublishedActivity.this);
-                             dialog.setMessage("正在上传...");
-                             dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                             dialog.show();
-                             response = GetPostUtil.uploadFiletiezi(Constant.insertPost, list, Constant.id, dongTai);
-                             Log.w("111........", response);
-                             JSONObject obj = JSON.parseObject(response);
-                             String msg = obj.getString("msg");
-
-                             if (msg.equals("success")) {
-                                 myhandler.sendEmptyMessage(0x111);
-                             } else {
-                                 myhandler.sendEmptyMessage(0x222);
-                             }
-                         }
-                             Looper.loop();
-
-                     }
-                 });
-
+                String dongTai = dongtai.getText().toString();
+                List<String> list = new ArrayList<String>();
+                for (int i = 0; i < drr.size(); i++) {
+                    String Str = drr.get(i).substring(
+                            drr.get(i).lastIndexOf("/") + 1,
+                            drr.get(i).lastIndexOf("."));
+                    list.add(FileUtils.SDPATH + Str + ".JPEG");
+                }
+                dialog = new ProgressDialog(PublishedActivity.this);
+                dialog.setMessage("正在上传...");
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.show();
+                uploadPost(dongTai, list);
             }
         });
     }
 
-    Handler myhandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg.what == 0x111) {
-                ToastUtils.showShort(PublishedActivity.this, "状态上传成功");
-                EventBus.getDefault().post(new MessageEvent("刷新"));
-                Bimp.bmp.clear();
-                Bimp.drr.clear();
-                Bimp.max = 0;
-                FileUtils.deleteDir();
-                dialog.dismiss();
-                finish();
-
-            } else if (msg.what == 0x222) {
-                ToastUtils.showShort(PublishedActivity.this, "状态上传失败请重试");
-                dialog.dismiss();
-                return;
-            }
-            else if(msg.what==0x333){
-                ToastUtils.showShort(PublishedActivity.this,"发送的内容不能为空");
+    private UploadPostRequest mUploadPostRequest;
+    private void uploadPost(String content, List<String> list) {
+        if (TextUtils.isEmpty(content)) {
+            ToastUtils.showShort(PublishedActivity.this,"发送的内容不能为空");
+            return;
+        }
+        if (mUploadPostRequest != null && !mUploadPostRequest.isFinish()) {
+            return;
+        }
+        mUploadPostRequest = new UploadPostRequest();
+        mUploadPostRequest.addEntityParam("id", Constant.id);
+        mUploadPostRequest.addEntityParam("content", content);
+        List<File> files = new ArrayList<>();
+        if (list != null && !list.isEmpty()) {
+            for (int i = 0; i < list.size(); i++) {
+                String filePath = list.get(i);
+                files.add(new File(filePath));
             }
         }
-    };
+        if (!files.isEmpty()) {
+            mUploadPostRequest.addEntityParam("file[]", files);
+        }
+        mUploadPostRequest.setRequestListener(new RequestListener<PNBaseModel>() {
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSuccess(PNBaseModel result) {
+                if (result.isSuccess()) {
+                    ToastUtils.showShort(PublishedActivity.this, "状态上传成功");
+                    EventBus.getDefault().post(new MessageEvent("刷新"));
+                    Bimp.bmp.clear();
+                    Bimp.drr.clear();
+                    Bimp.max = 0;
+                    FileUtils.deleteDir();
+                    dialog.dismiss();
+                    finish();
+                } else {
+                    ToastUtils.showShort(PublishedActivity.this, "状态上传失败请重试");
+                    dialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+        HttpManager.addRequest(mUploadPostRequest);
+    }
 
     @SuppressLint("HandlerLeak")
     public class GridAdapter extends BaseAdapter {

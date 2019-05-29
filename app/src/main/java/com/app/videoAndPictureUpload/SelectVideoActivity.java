@@ -301,7 +301,7 @@ public class SelectVideoActivity extends BaseActivity implements SwipeRefreshLay
                 selected.setImageResource(R.drawable.icon_data_select);
                 textView.setBackgroundResource(R.drawable.bgd_relatly_line);
             } else {
-                selected.setImageResource(-1);
+                selected.setImageResource(android.R.color.transparent);
                 textView.setBackgroundColor(0x00000000);
             }
             Glide.with(SelectVideoActivity.this)
@@ -325,7 +325,7 @@ public class SelectVideoActivity extends BaseActivity implements SwipeRefreshLay
                             map.put(path, path);
 
                         } else if (!item.isSelected) {
-                            selected.setImageResource(-1);
+                            selected.setImageResource(android.R.color.transparent);
                             textView.setBackgroundColor(0x00000000);
                             selectTotal--;
 //                            if (textcallback != null)
@@ -335,7 +335,7 @@ public class SelectVideoActivity extends BaseActivity implements SwipeRefreshLay
                     } else if ( selectTotal >= 9) {
                         if (item.isSelected == true) {
                             item.isSelected = !item.isSelected;
-                            selected.setImageResource(-1);
+                            selected.setImageResource(android.R.color.transparent);
                             selectTotal--;
                             map.remove(path);
 
