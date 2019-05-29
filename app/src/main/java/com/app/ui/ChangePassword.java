@@ -3,11 +3,7 @@ package com.app.ui;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -18,20 +14,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.app.R;
-import com.app.http.GetPostUtil;
 import com.app.http.ToastUtils;
-import com.app.model.Constant;
+import com.app.model.PNBaseModel;
+import com.app.request.ChangePwdRequest;
 import com.app.sip.SipInfo;
 import com.app.views.CleanEditText;
 import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.httplib.HttpManager;
+import com.punuo.sys.app.httplib.RequestListener;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.smssdk.EventHandler;
 
 /**
  * Author chzjy
@@ -54,7 +49,6 @@ public class ChangePassword extends BaseActivity implements View.OnClickListener
     CleanEditText newpasswordInput;
     @Bind(R.id.newpassword_again)
     CleanEditText newpasswordAgain;
-    private EventHandler eventHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,52 +90,48 @@ public class ChangePassword extends BaseActivity implements View.OnClickListener
         super.onDestroy();
     }
 
-    Handler myhandle = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg.what == 1) {
-
-                startActivity(new Intent(ChangePassword.this, LoginActivity.class));
-            }
-        }
-    };
-
     //注册回调监听接口
     private void commit() {
         final String old = oldpasswordInput.getText().toString().trim();
         SipInfo.passWord2 = newpasswordInput.getText().toString().trim();
         final String again = newpasswordAgain.getText().toString().trim();
         if (checkInput(old, SipInfo.passWord2, again)) {
-            // TODO:请求服务端注册账号
-            new Thread() {
-                @Override
-                public void run() {
-                    response = GetPostUtil.sendGet1111(Constant.URL_ChPaw, "tel_num=" + SipInfo.userAccount + "&" + "password=" + SipInfo.passWord2);
-                    Log.i("jonsresponse", response);
-                    if ((response != null) && !("".equals(response))) {
-                        JSONObject obj = JSON.parseObject(response);
-                        String msg = obj.getString("msg");
-                        if (msg.equals("success")) {
-                            Looper.prepare();
-                            ToastUtils.showShort(ChangePassword.this, "密码修改成功");
-                            myhandle.sendEmptyMessage(1);
-                            Looper.loop();
-                            return;
-                        } else {
-                            ToastUtils.showShort(ChangePassword.this, msg);
-                            return;
-                        }
+            changePwd(SipInfo.userAccount, SipInfo.passWord2);
+        }
+    }
 
-                    } else {
-                        Looper.prepare();
-                        ToastUtils.makeShortText("请求无响应请重试", ChangePassword.this);
-                        Looper.loop();
+    private ChangePwdRequest mChangePwdRequest;
+    private void changePwd(String telNum, String newPwd) {
+        if (mChangePwdRequest != null && !mChangePwdRequest.isFinish()) {
+            return;
+        }
+        mChangePwdRequest = new ChangePwdRequest();
+        mChangePwdRequest.addUrlParam("tel_num", telNum);
+        mChangePwdRequest.addUrlParam("password", newPwd);
+        mChangePwdRequest.setRequestListener(new RequestListener<PNBaseModel>() {
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSuccess(PNBaseModel result) {
+                if (result.isSuccess()) {
+                    ToastUtils.showShort(ChangePassword.this, "密码修改成功");
+                    startActivity(new Intent(ChangePassword.this, LoginActivity.class));
+                } else {
+                    if (!TextUtils.isEmpty(result.msg)) {
+                        ToastUtils.showShort(ChangePassword.this, result.msg);
                     }
                 }
-            }.start();
-        }
+            }
 
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+        HttpManager.addRequest(mChangePwdRequest);
     }
 
 
