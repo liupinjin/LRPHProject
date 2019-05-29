@@ -115,7 +115,7 @@ public class ImageGridAdapter extends BaseAdapter {
 			holder.selected.setImageResource(R.drawable.icon_data_select);  
 			holder.text.setBackgroundResource(R.drawable.bgd_relatly_line);
 		} else {
-			holder.selected.setImageResource(-1);
+			holder.selected.setImageResource(android.R.color.transparent);
 			holder.text.setBackgroundColor(0x00000000);
 		}
 		holder.iv.setOnClickListener(new OnClickListener() {
@@ -136,7 +136,7 @@ public class ImageGridAdapter extends BaseAdapter {
 						map.put(path, path);
 
 					} else if (!item.isSelected) {
-						holder.selected.setImageResource(-1);
+						holder.selected.setImageResource(android.R.color.transparent);
 						holder.text.setBackgroundColor(0x00000000);
 						selectTotal--;
 						if (textcallback != null)
@@ -146,7 +146,7 @@ public class ImageGridAdapter extends BaseAdapter {
 				} else if ((Bimp.drr.size() + selectTotal) >= 9) {
 					if (item.isSelected == true) {
 						item.isSelected = !item.isSelected;
-						holder.selected.setImageResource(-1);
+						holder.selected.setImageResource(android.R.color.transparent);
 						selectTotal--;
 						map.remove(path);
 

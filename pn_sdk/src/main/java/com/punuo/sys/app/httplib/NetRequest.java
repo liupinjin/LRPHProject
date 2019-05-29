@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -145,7 +146,16 @@ public class NetRequest implements RequestDeliver {
                 if (mParams != null) {
                     for (Map.Entry<String, Object> key : mParams.entrySet()) {
                         Object value = key.getValue();
-                        if (value instanceof File) {
+                        if (value instanceof List) {
+                            List list = (List) value;
+                            for (int i = 0; i < list.size(); i++) {
+                                Object val = list.get(i);
+                                if (val instanceof File) {
+                                    File file = (File) val;
+                                    multipartBuilder.addFormDataPart(key.getKey(), file.getName(), RequestBody.create(mContentType, file));
+                                }
+                            }
+                        } else if (value instanceof File) {
                             File file = (File) value;
                             multipartBuilder.addFormDataPart(key.getKey(), file.getName(), RequestBody.create(mContentType, file));
                         } else if (value instanceof String) {
