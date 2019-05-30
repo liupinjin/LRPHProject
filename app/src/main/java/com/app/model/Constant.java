@@ -66,7 +66,6 @@ public static Runnable runnable=new Runnable() {
     public static final String URL_Avatar = "http://"+SipInfo.serverIp+":8000/static/xiaoyupeihu/";//照片获取地址
     public static final String URL_UPDATE_Avatar = FORMT+"users/updateUserPic";//换头像
     public static final String URL_UPDATE_Nick = FORMT+"users/updateUserName";//改昵称
-    public static final String insertPost = FORMT+"posts/insertPost ";//发帖
     public static final String URL_Bind=FORMT+"devs/bindDev";//绑定设备
     public static final String URL_UnBind=FORMT+"devs/unbindDev";//解绑设备
     public static final String URL_joinGroup=FORMT+"groups/joinGroup";//加入群组

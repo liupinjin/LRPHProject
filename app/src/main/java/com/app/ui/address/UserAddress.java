@@ -25,8 +25,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.app.R;
 import com.app.http.GetPostUtil;
-import com.app.http.RegexUtils;
-import com.app.http.ToastUtils;
+import com.punuo.sys.app.util.RegexUtils;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
 import com.app.sip.SipInfo;
@@ -34,6 +33,7 @@ import com.app.views.CleanEditText;
 import com.hengyi.wheelpicker.listener.OnCityWheelComfirmListener;
 import com.hengyi.wheelpicker.ppw.CityWheelPickerPopupWindow;
 import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.util.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -251,15 +251,15 @@ public class UserAddress extends BaseActivity {
 
     private boolean checkInput(String userAddress, String detailAddress, String userName, String userPhoneNum) {
         if(TextUtils.isEmpty(userPhoneNum)){
-            ToastUtils.showShort(this,"手机号码不能为空");
+            ToastUtils.showToast("手机号码不能为空");
         }else if(!RegexUtils.checkMobile(userPhoneNum)){
-                ToastUtils.showShort(this,"手机号码格式不正确" );
+                ToastUtils.showToast("手机号码格式不正确" );
             }else if(TextUtils.isEmpty(userName)){
-                ToastUtils.showShort(this,"请输入收货人姓名");
+                ToastUtils.showToast("请输入收货人姓名");
             }else if(TextUtils.isEmpty(detailAddress)){
-                ToastUtils.showShort(this,"请输入具体收货地址");
+                ToastUtils.showToast("请输入具体收货地址");
             }else  if(TextUtils.isEmpty(userAddress)){
-                ToastUtils.showShort(this,"请选择所在地区");
+                ToastUtils.showToast("请选择所在地区");
             }else {
             return true;
         }

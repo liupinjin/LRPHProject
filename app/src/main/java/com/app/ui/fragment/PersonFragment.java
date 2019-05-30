@@ -38,7 +38,6 @@ import com.app.LocalUserInfo;
 import com.app.R;
 import com.app.ftp.Ftp;
 import com.app.ftp.FtpListener;
-import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
@@ -55,6 +54,7 @@ import com.app.view.CircleImageView;
 import com.app.view.CustomProgressDialog;
 import com.punuo.sys.app.activity.ActivityCollector;
 import com.punuo.sys.app.util.StatusBarUtil;
+import com.punuo.sys.app.util.ToastUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -191,7 +191,7 @@ private CircleImageView iv_avatar;
                  * grant permissions
                  * @param activity
                  */
-                ToastUtils.makeShortText("该功能即将上线",getActivity());
+                ToastUtils.showToastShort("该功能即将上线");
             showPhotoDialog();
                 break;
 //            case R.id.re_psd:
@@ -204,16 +204,16 @@ private CircleImageView iv_avatar;
                 startActivity(new Intent(getActivity(), ServiceCallSet.class));
                 break;
             case R.id.re_order:
-                ToastUtils.makeShortText("该功能即将上线",getActivity());
+                ToastUtils.showToastShort("该功能即将上线");
                 break;
             case R.id.re_coupon:
                 startActivity(new Intent(getActivity(),MyCouponActivity.class));
                 break;
             case R.id.re_shoppingcart:
-                ToastUtils.makeShortText("该功能即将上线",getActivity());
+                ToastUtils.showToastShort("该功能即将上线");
                 break;
             case R.id.re_collection:
-                ToastUtils.makeShortText("该功能即将上线",getActivity());
+                ToastUtils.showToastShort("该功能即将上线");
                 break;
 //            case R.id.re_instruction:
 //                startActivity(new Intent(getActivity(),SoftwareIntruct.class));

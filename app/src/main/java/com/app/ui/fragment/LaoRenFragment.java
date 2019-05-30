@@ -25,7 +25,6 @@ import com.app.friendCircleMain.custonListView.CustomListView;
 import com.app.friendCircleMain.domain.UserFromGroup;
 import com.app.friendCircleMain.domain.UserList;
 import com.app.http.GetPostUtil;
-import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.model.Friend;
 import com.app.model.MessageEvent;
@@ -43,6 +42,7 @@ import com.app.video.VideoInfo;
 import com.app.view.CircleImageView;
 import com.app.view.CustomProgressDialog;
 import com.punuo.sys.app.util.StatusBarUtil;
+import com.punuo.sys.app.util.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -344,7 +344,7 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
                 }
             } else {
                 Looper.prepare();
-                ToastUtils.makeShortText("获取用户数据失败请重试", getActivity());
+                ToastUtils.showToastShort("获取用户数据失败请重试");
 
                 Looper.loop();
             }

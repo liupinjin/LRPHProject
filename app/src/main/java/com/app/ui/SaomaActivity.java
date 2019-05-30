@@ -33,7 +33,6 @@ import com.app.LocalUserInfo;
 import com.app.R;
 import com.app.groupvoice.GroupInfo;
 import com.app.http.GetPostUtil;
-import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
@@ -42,6 +41,7 @@ import com.app.view.CustomProgressDialog;
 import com.app.zxing.android.CaptureActivity;
 import com.punuo.sys.app.activity.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.util.ToastUtils;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -216,7 +216,6 @@ public class SaomaActivity extends BaseActivity implements View.OnClickListener 
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 1111) {
-                //ToastUtils.makeShortText("绑定设备成功请重新登录", saomaActivity.this);
                 org.zoolu.sip.message.Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
                         SipInfo.user_from, BodyFactory.createListUpdate("addsuccess"));
                 SipInfo.sipUser.sendMessage(query);
@@ -253,10 +252,10 @@ public class SaomaActivity extends BaseActivity implements View.OnClickListener 
                 return;
             }
             else if (msg.what == 222) {
-                ToastUtils.makeShortText("已经绑定过该设备", SaomaActivity.this);
+                ToastUtils.showToastShort("已经绑定过该设备");
                 return;
             } else if (msg.what == 333) {
-                ToastUtils.makeShortText("绑定失败，不是一个合法的设备", SaomaActivity.this);
+                ToastUtils.showToastShort("绑定失败，不是一个合法的设备");
                 return;
             }else if(msg.what==444){
               Log.d("jiebang","111");

@@ -20,12 +20,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.app.R;
 import com.app.http.GetPostUtil;
-import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.util.ToastUtils;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -90,7 +90,7 @@ public class DevBindSuccess extends BaseActivity {
                 Toast.makeText(getApplicationContext(),"解绑成功",Toast.LENGTH_SHORT).show();
                 finish();
             }else if(message.what==555){
-                ToastUtils.makeShortText("解绑失败",getApplicationContext());
+                ToastUtils.showToastShort("解绑失败");
             }
         }
     };

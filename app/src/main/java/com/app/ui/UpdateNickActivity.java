@@ -20,13 +20,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.app.LocalUserInfo;
 import com.app.R;
 import com.app.http.GetPostUtil;
-import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.views.CleanEditText;
 import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.util.ToastUtils;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -116,11 +116,11 @@ public class UpdateNickActivity extends BaseActivity {
 
                     String msg = obj.getString("msg");
                     if (msg.equals("fail")) {
-                        ToastUtils.showShort(UpdateNickActivity.this, msg);
+                        ToastUtils.showToast(msg);
                         myhandle.sendEmptyMessage(2);
                     } else if (msg.equals("success")) {
                         Looper.prepare();
-                        ToastUtils.showShort(UpdateNickActivity.this, msg);
+                        ToastUtils.showToast( msg);
                         LocalUserInfo.getInstance(UpdateNickActivity.this).setUserInfo("nick", newNick);
                         myhandle.sendEmptyMessage(1);
 
