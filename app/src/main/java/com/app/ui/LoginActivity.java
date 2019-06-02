@@ -168,7 +168,6 @@ public class LoginActivity extends BaseActivity {
         return SipInfo.isNetworkConnected;
     }
 
-
     private void initViews() {
         numInput2.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         numInput2.setTransformationMethod(HideReturnsTransformationMethod
