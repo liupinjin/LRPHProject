@@ -162,7 +162,6 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
 //        SharedPreferences sharedPreferences = getSharedPreferences("sex", MODE_PRIVATE);
         sp= getSharedPreferences("sex", MODE_PRIVATE);
         String sex = sp.getString("sex", "");
-
         if (!(sex.equals(""))) {
             tv_sex1.setText(sex);
         }
@@ -306,7 +305,6 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     startActivityForResult(intent, PHOTO_REQUEST_TAKEPHOTO);
                     dlg.cancel();
-
                 }
                dlg.cancel();
 
@@ -336,8 +334,6 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
         });
 
     }
-
-
     @SuppressLint("SdCardPath")
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -360,14 +356,12 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
 //                    startPhotoZoom(Uri.fromFile(new File(picPath)), 480);
                 }
                 break;
-
             case PHOTO_REQUEST_GALLERY:
                 if (resultCode == RESULT_OK) {
                     if (data != null)
                         startPhotoZoom(data.getData(), 480);
                 }
                 break;
-
             case PHOTO_REQUEST_CUT:
                 if (resultCode == RESULT_OK) {
                     // BitmapFactory.Options options = new BitmapFactory.Options();
@@ -385,7 +379,6 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
                     updateAvatarInServer(imageName);
                 }
                 break;
-
         }
         super.onActivityResult(requestCode, resultCode, data);
 
