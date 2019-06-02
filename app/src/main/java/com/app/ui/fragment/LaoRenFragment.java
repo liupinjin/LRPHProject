@@ -9,7 +9,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -81,22 +80,15 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
-
-        return inflater.inflate(R.layout.micro_list_header1, container, false);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        init();
-        mStatusBar = getView().findViewById(R.id.status_bar);
+        View view  = inflater.inflate(R.layout.micro_list_header1, container, false);
+        mStatusBar = view.findViewById(R.id.status_bar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mStatusBar.setVisibility(View.VISIBLE);
             mStatusBar.getLayoutParams().height = StatusBarUtil.getStatusBarHeight(getActivity());
             mStatusBar.requestLayout();
         }
-
+        init(view);
+        return view;
     }
 
     Handler handler = new Handler() {
@@ -139,10 +131,10 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
             new Thread(runnable).start();
         }
     }
-    private void init() {
+    private void init(View view) {
         EventBus.getDefault().register(this);  //注册
-        re_background=(RelativeLayout)getView().findViewById(R.id.re_background);
-        re_funcation=(RelativeLayout)getView().findViewById(R.id.re_funcation);
+        re_background=(RelativeLayout)view.findViewById(R.id.re_background);
+        re_funcation=(RelativeLayout)view.findViewById(R.id.re_funcation);
         camera=(ImageView)re_background.findViewById(R.id.iv_camera);
         camera.setVisibility(View.VISIBLE);
         camera.setOnClickListener(this);
