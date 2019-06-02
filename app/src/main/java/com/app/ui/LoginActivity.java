@@ -91,6 +91,7 @@ public class LoginActivity extends BaseActivity {
 //    private String[] groupname = new String[3];
 //    private String[] groupid = new String[3];
 //    private String[] appdevid = new String[3];
+
     private String groupname;
     private String groupid;
     private String appdevid;
