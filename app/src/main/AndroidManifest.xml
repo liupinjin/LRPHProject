@@ -281,7 +281,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.address.UserAddress"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.address.AddressSupervise"
+        <activity android:name=".ui.address.AddressManagerActivity"
             android:screenOrientation="portrait"/>
     </application>
 

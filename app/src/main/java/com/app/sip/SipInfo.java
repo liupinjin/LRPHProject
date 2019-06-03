@@ -5,7 +5,7 @@ import android.net.sip.SipAudioCall;
 import android.os.Handler;
 
 import com.app.db.MyDatabaseHelper;
-import com.app.model.Addressitem;
+import com.app.model.AddressItem;
 import com.app.model.App;
 import com.app.model.Device;
 import com.app.model.Device1;
@@ -131,7 +131,7 @@ public class SipInfo {
     public static ArrayList<Device> devList = new ArrayList<>();
 
     //地址列表
-    public static ArrayList<Addressitem> addressList=new ArrayList<>();
+    public static List<AddressItem> addressList = new ArrayList<>();
 
     public static ArrayList<Friend> friendsList = new ArrayList<>();
     //设备列表

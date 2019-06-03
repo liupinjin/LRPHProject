@@ -17,7 +17,7 @@ import com.app.R;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.ui.address.AddressSupervise;
+import com.app.ui.address.AddressManagerActivity;
 import com.punuo.sys.app.util.DataClearUtil;
 import com.punuo.sys.app.activity.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
@@ -118,7 +118,7 @@ public class SettingActivity extends BaseActivity {
                 startActivity(new Intent(this, ChangePasswordActivity.class));
                 break;
             case R.id.re_address:
-                startActivity(new Intent(this, AddressSupervise.class));
+                startActivity(new Intent(this, AddressManagerActivity.class));
                 break;
             case R.id.re_introduction:
                 startActivity(new Intent(this, SoftwareInstructActivity.class));

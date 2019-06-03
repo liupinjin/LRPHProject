@@ -82,10 +82,10 @@ public class UserAddress extends BaseActivity {
         }
         if (SipInfo.isEditor) {
             titleset.setText("编辑地址");
-            etUserName.setText(addressList.get(SipInfo.listPosition).getUserName());
-            etUserPhoneNum.setText(addressList.get(SipInfo.listPosition).getUserPhoneNum());
-            etDetailAddress.setText(addressList.get(SipInfo.listPosition).getDetailAddress());
-            tvAddressSelect.setText(addressList.get(SipInfo.listPosition).getUserAddress());
+            etUserName.setText(addressList.get(SipInfo.listPosition).userName);
+            etUserPhoneNum.setText(addressList.get(SipInfo.listPosition).userPhoneNum);
+            etDetailAddress.setText(addressList.get(SipInfo.listPosition).detailAddress);
+            tvAddressSelect.setText(addressList.get(SipInfo.listPosition).userAddress);
             if(SipInfo.isDefault==1){
                 isdefault=true;
             }else if(SipInfo.isDefault==2){
