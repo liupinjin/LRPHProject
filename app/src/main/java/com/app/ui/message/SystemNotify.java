@@ -16,7 +16,7 @@ import com.app.R;
 import com.app.adapter.SystemNotifyAdapter;
 import com.app.model.MessageEvent;
 import com.app.model.MessageNotify;
-import com.app.ui.SoftwareIntruct;
+import com.app.ui.SoftwareInstructActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -90,7 +90,7 @@ public class SystemNotify extends BaseActivity {
     public void onMessageEvent(MessageEvent messageEvent)
     {
         if(messageEvent.getMessage().equals("去版本更新")){
-            startActivity(new Intent(this,SoftwareIntruct.class));
+            startActivity(new Intent(this, SoftwareInstructActivity.class));
         }
     }
 

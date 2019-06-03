@@ -40,6 +40,11 @@ public class ProcessTasks {
             public String getUserAgent() {
                 return "punuo";
             }
+
+            @Override
+            public String getPrefixPath() {
+                return "/xiaoyupeihu/public/index.php";
+            }
         });
         HttpManager.setContext(app);
         HttpManager.init();

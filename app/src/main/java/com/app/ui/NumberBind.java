@@ -183,7 +183,7 @@ public class NumberBind extends BaseActivity {
             // 短信注册成功后，返回LoginActivity,然后提示
             if (result == SMSSDK.RESULT_COMPLETE) {
                 if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {// 提交验证码成功
-//                    Toast.makeText(SignUpActivity.this, "验证成功",
+//                    Toast.makeText(RegisterAccountActivity.this, "验证成功",
 //                            Toast.LENGTH_SHORT).show();
                     final String phone = tvPhone.getText().toString().trim();
                     String code = verificodeInput2.getText().toString().trim();

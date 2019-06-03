@@ -11,6 +11,6 @@ public class GetUserInfoRequest extends BaseRequest<PNUserInfo> {
 
     public GetUserInfoRequest() {
         setRequestType(RequestType.GET);
-        setRequestPath("/xiaoyupeihu/public/index.php/users/getUserInfo");
+        setRequestPath("/users/getUserInfo");
     }
 }

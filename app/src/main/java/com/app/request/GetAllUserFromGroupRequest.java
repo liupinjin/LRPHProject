@@ -10,6 +10,6 @@ import com.punuo.sys.app.httplib.BaseRequest;
 public class GetAllUserFromGroupRequest extends BaseRequest<UserFromGroup> {
     public GetAllUserFromGroupRequest() {
         setRequestType(RequestType.GET);
-        setRequestPath("/xiaoyupeihu/public/index.php/groups/getAllUserFromGroup");
+        setRequestPath("/groups/getAllUserFromGroup");
     }
 }

@@ -5,12 +5,12 @@ import com.punuo.sys.app.httplib.BaseRequest;
 
 /**
  * Created by han.chen.
- * Date on 2019/5/29.
+ * Date on 2019-06-03.
  **/
-public class ChangePwdRequest extends BaseRequest<PNBaseModel> {
+public class AddAddressRequest extends BaseRequest<PNBaseModel> {
 
-    public ChangePwdRequest() {
+    public AddAddressRequest() {
         setRequestType(RequestType.GET);
-        setRequestPath("/users/updateUserPwd");
+        setRequestPath("/users/addAddress");
     }
 }

@@ -11,6 +11,6 @@ public class GetPostListFromGroupRequest extends BaseRequest<FriendsMicro> {
 
     public GetPostListFromGroupRequest() {
         setRequestType(RequestType.GET);
-        setRequestPath("/xiaoyupeihu/public/index.php/posts/getPostListFromGroup");
+        setRequestPath("/posts/getPostListFromGroup");
     }
 }

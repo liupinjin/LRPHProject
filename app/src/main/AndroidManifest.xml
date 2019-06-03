@@ -99,14 +99,16 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".ui.VideoStart"
+            android:name=".ui.VideoStartActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.LoginActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".ui.HomeActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".friendCircleMain.adapter.ImagePagerActivity"
             android:screenOrientation="portrait" />
@@ -138,7 +140,7 @@
             android:name=".ui.ImageGridUploadpictureActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.ChangePassword"
+            android:name=".ui.ChangePasswordActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.PhoneCall"
@@ -186,7 +188,7 @@
             android:name=".ui.SmallVideoPlay"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.ShowPhoto"
+            android:name=".ui.ShowPhotoActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.ShowLocation"
@@ -236,9 +238,9 @@
         </receiver>
 
         <activity
-            android:name=".ui.SoftwareIntruct"
+            android:name=".ui.SoftwareInstructActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.Setting"
+        <activity android:name=".ui.SettingActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.MessageNotify"
             android:screenOrientation="portrait"/>
@@ -248,13 +250,13 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.SaomaActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.SignUpActivity"
+        <activity android:name=".ui.RegisterAccountActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.ChangePassword1"
+        <activity android:name=".ui.ForgetPasswordActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.VerificodeLogin"
+        <activity android:name=".ui.VerifyCodeLoginActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.SetNewPassword"
+        <activity android:name=".ui.SetNewPasswordActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.FamilyCircle"
             android:screenOrientation="portrait"/>
@@ -269,8 +271,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.ShopActivity"
-            android:screenOrientation="portrait"/>
         <activity android:name=".ui.AddressManage"
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.AddNewAddress"
@@ -279,9 +279,9 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.MyCouponActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.address.UserAddress"
+        <activity android:name=".ui.address.AddressDetailActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.address.AddressSupervise"
+        <activity android:name=".ui.address.AddressManagerActivity"
             android:screenOrientation="portrait"/>
     </application>
 

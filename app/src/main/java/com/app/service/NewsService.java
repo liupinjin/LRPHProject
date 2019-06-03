@@ -18,9 +18,8 @@ import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.tools.NewsVideo;
-import com.app.tools.SipCallMananger;
+import com.app.tools.SipCallManager;
 import com.app.ui.VideoCallActivity;
-import com.app.video.H264Sending;
 
 import java.util.List;
 
@@ -65,7 +64,7 @@ public class NewsService extends Service {
                     if (SipInfo.isWaitingFeedback) {  // 主动呼叫不用再呼叫一次，直接去视频界面
                         SipInfo.isWaitingFeedback = false; // 改变这个标志，sipCallManager中会跳转到videoCall界面
                     } else {
-                        SipCallMananger.getInstance().callVideoChat(NewsService.this, false);
+                        SipCallManager.getInstance().callVideoChat(NewsService.this, false);
                     }
                     super.handleMessage(msg);
                 } else if (msg.what == 0x2222) {

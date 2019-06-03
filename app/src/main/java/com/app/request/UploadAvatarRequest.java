@@ -12,7 +12,7 @@ import okhttp3.MediaType;
 public class UploadAvatarRequest extends BaseRequest<UploadAvatarResult> {
     public UploadAvatarRequest() {
         setRequestType(RequestType.UPLOAD);
-        setRequestPath("/xiaoyupeihu/public/index.php/users/updateUserPic");
+        setRequestPath("/users/updateUserPic");
         contentType(MediaType.parse("image/*"));
     }
 }

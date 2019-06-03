@@ -76,6 +76,7 @@ import static com.app.sip.SipUser.list;
  * 集群呼叫
  */
 //public class ChsChange extends BaseActivity implements View.OnTouchListener {
+@Deprecated
 public class ChsChange extends BaseActivity implements SipUser.QinliaoUpdateListener {
     //    @Bind(R.id.b1)
 //    Button b1;

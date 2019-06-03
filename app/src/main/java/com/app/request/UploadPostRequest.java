@@ -12,7 +12,7 @@ import okhttp3.MediaType;
 public class UploadPostRequest extends BaseRequest<PNBaseModel> {
     public UploadPostRequest() {
         setRequestType(RequestType.UPLOAD);
-        setRequestPath("/xiaoyupeihu/public/index.php/posts/insertPost");
+        setRequestPath("/posts/insertPost");
         contentType(MediaType.parse("multipart/form-data; charset=utf-8"));
     }
 }

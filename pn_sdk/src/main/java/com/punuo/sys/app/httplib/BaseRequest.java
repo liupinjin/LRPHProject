@@ -94,6 +94,7 @@ public class BaseRequest<T> extends NetRequest implements IRequest<T> {
         url.append(HttpConfig.isUseHttps() ? "https://" : "http://");
         url.append(HttpConfig.getHost());
         url.append(HttpConfig.getPort() <= 0 ? "" : ":" + HttpConfig.getPort());
+        url.append(HttpConfig.getPrefixPath());
         url.append(mRequestPath);
         return url.toString();
     }
