@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
@@ -15,26 +14,26 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.app.R;
-import com.app.http.GetPostUtil;
-import com.punuo.sys.app.util.RegexUtils;
 import com.app.http.VerifyCodeManager;
 import com.app.http.VerifyCodeManager1;
-import com.app.model.Constant;
+import com.app.model.PNBaseModel;
+import com.app.request.RegisterRequest;
 import com.app.sip.SipInfo;
 import com.app.views.CleanEditText;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mob.MobSDK;
-import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.activity.BaseSwipeBackActivity;
+import com.punuo.sys.app.httplib.HttpManager;
+import com.punuo.sys.app.httplib.RequestListener;
+import com.punuo.sys.app.util.IntentUtil;
+import com.punuo.sys.app.util.RegexUtils;
 import com.punuo.sys.app.util.ToastUtils;
 
 import butterknife.Bind;
@@ -46,7 +45,7 @@ import cn.smssdk.SMSSDK;
 /**
  * 用户注册页
  */
-public class RegisterAccountActivity extends BaseActivity {
+public class RegisterAccountActivity extends BaseSwipeBackActivity {
 
     @Bind(R.id.num_input)
     CleanEditText numInput;
@@ -58,18 +57,15 @@ public class RegisterAccountActivity extends BaseActivity {
     CleanEditText passwordSet;
     @Bind(R.id.hidepassword)
     ImageView hidepassword;
-    @Bind(R.id.showpassword)
-    ImageView showpassword;
     @Bind(R.id.btn_register)
-    Button btnRegister;
+    TextView btnRegister;
     @Bind(R.id.linearLayout)
     LinearLayout linearLayout;
     @Bind(R.id.goto_login)
     TextView gotoLogin;
-    @Bind(R.id.iv_back6)
-    ImageView ivBack6;
+    @Bind(R.id.iv_back)
+    ImageView ivBack;
     private VerifyCodeManager1 codeManager1;
-    String response;
     private EventHandler eventHandler;
 
     @Override
@@ -89,6 +85,7 @@ public class RegisterAccountActivity extends BaseActivity {
     private void initViews() {
         numInput.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         verificodeInput.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        passwordSet.setTransformationMethod(PasswordTransformationMethod.getInstance());
         passwordSet.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
             @Override
@@ -110,69 +107,57 @@ public class RegisterAccountActivity extends BaseActivity {
                 msg.arg1 = event;
                 msg.arg2 = result;
                 msg.obj = data;
-                handler.sendMessage(msg);
+                mHandler.sendMessage(msg);
             }
         };
         //注册回调监听接口
         SMSSDK.registerEventHandler(eventHandler);
     }
 
-    Handler myhandle = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg.what == 1) {
-                startActivity(new Intent(RegisterAccountActivity.this, LoginActivity.class));
-            }
-        }
-    };
+    private RegisterRequest mRegisterRequest;
 
     private void commit() {
+        showLoadingDialog();
+        if (mRegisterRequest != null && !mRegisterRequest.isFinish()) {
+            return;
+        }
         SipInfo.userAccount2 = numInput.getText().toString().trim();
         SipInfo.passWord2 = passwordSet.getText().toString().trim();
         String code = verificodeInput.getText().toString().trim();
-        if (checkInput(SipInfo.userAccount2, SipInfo.passWord2, code)) {
-            // TODO:请求服务端注册账号
-            new Thread() {
-                @Override
-                public void run() {
-                    response = GetPostUtil.sendGet1111(Constant.URL_Register, "username=" + SipInfo.userAccount2 + "&" + "password=" + SipInfo.passWord2);
-                    Log.i("jonsresponse", response);
-                    if ((response != null) && !("".equals(response))) {
-                        JSONObject obj = JSON.parseObject(response);
-                        String msg = obj.getString("msg");
-                        if (msg.equals("注册失败")) {
-                            Looper.prepare();
-                            ToastUtils.showToast(msg);
-                            Looper.loop();
-                            return;
-                        } else if (msg.equals("手机号已注册")) {
-                            Looper.prepare();
-                            ToastUtils.showToast(msg);
-                            Looper.loop();
-                            return;
-                        } else {
-                            Looper.prepare();
-                            ToastUtils.showToast(msg);
-                            myhandle.sendEmptyMessage(1);
-                            Looper.loop();
-                            return;
-                        }
-                    }else {
-                        Looper.prepare();
-                        ToastUtils.showToastShort("请求无响应请重试");
-                        Looper.loop();
-                    }
-                }
-            }.start();
-
+        if (!checkInput(SipInfo.userAccount2, SipInfo.passWord2, code)) {
+            return;
         }
+        mRegisterRequest = new RegisterRequest();
+        mRegisterRequest.addUrlParam("username", SipInfo.userAccount2);
+        mRegisterRequest.addUrlParam("password", SipInfo.passWord2);
+        mRegisterRequest.setRequestListener(new RequestListener<PNBaseModel>() {
+            @Override
+            public void onComplete() {
+                dismissLoadingDialog();
+            }
+
+            @Override
+            public void onSuccess(PNBaseModel result) {
+                if (result == null || result.msg == null) {
+                    return;
+                }
+                if ("注册失败".equals(result.msg) || "手机号已注册".equals(result.msg)) {
+                    ToastUtils.showToast(result.msg);
+                } else {
+                    ToastUtils.showToast(result.msg);
+                    IntentUtil.jumpActivity(RegisterAccountActivity.this, LoginActivity.class);
+                    finish();
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+        HttpManager.addRequest(mRegisterRequest);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 
     private boolean checkInput(String phone, String password, String code) {
         if (TextUtils.isEmpty(phone)) { // 电话号码为空
@@ -193,40 +178,37 @@ public class RegisterAccountActivity extends BaseActivity {
         return false;
     }
 
-    @OnClick({R.id.get_verificode, R.id.hidepassword, R.id.showpassword,
-            R.id.btn_register, R.id.goto_login,R.id.iv_back6})
+    @OnClick({R.id.get_verificode, R.id.hidepassword, R.id.btn_register, R.id.goto_login, R.id.iv_back})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.get_verificode:
                 codeManager1.getVerifyCode(VerifyCodeManager.REGISTER);
                 break;
             case R.id.hidepassword:
-                passwordSet.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                Toast.makeText(this, "隐藏密码", Toast.LENGTH_SHORT).show();
-                hidepassword.setVisibility(View.INVISIBLE);
-                showpassword.setVisibility(View.VISIBLE);
-                break;
-            case R.id.showpassword:
-                passwordSet.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                Toast.makeText(this,"显示密码",Toast.LENGTH_SHORT).show();
-                showpassword.setVisibility(View.INVISIBLE);
-                hidepassword.setVisibility(View.VISIBLE);
+                if (passwordSet.getTransformationMethod() == PasswordTransformationMethod.getInstance()) {
+                    hidepassword.setImageResource(R.drawable.ic_eye);
+                    passwordSet.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                } else if (passwordSet.getTransformationMethod() == HideReturnsTransformationMethod.getInstance()) {
+                    hidepassword.setImageResource(R.drawable.ic_hide);
+                    passwordSet.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                }
                 break;
             case R.id.btn_register:
                 commit();
                 break;
             case R.id.goto_login:
                 finish();
-                startActivity(new Intent(this,LoginActivity.class));
+                startActivity(new Intent(this, LoginActivity.class));
                 break;
-            case R.id.iv_back6:
-                finish();
+            case R.id.iv_back:
+                scrollToFinishActivity();
                 break;
         }
     }
-    Handler handler = new Handler() {
 
-        public void handleMessage(android.os.Message msg) {
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
             int event = msg.arg1;
             int result = msg.arg2;
             Object data = msg.obj;
@@ -257,10 +239,10 @@ public class RegisterAccountActivity extends BaseActivity {
                 int status = obj.get("status").getAsInt();//错误代码
                 if (status > 0 && !TextUtils.isEmpty(des)) {
                     Toast.makeText(RegisterAccountActivity.this, des, Toast.LENGTH_SHORT).show();
-                    return;
                 }
             }
+            return true;
         }
-    };
+    });
 }
 

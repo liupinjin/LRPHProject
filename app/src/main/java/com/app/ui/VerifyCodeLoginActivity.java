@@ -1,7 +1,6 @@
 package com.app.ui;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,7 +51,7 @@ import com.app.views.CleanEditText;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mob.MobSDK;
-import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.activity.BaseSwipeBackActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;
 import com.punuo.sys.app.util.RegexUtils;
@@ -77,8 +75,7 @@ import static com.app.model.Constant.devid2;
 import static com.app.model.Constant.devid3;
 import static java.lang.Thread.sleep;
 
-public class VerifyCodeLoginActivity extends BaseActivity {
-    private Context mContext;
+public class VerifyCodeLoginActivity extends BaseSwipeBackActivity {
     @Bind(R.id.num_input4)
     CleanEditText numInput4;
     @Bind(R.id.vericode_input)
@@ -88,7 +85,7 @@ public class VerifyCodeLoginActivity extends BaseActivity {
     @Bind(R.id.password_login)
     TextView passwordLogin;
     @Bind(R.id.btn_login2)
-    Button btnLogin2;
+    TextView btnLogin2;
     @Bind(R.id.iv_back5)
     ImageView ivBack5;
     @Bind(R.id.newAccount_register)
@@ -120,7 +117,6 @@ public class VerifyCodeLoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verificode_login);
-        mContext = this;
         ButterKnife.bind(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
             Window window = getWindow();
@@ -182,6 +178,9 @@ public class VerifyCodeLoginActivity extends BaseActivity {
                 break;
             case R.id.newAccount_register:
                 startActivity(new Intent(this, RegisterAccountActivity.class));
+                break;
+            case R.id.iv_back5:
+                scrollToFinishActivity();
                 break;
         }
     }
