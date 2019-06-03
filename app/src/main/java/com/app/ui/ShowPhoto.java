@@ -14,7 +14,7 @@ import com.app.ftp.Ftp;
 import com.app.ftp.FtpListener;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;
-import com.app.view.CustomProgressDialog;
+import com.app.view.PNLoadingDialog;
 import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.File;
@@ -30,7 +30,7 @@ public class ShowPhoto extends BaseActivity {
     ImageView photo;
     private String mPhotoPath;
     private int type;
-    private CustomProgressDialog dialog;
+    private PNLoadingDialog dialog;
     String ftppath;
     private String localPath;
     private String msgid;
@@ -93,7 +93,7 @@ public class ShowPhoto extends BaseActivity {
                     if (!new File(localphotoPath).exists()) {
                         currentBitmap=BitmapFactory.decodeFile(mPhotoPath);
                         photo.setImageBitmap(currentBitmap);
-                        dialog = new CustomProgressDialog(this);
+                        dialog = new PNLoadingDialog(this);
                         dialog.setCanceledOnTouchOutside(false);
                         dialog.setCancelable(false);
                         dialog.show();

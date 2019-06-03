@@ -138,7 +138,7 @@
             android:name=".ui.ImageGridUploadpictureActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.ChangePassword"
+            android:name=".ui.ChangePasswordActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.PhoneCall"
@@ -238,7 +238,7 @@
         <activity
             android:name=".ui.SoftwareIntruct"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.Setting"
+        <activity android:name=".ui.SettingActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.MessageNotify"
             android:screenOrientation="portrait"/>
@@ -248,11 +248,11 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.SaomaActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.SignUpActivity"
+        <activity android:name=".ui.RegisterAccountActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.ChangePassword1"
+        <activity android:name=".ui.ForgetPasswordActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.VerificodeLogin"
+        <activity android:name=".ui.VerifyCodeLoginActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.SetNewPassword"
             android:screenOrientation="portrait"/>

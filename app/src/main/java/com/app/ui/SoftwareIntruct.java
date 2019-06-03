@@ -31,7 +31,7 @@ import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.tools.VersionXmlParse;
-import com.app.view.CustomProgressDialog;
+import com.app.view.PNLoadingDialog;
 import com.punuo.sys.app.activity.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
 
@@ -69,7 +69,7 @@ public class SoftwareIntruct extends BaseActivity {
     //进度条消失类型
     String result;
     //进度条
-    CustomProgressDialog loading;
+    PNLoadingDialog loading;
     //下载进度条
     ProgressDialog downloadDialog;
     String apkPath;
@@ -115,7 +115,7 @@ public class SoftwareIntruct extends BaseActivity {
                 break;
             case R.id.tv_update:
                 result = "Finished";
-                loading = new CustomProgressDialog(this);
+                loading = new PNLoadingDialog(this);
                 loading.setCancelable(false);
                 loading.setCanceledOnTouchOutside(false);
                 loading.show();

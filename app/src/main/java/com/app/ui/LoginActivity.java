@@ -58,7 +58,7 @@ import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.sip.SipUser;
 import com.app.tools.PermissionUtils;
-import com.app.view.CustomProgressDialog;
+import com.app.view.PNLoadingDialog;
 import com.app.views.CleanEditText;
 import com.punuo.sys.app.activity.BaseActivity;
 import com.punuo.sys.app.httplib.HttpManager;
@@ -85,6 +85,9 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.app.groupvoice.GroupInfo.wakeLock;
 import static java.lang.Thread.sleep;
 
+/**
+ * 用户登陆页
+ */
 public class LoginActivity extends BaseActivity {
     private static final String TAG ="LoginActivity";
 
@@ -108,7 +111,7 @@ public class LoginActivity extends BaseActivity {
     private AlertDialog timeOutDialog;
     //密码错误次数
     private int errorTime = 0;
-    private CustomProgressDialog registering;
+    private PNLoadingDialog registering;
     protected CompositeSubscription mCompositeSubscription = new CompositeSubscription();
 
     @Bind(R.id.num_input2)
@@ -235,7 +238,7 @@ public class LoginActivity extends BaseActivity {
                     errorTime = 0;
                 }
                 beforeLogin();
-                registering = new CustomProgressDialog(LoginActivity.this);
+                registering = new PNLoadingDialog(LoginActivity.this);
                 registering.setCancelable(false);
                 registering.setCanceledOnTouchOutside(false);
                 registering.show();
@@ -379,8 +382,6 @@ public class LoginActivity extends BaseActivity {
         Constant.sex = userInfo.gender;
         Constant.isNotify = userInfo.isNotify;
     }
-    //获取用户数据线程
-    String response = "";
     //群组获取线程
     private GetAllGroupFromUserRequest mGetAllGroupFromUserRequest;
     //获取组信息
@@ -748,13 +749,13 @@ public class LoginActivity extends BaseActivity {
                 hidepassword.setVisibility(View.VISIBLE);
                 break;
             case R.id.vericode_login:
-                startActivity(new Intent(this,VerificodeLogin.class));
+                startActivity(new Intent(this, VerifyCodeLoginActivity.class));
                 break;
             case R.id.password_forget:
-                startActivity(new Intent(this,ChangePassword1.class));
+                startActivity(new Intent(this, ForgetPasswordActivity.class));
                 break;
             case R.id.tv_register:
-                startActivity(new Intent(this,SignUpActivity.class));
+                startActivity(new Intent(this, RegisterAccountActivity.class));
                 break;
             case R.id.iv_back2:
                 break;

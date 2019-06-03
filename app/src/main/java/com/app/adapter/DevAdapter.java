@@ -20,7 +20,7 @@ import com.app.ui.VideoPlay;
 import com.app.video.RtpVideo;
 import com.app.video.SendActivePacket;
 import com.app.video.VideoInfo;
-import com.app.view.CustomProgressDialog;
+import com.app.view.PNLoadingDialog;
 import com.app.R;
 
 import org.zoolu.sip.address.NameAddress;
@@ -42,7 +42,7 @@ import butterknife.ButterKnife;
 public class DevAdapter extends BaseAdapter {
     private Context mContext;
     private List<Device> list;
-    private CustomProgressDialog inviting;
+    private PNLoadingDialog inviting;
     private Handler handler=new Handler();
     public DevAdapter(Context mContext, List<Device> list) {
         this.mContext = mContext;
@@ -94,7 +94,7 @@ public class DevAdapter extends BaseAdapter {
                 SipInfo.toDev = new NameAddress(devName, sipURL);
                 SipInfo.queryResponse = false;
                 SipInfo.inviteResponse = false;
-                inviting = new CustomProgressDialog(mContext);
+                inviting = new PNLoadingDialog(mContext);
                 inviting.setCancelable(false);
                 inviting.setCanceledOnTouchOutside(false);
                 inviting.show();

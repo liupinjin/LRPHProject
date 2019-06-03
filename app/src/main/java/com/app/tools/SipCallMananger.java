@@ -16,7 +16,7 @@ import com.app.ui.VideoPlay;
 import com.app.video.RtpVideo;
 import com.app.video.SendActivePacket;
 import com.app.video.VideoInfo;
-import com.app.view.CustomProgressDialog;
+import com.app.view.PNLoadingDialog;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -68,7 +68,7 @@ public class SipCallMananger {
             
             new Thread(new Runnable() {
                 String devId;
-                CustomProgressDialog inviting = null;
+                PNLoadingDialog inviting = null;
                 
                 @Override
                 public void run() {
@@ -84,7 +84,7 @@ public class SipCallMananger {
                     SipInfo.inviteResponse = false;
 
                     if(mContext instanceof Activity){
-                        inviting = new CustomProgressDialog(mContext);
+                        inviting = new PNLoadingDialog(mContext);
                         inviting.setCancelable(false);
                         inviting.setCanceledOnTouchOutside(false);
                         inviting.show();

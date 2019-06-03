@@ -37,12 +37,15 @@ import butterknife.OnClick;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
-public class ChangePassword1 extends BaseActivity {
+/**
+ * 密码重置页
+ */
+
+public class ForgetPasswordActivity extends BaseActivity {
     private static final String TAG = "Changepassword1Activity";
     private EventHandler eventHandler;
     private VerifyCodeManager1 codeManager1;
 
-    String response;
     @Bind(R.id.num_input3)
     CleanEditText numInput3;
     @Bind(R.id.verificode_input1)
@@ -145,7 +148,7 @@ public class ChangePassword1 extends BaseActivity {
                 String des = obj.get("detail").getAsString();//错误描述
                 int status = obj.get("status").getAsInt();//错误代码
                 if (status > 0 && !TextUtils.isEmpty(des)) {
-                    Toast.makeText(ChangePassword1.this, des, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ForgetPasswordActivity.this, des, Toast.LENGTH_SHORT).show();
                 }
             }
             return true;
@@ -174,7 +177,7 @@ public class ChangePassword1 extends BaseActivity {
             public void onSuccess(PNBaseModel result) {
                 if (result.isSuccess()) {
                     ToastUtils.showToast("密码修改成功");
-                    startActivity(new Intent(ChangePassword1.this, LoginActivity.class));
+                    startActivity(new Intent(ForgetPasswordActivity.this, LoginActivity.class));
                 } else {
                     if (!TextUtils.isEmpty(result.msg)) {
                         ToastUtils.showToast(result.msg);

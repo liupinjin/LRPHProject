@@ -30,7 +30,7 @@ import static com.app.model.Constant.groupid1;
 import static com.app.sip.SipInfo.sipUser;
 
 
-public class Setting extends BaseActivity {
+public class SettingActivity extends BaseActivity {
 
 
     @Bind(R.id.re_psds)
@@ -115,7 +115,7 @@ public class Setting extends BaseActivity {
                 dialog.show();
                 break;
             case R.id.re_psds:
-                startActivity(new Intent(this, ChangePassword.class));
+                startActivity(new Intent(this, ChangePasswordActivity.class));
                 break;
             case R.id.re_address:
                 startActivity(new Intent(this, AddressSupervise.class));

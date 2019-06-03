@@ -39,7 +39,7 @@ import com.app.video.RtpVideo;
 import com.app.video.SendActivePacket;
 import com.app.video.VideoInfo;
 import com.app.view.CircleImageView;
-import com.app.view.CustomProgressDialog;
+import com.app.view.PNLoadingDialog;
 import com.punuo.sys.app.util.StatusBarUtil;
 import com.punuo.sys.app.util.ToastUtils;
 
@@ -61,12 +61,12 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
 
     TextView title;
     private Boolean shan = true;
-    private CustomProgressDialog inviting;
+    private PNLoadingDialog inviting;
     private Handler handlervideo = new Handler();
     String SdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
     private static final String TAG = "MicroActivity";
     private List<UserList> userList = new ArrayList<UserList>();
-//    private CustomProgressDialog registering;//圈圈
+    //    private PNLoadingDialog registering;//圈圈
     public CustomListView listview;
     private CircleImageView alarm;
     private ImageView camera;
@@ -80,7 +80,7 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view  = inflater.inflate(R.layout.micro_list_header1, container, false);
+        View view = inflater.inflate(R.layout.micro_list_header1, container, false);
         mStatusBar = view.findViewById(R.id.status_bar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mStatusBar.setVisibility(View.VISIBLE);
@@ -96,12 +96,12 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
         public void handleMessage(Message msg) {
             if (msg.what == 666) {
                 alarm.setVisibility(View.INVISIBLE);
-            }else if (msg.what == 888) {
+            } else if (msg.what == 888) {
                 alarm.setVisibility(View.VISIBLE);
             }
         }
     };
-    Runnable runnable=new Runnable() {
+    Runnable runnable = new Runnable() {
         @Override
         public void run() {
             try {
@@ -116,10 +116,11 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
             }
         }
     };
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void aaa(MessageEvent messageEvent) {
-        if (messageEvent.getMessage().equals("警报")){
-            Log.d("111111   ","111111111");
+        if (messageEvent.getMessage().equals("警报")) {
+            Log.d("111111   ", "111111111");
             /*修改xml中某一区域的背景*/
             //方法一：
 //            Resources resources = getActivity().getResources();
@@ -127,19 +128,20 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
 //            re_background.setBackgroundDrawable(btnDrawable);
             //方法二：
             re_background.setBackgroundResource(R.drawable.background2);
-            shan=true;
+            shan = true;
             new Thread(runnable).start();
         }
     }
+
     private void init(View view) {
         EventBus.getDefault().register(this);  //注册
-        re_background=(RelativeLayout)view.findViewById(R.id.re_background);
-        re_funcation=(RelativeLayout)view.findViewById(R.id.re_funcation);
-        camera=(ImageView)re_background.findViewById(R.id.iv_camera);
+        re_background = view.findViewById(R.id.re_background);
+        re_funcation = view.findViewById(R.id.re_funcation);
+        camera = re_background.findViewById(R.id.iv_camera);
         camera.setVisibility(View.VISIBLE);
         camera.setOnClickListener(this);
 
-        alarm=(CircleImageView)re_background.findViewById(R.id.alarm1) ;
+        alarm = re_background.findViewById(R.id.alarm1);
         alarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -148,10 +150,10 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
                 re_background.setBackgroundResource(R.drawable.background1);
             }
         });
-        ImageView application=(ImageView)re_funcation.findViewById(R.id.application);
-        ImageView video=(ImageView)re_funcation.findViewById(R.id.video);
-        ImageView browse=(ImageView)re_funcation.findViewById(R.id.browse);
-        ImageView chat=(ImageView)re_funcation.findViewById(R.id.chat);
+        ImageView application =re_funcation.findViewById(R.id.application);
+        ImageView video = re_funcation.findViewById(R.id.video);
+        ImageView browse = re_funcation.findViewById(R.id.browse);
+        ImageView chat = re_funcation.findViewById(R.id.chat);
         application.setOnClickListener(this);
         video.setOnClickListener(this);
         browse.setOnClickListener(this);
@@ -176,9 +178,8 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
                 startActivity(new Intent(getActivity(), FamilyCircle.class));
                 break;
             case R.id.browse:
-                if((devid1==null)||("".equals(devid1)))
-                {
-                    AlertDialog.Builder dialog=new AlertDialog.Builder(getActivity())
+                if ((devid1 == null) || ("".equals(devid1))) {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity())
                             .setTitle("请先绑定设备")
                             .setCancelable(false)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -189,9 +190,8 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
                             });
                     dialog.show();
 
-                }
-                else {
-                    SipInfo.single=true;
+                } else {
+                    SipInfo.single = true;
                     String devId = SipInfo.paddevId;
                     devId = devId.substring(0, devId.length() - 4).concat("0160");//设备id后4位替换成0160
                     String devName = "pad";
@@ -203,7 +203,7 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
                     SipInfo.sipUser.sendMessage(response);
                     SipInfo.queryResponse = false;
                     SipInfo.inviteResponse = false;
-                    inviting = new CustomProgressDialog(getActivity());
+                    inviting = new PNLoadingDialog(getActivity());
                     inviting.setCancelable(false);
                     inviting.setCanceledOnTouchOutside(false);
                     inviting.show();
@@ -286,27 +286,31 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
             case R.id.application:
 //                应用
 //                startActivity(new Intent(getActivity(),ApplicationActivity.class));
-                startActivity(new Intent(getActivity(),ShopActivity.class));
+                startActivity(new Intent(getActivity(), ShopActivity.class));
                 break;
             case R.id.video:
-                SipInfo.single=false;
+                SipInfo.single = false;
                 String devId1 = SipInfo.paddevId;
-//                    devId = devId1.substring(0, devId1.length() - 4).concat("0160");//设备id后4位替换成0160
+//                    devId = devId1.substring(0, devId1.length() - 4).concat("0160");
+// 设备id后4位替换成0160
                 String devName1 = "pad";
                 final String devType1 = "2";
                 SipURL sipURL1 = new SipURL(devId1, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
                 SipInfo.toDev = new NameAddress(devName1, sipURL1);
                 //视频
-                org.zoolu.sip.message.Message query1 = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
-                        SipInfo.user_from, BodyFactory.createCallRequest("request",SipInfo.devId,SipInfo.userId));
+                org.zoolu.sip.message.Message query1 =
+                        SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+                        SipInfo.user_from, BodyFactory.createCallRequest("request", SipInfo.devId
+                                        , SipInfo.userId));
                 SipInfo.sipUser.sendMessage(query1);
 
-                startActivity(new Intent(getActivity(),VideoDial.class));
+                startActivity(new Intent(getActivity(), VideoDial.class));
                 break;
             default:
                 break;
         }
     }
+
     private void waitFor() {
         try {
             Thread.sleep(100);
@@ -314,20 +318,22 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
             e.printStackTrace();
         }
     }
+
     private Runnable getuserfromgroup = new Runnable() {
         @Override
         public void run() {
             String response = "";
-            response = GetPostUtil.sendGet1111(Constant.URL_InquireUser, "groupid=" + Constant.groupid);
+            response = GetPostUtil.sendGet1111(Constant.URL_InquireUser,
+                    "groupid=" + Constant.groupid);
             Log.i("jonsresponse...........", response);
-            if (( null!= response ) && !("".equals(response))) {
+            if ((null != response) && !("".equals(response))) {
                 UserFromGroup userFromGroup = JSON.parseObject(response, UserFromGroup.class);
 
                 userList = userFromGroup.getUserList();
 
                 for (i = 0; i < userList.size(); i++) {
                     Friend friend = new Friend();
-                    friend.setNickName (userList.get(i).getNickname());
+                    friend.setNickName(userList.get(i).getNickname());
                     friend.setPhoneNum(userList.get(i).getName());
                     friend.setUserId(userList.get(i).getUserid());
                     friend.setId(userList.get(i).getId());
@@ -342,6 +348,7 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
             }
         }
     };
+
     public void changStatusIconCollor(boolean setDark) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             View decorView = getActivity().getWindow().getDecorView();
@@ -361,7 +368,7 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             if (isBlack) {
                 getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//设置状态栏黑色字体
-            }else {
+            } else {
                 getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);//恢复状态栏白色字体
             }
         }

@@ -7,12 +7,12 @@ import android.os.Bundle;
 import com.app.R;
 
 
-public class CustomProgressDialog extends Dialog {
+public class PNLoadingDialog extends Dialog {
 
-    public CustomProgressDialog(Context context, int themeResId) {
+    public PNLoadingDialog(Context context, int themeResId) {
         super(context, themeResId);
     }
-    public CustomProgressDialog(Context context) {
+    public PNLoadingDialog(Context context) {
         this(context,  R.style.CustomProgressDialog);
 
     }
@@ -20,6 +20,6 @@ public class CustomProgressDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.customprogressdialog);
+        setContentView(R.layout.loading_view_dialog);
     }
 }

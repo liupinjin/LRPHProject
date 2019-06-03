@@ -7,7 +7,7 @@ import android.util.Log;
 import com.app.R;
 import com.app.model.MessageEvent;
 import com.app.tools.SipCallMananger;
-import com.app.view.CustomProgressDialog;
+import com.app.view.PNLoadingDialog;
 import com.punuo.sys.app.activity.BaseActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -21,7 +21,7 @@ import static com.app.camera.FileOperateUtil.TAG;
  */
 
 public class VideoStart extends BaseActivity {
-    private CustomProgressDialog inviting;
+    private PNLoadingDialog inviting;
     private Handler handlervideo = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -43,7 +43,7 @@ import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.tools.VersionXmlParse;
-import com.app.view.CustomProgressDialog;
+import com.app.view.PNLoadingDialog;
 import com.punuo.sys.app.activity.ActivityCollector;
 
 import java.io.File;
@@ -125,7 +125,7 @@ public class MenuFragment extends Fragment {
     //用于版本xml解析
     HashMap<String, String> versionHashMap = new HashMap<>();
     //进度条
-    CustomProgressDialog loading;
+    PNLoadingDialog loading;
     //进度条消失类型
     String result;
     //下载进度条
@@ -286,7 +286,7 @@ public class MenuFragment extends Fragment {
                                 PhoneCall.actionStart(getActivity(), SipInfo.centerPhoneNumber,1);
                                 break;
                             case CHANGEPWD:
-                                startActivity(new Intent(getActivity(), ChangePassword.class));
+                                startActivity(new Intent(getActivity(), ChangePasswordActivity.class));
                                 break;
                             case GALLER:
                                 Intent gallerIntent = new Intent(getActivity(), AlbumAty.class);
@@ -298,7 +298,7 @@ public class MenuFragment extends Fragment {
                                 break;
                             case UPDATE:
                                 result = "Finished";
-                                loading = new CustomProgressDialog(getActivity());
+                                loading = new PNLoadingDialog(getActivity());
                                 loading.setCancelable(false);
                                 loading.setCanceledOnTouchOutside(false);
                                 loading.show();

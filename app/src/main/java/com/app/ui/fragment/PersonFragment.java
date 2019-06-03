@@ -47,11 +47,11 @@ import com.app.ui.FamilyCircle;
 import com.app.ui.MyCouponActivity;
 import com.app.ui.SaomaActivity;
 import com.app.ui.ServiceCallSet;
-import com.app.ui.Setting;
+import com.app.ui.SettingActivity;
 import com.app.ui.UploadPictureActivity;
 import com.app.videoAndPictureUpload.SelectVideoActivity;
 import com.app.view.CircleImageView;
-import com.app.view.CustomProgressDialog;
+import com.app.view.PNLoadingDialog;
 import com.punuo.sys.app.activity.ActivityCollector;
 import com.punuo.sys.app.util.StatusBarUtil;
 import com.punuo.sys.app.util.ToastUtils;
@@ -84,7 +84,7 @@ private CircleImageView iv_avatar;
     //用于版本xml解析
     HashMap<String, String> versionHashMap = new HashMap<>();
     //进度条
-    CustomProgressDialog loading;
+    PNLoadingDialog loading;
     //进度条消失类型
     String result;
     //下载进度条
@@ -195,7 +195,7 @@ private CircleImageView iv_avatar;
             showPhotoDialog();
                 break;
 //            case R.id.re_psd:
-//                startActivity(new Intent(getActivity(), ChangePassword.class));
+//                startActivity(new Intent(getActivity(), ChangePasswordActivity.class));
 //                break;
             case R.id.re_adddev:
                 startActivity(new Intent(getActivity(), SaomaActivity.class));
@@ -219,7 +219,7 @@ private CircleImageView iv_avatar;
 //                startActivity(new Intent(getActivity(),SoftwareIntruct.class));
 //                break;
             case R.id.re_settings:
-                startActivity(new Intent(getActivity(),Setting.class));
+                startActivity(new Intent(getActivity(), SettingActivity.class));
                 break;
         }
     }

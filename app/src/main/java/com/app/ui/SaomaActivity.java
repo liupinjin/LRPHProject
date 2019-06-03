@@ -37,7 +37,7 @@ import com.app.model.Constant;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.view.CustomProgressDialog;
+import com.app.view.PNLoadingDialog;
 import com.app.zxing.android.CaptureActivity;
 import com.punuo.sys.app.activity.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
@@ -53,7 +53,7 @@ import static com.app.sip.SipInfo.paduserid;
 import static com.app.sip.SipInfo.sipUser;
 
 public class SaomaActivity extends BaseActivity implements View.OnClickListener {
-    private CustomProgressDialog registering;
+    private PNLoadingDialog registering;
     private static final int REQUEST_CODE_SCAN1 = 0x0000;
     private static final String DECODED_CONTENT_KEY = "codedContent";
     private View inflate;

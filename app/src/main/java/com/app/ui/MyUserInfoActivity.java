@@ -20,6 +20,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -32,24 +33,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.app.LoadPicture;
 import com.app.LoadPicture.ImageDownloadedCallBack;
 import com.app.LocalUserInfo;
 import com.app.R;
-import com.app.http.GetPostUtil;
 import com.app.model.Constant;
+import com.app.model.PNBaseModel;
 import com.app.model.UploadAvatarResult;
+import com.app.request.UpdateSexRequest;
 import com.app.request.UploadAvatarRequest;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.punuo.sys.app.util.ProviderUtil;
 import com.app.view.CircleImageView;
 import com.punuo.sys.app.activity.BaseActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;
+import com.punuo.sys.app.util.ProviderUtil;
 import com.punuo.sys.app.util.ToastUtils;
 
 import org.zoolu.sip.address.NameAddress;
@@ -67,32 +67,6 @@ import static com.app.sip.SipInfo.devName;
 
 @SuppressLint("SdCardPath")
 public class MyUserInfoActivity extends BaseActivity implements View.OnClickListener {
-
-//    private static class MyHandler extends Handler{
-//        private final WeakReference<MyUserInfoActivity> mActivity;
-//
-//        public MyHandler(MyUserInfoActivity activity){
-//            mActivity=new WeakReference<MyUserInfoActivity>(activity);
-//        }
-//
-//        @Override
-//        public void handleMessage(Message msg){
-//            MyUserInfoActivity activity=mActivity.get();
-//            if(activity!=null){
-////                activity.handleMessage(msg);
-//            }
-//        }
-//
-//
-//
-//        private static final Runnable sRunnable=new Runnable() {
-//            @Override
-//            public void run() {
-//
-//            }
-//        };
-//    }
-//    private final MyHandler mHandler=new MyHandler(this);
 
     private static final int CAMERA_REQUEST_CODE = 1;
     private RelativeLayout re_avatar;
@@ -194,45 +168,65 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
     }
 
 
-    String[] sexArray = new String[]{"男", "女"};
+    private String[] sexArray = new String[]{"男", "女"};
 
     /*性别选择*/
     private void showChooseDialog() {
         background=sp.getInt("background",0);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setSingleChoiceItems(sexArray,background, new DialogInterface.OnClickListener() {
+        builder.setSingleChoiceItems(sexArray, background, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //获取sharedPreferences对象
-                //获取editor对象
-                SharedPreferences.Editor editor = sp.edit();//获取编辑器
-                //存储键值对
-                editor.putString("sex", sexArray[which]);
-                editor.putInt("background",which);
-                editor.apply();//提交修改
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        response=GetPostUtil.sendGet1111(Constant.URL_updateSex,"id="+Constant.id+"&gender="+
-                                sexArray[which]);
-                        if ((response != null) && !("".equals(response))) {
-                            JSONObject obj2 = JSON.parseObject(response);
-                            String msg = obj2.getString("msg");
-                            if (msg.equals("success")){
-                                Log.i("MyUserInfo","成功");
-                            }
-                            else{
-                                Log.i("MyUserInfo","失败");
-                            }
-
-                        }
-                    }
-                }).start();
-                tv_sex1.setText(sexArray[which]);
-                dialog.dismiss();
+                updateSex(sexArray[which], which, dialog);
             }
         });
         builder.show();
+    }
+
+    private UpdateSexRequest mUpdateSexRequest;
+    private void updateSex(String gender, int which, DialogInterface dialog) {
+        if (mUpdateSexRequest != null && !mUpdateSexRequest.isFinish()) {
+            return;
+        }
+        showLoadingDialog();
+        mUpdateSexRequest = new UpdateSexRequest();
+        mUpdateSexRequest.addUrlParam("id", Constant.id);
+        mUpdateSexRequest.addUrlParam("gender", gender);
+        mUpdateSexRequest.setRequestListener(new RequestListener<PNBaseModel>() {
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSuccess(PNBaseModel result) {
+                if (result == null) {
+                    return;
+                }
+                dismissLoadingDialog();
+                if (result.isSuccess()) {
+                    tv_sex1.setText(gender);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("sex", sexArray[which]);
+                    editor.putInt("background",which);
+                    editor.apply();
+
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
+                } else {
+                   if (!TextUtils.isEmpty(result.msg)) {
+                       ToastUtils.showToast(result.msg);
+                   }
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                dismissLoadingDialog();
+            }
+        });
+        HttpManager.addRequest(mUpdateSexRequest);
     }
 
     @Override

@@ -43,8 +43,10 @@ import butterknife.OnClick;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
-
-public class SignUpActivity extends BaseActivity {
+/**
+ * 用户注册页
+ */
+public class RegisterAccountActivity extends BaseActivity {
 
     @Bind(R.id.num_input)
     CleanEditText numInput;
@@ -120,7 +122,7 @@ public class SignUpActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 1) {
-                startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+                startActivity(new Intent(RegisterAccountActivity.this, LoginActivity.class));
             }
         }
     };
@@ -233,7 +235,7 @@ public class SignUpActivity extends BaseActivity {
             // 短信注册成功后，返回LoginActivity,然后提示
             if (result == SMSSDK.RESULT_COMPLETE) {
                 if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {// 提交验证码成功
-//                    Toast.makeText(SignUpActivity.this, "验证成功",
+//                    Toast.makeText(RegisterAccountActivity.this, "验证成功",
 //                            Toast.LENGTH_SHORT).show();
                     final String phone = numInput.getText().toString().trim();
                     final String passWord = passwordSet.getText().toString().trim();
@@ -241,7 +243,7 @@ public class SignUpActivity extends BaseActivity {
                     if (checkInput(phone, passWord, code)) {
                         commit();
                     } else {
-                        Toast.makeText(SignUpActivity.this, "填写信息格式不正确", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterAccountActivity.this, "填写信息格式不正确", Toast.LENGTH_SHORT).show();
                     }
                 } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
                     Toast.makeText(getApplicationContext(), "验证码已经发送",
@@ -254,7 +256,7 @@ public class SignUpActivity extends BaseActivity {
                 String des = obj.get("detail").getAsString();//错误描述
                 int status = obj.get("status").getAsInt();//错误代码
                 if (status > 0 && !TextUtils.isEmpty(des)) {
-                    Toast.makeText(SignUpActivity.this, des, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterAccountActivity.this, des, Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
