@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,21 +16,15 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
 import com.app.R;
 import com.app.friendCircleMain.custonListView.CustomListView;
-import com.app.friendCircleMain.domain.UserFromGroup;
 import com.app.friendCircleMain.domain.UserList;
-import com.app.http.GetPostUtil;
-import com.app.model.Constant;
-import com.app.model.Friend;
 import com.app.model.MessageEvent;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.ui.FamilyCircle;
 import com.app.ui.FriendCallActivity;
-import com.app.ui.ShopActivity;
 import com.app.ui.VideoDial;
 import com.app.ui.VideoPlay;
 import com.app.video.RtpVideo;
@@ -39,8 +32,8 @@ import com.app.video.SendActivePacket;
 import com.app.video.VideoInfo;
 import com.app.view.CircleImageView;
 import com.punuo.sys.app.fragment.BaseFragment;
+import com.punuo.sys.app.util.IntentUtil;
 import com.punuo.sys.app.util.StatusBarUtil;
-import com.punuo.sys.app.util.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -52,7 +45,6 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.amap.api.mapcore2d.p.i;
 import static com.app.model.Constant.devid1;
 
 
@@ -269,18 +261,13 @@ public class LaoRenFragment extends BaseFragment implements View.OnClickListener
                         }
                     }.start();
                 }
-//                SipCallManager.getInstance().callVideoChat(getActivity(),true);
                 break;
             case R.id.chat:
-//                userList.clear();
-//                SipInfo.friends.clear();
-//                new Thread(getuserfromgroup).start();//亲聊模块获取用户信息得时候需要
-                startActivity(new Intent(getActivity(), FriendCallActivity.class));
+                IntentUtil.jumpActivity(getActivity(), FriendCallActivity.class);
                 break;
             case R.id.application:
-//                应用
-//                startActivity(new Intent(getActivity(),ApplicationActivity.class));
-                startActivity(new Intent(getActivity(), ShopActivity.class));
+                String url = "http://sip.qinqingonline.com:8888/mobileshop";
+                IntentUtil.openWebViewActivity(getActivity(), url);
                 break;
             case R.id.video:
                 SipInfo.single = false;
@@ -302,69 +289,6 @@ public class LaoRenFragment extends BaseFragment implements View.OnClickListener
                 break;
             default:
                 break;
-        }
-    }
-
-    private void waitFor() {
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private Runnable getuserfromgroup = new Runnable() {
-        @Override
-        public void run() {
-            String response = "";
-            response = GetPostUtil.sendGet1111(Constant.URL_InquireUser,
-                    "groupid=" + Constant.groupid);
-            Log.i("jonsresponse...........", response);
-            if ((null != response) && !("".equals(response))) {
-                UserFromGroup userFromGroup = JSON.parseObject(response, UserFromGroup.class);
-
-                userList = userFromGroup.getUserList();
-
-                for (i = 0; i < userList.size(); i++) {
-                    Friend friend = new Friend();
-                    friend.setNickName(userList.get(i).getNickname());
-                    friend.setPhoneNum(userList.get(i).getName());
-                    friend.setUserId(userList.get(i).getUserid());
-                    friend.setId(userList.get(i).getId());
-                    friend.setAvatar(userList.get(i).getAvatar());
-                    SipInfo.friends.add(friend);
-                }
-            } else {
-                Looper.prepare();
-                ToastUtils.showToastShort("获取用户数据失败请重试");
-
-                Looper.loop();
-            }
-        }
-    };
-
-    public void changStatusIconCollor(boolean setDark) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            View decorView = getActivity().getWindow().getDecorView();
-            if (decorView != null) {
-                int vis = decorView.getSystemUiVisibility();
-                if (setDark) {
-                    vis |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-                } else {
-                    vis &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-                }
-                decorView.setSystemUiVisibility(vis);
-            }
-        }
-    }
-
-    private void changeStatusBarTextColor(boolean isBlack) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-            if (isBlack) {
-                getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//设置状态栏黑色字体
-            } else {
-                getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);//恢复状态栏白色字体
-            }
         }
     }
 }

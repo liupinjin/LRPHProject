@@ -25,11 +25,9 @@ import static com.app.sip.SipInfo.addressList;
  */
 
 public class AddressItemAdapter extends RecyclerView.Adapter<AddressItemAdapter.ViewHolder> {
-    private LayoutInflater mLayoutInflater;
     private List<AddressItem> mAddressList;
 
     public AddressItemAdapter(Context context, List<AddressItem> addressList) {
-        mLayoutInflater = LayoutInflater.from(context);
         mAddressList = addressList;
     }
 
@@ -45,20 +43,9 @@ public class AddressItemAdapter extends RecyclerView.Adapter<AddressItemAdapter.
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mLayoutInflater.from(parent.getContext())
+        View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.addressitem, parent, false);
-        final AddressItemAdapter.ViewHolder holder = new AddressItemAdapter.ViewHolder(view);
-        holder.addressEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SipInfo.listPosition = holder.getAdapterPosition();
-                AddressItem addressitem = addressList.get(SipInfo.listPosition);
-                SipInfo.addressPosition = addressitem.position;
-                SipInfo.isDefault = addressitem.position;
-                EventBus.getDefault().post(new MessageEvent("编辑"));
-            }
-        });
-        return holder;
+        return new AddressItemAdapter.ViewHolder(view);
     }
 
     @Override
@@ -69,6 +56,16 @@ public class AddressItemAdapter extends RecyclerView.Adapter<AddressItemAdapter.
         holder.userName.setText(addressitem.userName);
         holder.userPhoneNum.setText(changePhoneNum(addressitem.userPhoneNum));
         holder.isDefault.setText(addressitem.isDefult() ? "默认" : "");
+        holder.addressEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SipInfo.listPosition = holder.getAdapterPosition();
+                AddressItem addressitem = addressList.get(SipInfo.listPosition);
+                SipInfo.addressPosition = addressitem.position;
+                SipInfo.isDefault = addressitem.position;
+                EventBus.getDefault().post(new MessageEvent("编辑"));
+            }
+        });
     }
 
     @Override

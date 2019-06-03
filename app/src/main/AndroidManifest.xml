@@ -269,8 +269,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.ShopActivity"
-            android:screenOrientation="portrait"/>
         <activity android:name=".ui.AddressManage"
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.AddNewAddress"
@@ -279,7 +277,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.MyCouponActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.address.UserAddress"
+        <activity android:name=".ui.address.AddressDetailActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.address.AddressManagerActivity"
             android:screenOrientation="portrait"/>

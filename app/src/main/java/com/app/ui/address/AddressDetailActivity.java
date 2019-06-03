@@ -5,8 +5,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,18 +19,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.app.R;
-import com.app.http.GetPostUtil;
-import com.punuo.sys.app.util.RegexUtils;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
+import com.app.model.PNBaseModel;
+import com.app.request.AddAddressRequest;
+import com.app.request.DeleteAddressRequest;
+import com.app.request.UpdateAddressRequest;
 import com.app.sip.SipInfo;
 import com.app.views.CleanEditText;
 import com.hengyi.wheelpicker.listener.OnCityWheelComfirmListener;
 import com.hengyi.wheelpicker.ppw.CityWheelPickerPopupWindow;
-import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.activity.BaseSwipeBackActivity;
+import com.punuo.sys.app.httplib.HttpManager;
+import com.punuo.sys.app.httplib.RequestListener;
+import com.punuo.sys.app.util.RegexUtils;
 import com.punuo.sys.app.util.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -44,11 +45,11 @@ import butterknife.OnClick;
 import static com.app.sip.SipInfo.addressList;
 
 
-public class UserAddress extends BaseActivity {
+public class AddressDetailActivity extends BaseSwipeBackActivity {
     @Bind(R.id.iv_back1)
     ImageView ivBack1;
     @Bind(R.id.titleset)
-    TextView titleset;
+    TextView titleSet;
     @Bind(R.id.tv_addressSelect)
     TextView tvAddressSelect;
     @Bind(R.id.Rl_address)
@@ -63,11 +64,9 @@ public class UserAddress extends BaseActivity {
     CheckBox box1;
     @Bind(R.id.bt_addressSave)
     Button btAddressSave;
-
-    String response;
     @Bind(R.id.rl_addressDelete)
     RelativeLayout rlAddressDelete;
-    private boolean isdefault;
+    private boolean isDefault;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,22 +80,22 @@ public class UserAddress extends BaseActivity {
             window.setStatusBarColor(getResources().getColor(R.color.white));
         }
         if (SipInfo.isEditor) {
-            titleset.setText("编辑地址");
+            titleSet.setText("编辑地址");
             etUserName.setText(addressList.get(SipInfo.listPosition).userName);
             etUserPhoneNum.setText(addressList.get(SipInfo.listPosition).userPhoneNum);
             etDetailAddress.setText(addressList.get(SipInfo.listPosition).detailAddress);
             tvAddressSelect.setText(addressList.get(SipInfo.listPosition).userAddress);
             if(SipInfo.isDefault==1){
-                isdefault=true;
+                isDefault =true;
             }else if(SipInfo.isDefault==2){
-                isdefault=false;
+                isDefault =false;
             }
-            box1.setChecked(isdefault);
+            box1.setChecked(isDefault);
         } else {
-            titleset.setText("新增地址");
+            titleSet.setText("新增地址");
             rlAddressDelete.setVisibility(View.INVISIBLE);
         }
-        TextPaint tp = titleset.getPaint();
+        TextPaint tp = titleSet.getPaint();
         tp.setFakeBoldText(true);
         box1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -134,19 +133,26 @@ public class UserAddress extends BaseActivity {
             case R.id.et_detailAddress:
                 break;
             case R.id.bt_addressSave:
+                SipInfo.userName = etUserName.getText().toString();
+                SipInfo.userPhoneNum = etUserPhoneNum.getText().toString();
+                SipInfo.userAddress = tvAddressSelect.getText().toString();
+                SipInfo.detailAddress = etDetailAddress.getText().toString();
+                if (!checkInput(SipInfo.userAddress, SipInfo.detailAddress, SipInfo.userName, SipInfo.userPhoneNum)) {
+                    return;
+                }
                 if (SipInfo.isEditor) {
-                    addressUpdate();
+                    updateAddress();
                 } else {
-                    addressSave();
+                    saveAddress();
                 }
                 break;
             case R.id.rl_addressDelete:
-                Dialog dialog=new AlertDialog.Builder(this)
+                Dialog dialog = new AlertDialog.Builder(this)
                         .setMessage("确定要删除该地址吗？")
                         .setPositiveButton("确认", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                addressDelete();
+                                deleteAddress();
                             }
                         })
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -163,90 +169,118 @@ public class UserAddress extends BaseActivity {
         }
     }
 
-    private void addressDelete() {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
+    private DeleteAddressRequest mDeleteAddressRequest;
 
-                    response = GetPostUtil.sendGet1111(Constant.URL_deleteAddress, "id=" + Constant.id +
-                            "&position=" + SipInfo.addressPosition);
-                    if ((response != null) && !(("").equals(response))) {
-                        Log.d("删除地址", response);
-                        JSONObject obj = JSON.parseObject(response);
-                        String msg = obj.getString("msg");
-                        if (msg.equals("success")) {
-                            handler.sendEmptyMessage(0x111);
-                        }
-                    }
-                }
-            }).start();
+    private void deleteAddress() {
+        if (mDeleteAddressRequest != null && !mDeleteAddressRequest.isFinish()) {
+            return;
         }
-
-
-    private void addressUpdate() {
-        SipInfo.userName = etUserName.getText().toString();
-        SipInfo.userPhoneNum = etUserPhoneNum.getText().toString();
-        SipInfo.userAddress = tvAddressSelect.getText().toString();
-        SipInfo.detailAddress = etDetailAddress.getText().toString();
-        if (checkInput(SipInfo.userAddress, SipInfo.detailAddress, SipInfo.userName, SipInfo.userPhoneNum)) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-
-                    response = GetPostUtil.sendGet1111(Constant.URL_updateAddress, "id=" + Constant.id + "&userAddress=" + SipInfo.userAddress
-                            + "&detailAddress=" + SipInfo.detailAddress + "&userName=" + SipInfo.userName + "&userPhoneNum=" +
-                            SipInfo.userPhoneNum + "&position=" + SipInfo.addressPosition+"&isDefault="+SipInfo.isDefault);
-                    if ((response != null) && !(("").equals(response))) {
-                        Log.d("更新地址", response);
-                        JSONObject obj = JSON.parseObject(response);
-                        String msg = obj.getString("msg");
-                        if (msg.equals("success")) {
-                            handler.sendEmptyMessage(0x111);
-                        }
-                    }
-                }
-            }).start();
-        }
-    }
-
-    private void addressSave() {
-        SipInfo.userName = etUserName.getText().toString();
-        SipInfo.userPhoneNum = etUserPhoneNum.getText().toString();
-        SipInfo.userAddress = tvAddressSelect.getText().toString();
-        SipInfo.detailAddress = etDetailAddress.getText().toString();
-        if(checkInput(SipInfo.userAddress, SipInfo.detailAddress, SipInfo.userName, SipInfo.userPhoneNum)){
-        new Thread(new Runnable() {
+        mDeleteAddressRequest = new DeleteAddressRequest();
+        mDeleteAddressRequest.addUrlParam("id", Constant.id);
+        mDeleteAddressRequest.addUrlParam("position", SipInfo.addressPosition);
+        mDeleteAddressRequest.setRequestListener(new RequestListener<PNBaseModel>() {
             @Override
-            public void run() {
-                response = GetPostUtil.sendGet1111(Constant.URl_addAddress, "id=" + Constant.id + "&userAddress=" + SipInfo.userAddress
-                        + "&detailAddress=" + SipInfo.detailAddress + "&userName=" + SipInfo.userName + "&userPhoneNum=" +
-                        SipInfo.userPhoneNum+"&isDefault="+SipInfo.isDefault);
-                if ((response != null) && !(("").equals(response))) {
-                    Log.d("添加地址", response);
-                    JSONObject obj = JSON.parseObject(response);
-                    String msg = obj.getString("msg");
-                    if (msg.equals("success")) {
-                        handler.sendEmptyMessage(0x111);
-                    }
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSuccess(PNBaseModel result) {
+                if (result == null) {
+                    return;
+                }
+                if (result.isSuccess()) {
+                    EventBus.getDefault().post(new MessageEvent("刷新"));
+                    finish();
+                } else {
+                    ToastUtils.showToast("删除失败，请重试");
                 }
             }
-        }).start();
-        }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+        HttpManager.addRequest(mDeleteAddressRequest);
     }
 
-    Handler handler = new Handler() {
-        public void handleMessage(Message message) {
-            super.handleMessage(message);
-            if (message.what == 0x111) {
-                EventBus.getDefault().post(new MessageEvent("刷新"));
-                finish();
-            }
+    private UpdateAddressRequest mUpdateAddressRequest;
+    private void updateAddress() {
+        if (mUpdateAddressRequest != null && !mUpdateAddressRequest.isFinish()) {
+            return;
         }
-    };
+        mUpdateAddressRequest = new UpdateAddressRequest();
+        mUpdateAddressRequest.addUrlParam("id", Constant.id);
+        mUpdateAddressRequest.addUrlParam("userAddress", SipInfo.userAddress);
+        mUpdateAddressRequest.addUrlParam("detailAddress",SipInfo.detailAddress);
+        mUpdateAddressRequest.addUrlParam("userName", SipInfo.userName);
+        mUpdateAddressRequest.addUrlParam("userPhoneNum", SipInfo.userPhoneNum);
+        mUpdateAddressRequest.addUrlParam("position", SipInfo.addressPosition);
+        mUpdateAddressRequest.addUrlParam("isDefault", SipInfo.isDefault);
+        mUpdateAddressRequest.setRequestListener(new RequestListener<PNBaseModel>() {
+            @Override
+            public void onComplete() {
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+            }
+
+            @Override
+            public void onSuccess(PNBaseModel result) {
+                if (result == null) {
+                    return;
+                }
+                if (result.isSuccess()) {
+                    EventBus.getDefault().post(new MessageEvent("刷新"));
+                    finish();
+                } else {
+                    ToastUtils.showToast("更新失败，请重试");
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+        HttpManager.addRequest(mUpdateAddressRequest);
+    }
+    private AddAddressRequest mAddAddressRequest;
+    private void saveAddress() {
+        if (mAddAddressRequest != null && !mAddAddressRequest.isFinish()) {
+            return;
+        }
+        mAddAddressRequest = new AddAddressRequest();
+        mAddAddressRequest.addUrlParam("id", Constant.id);
+        mAddAddressRequest.addUrlParam("userAddress", SipInfo.userAddress);
+        mAddAddressRequest.addUrlParam("detailAddress",SipInfo.detailAddress);
+        mAddAddressRequest.addUrlParam("userName", SipInfo.userName);
+        mAddAddressRequest.addUrlParam("userPhoneNum", SipInfo.userPhoneNum);
+        mAddAddressRequest.addUrlParam("isDefault", SipInfo.isDefault);
+        mAddAddressRequest.setRequestListener(new RequestListener<PNBaseModel>() {
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSuccess(PNBaseModel result) {
+                if (result == null) {
+                    return;
+                }
+                if (result.isSuccess()) {
+                    EventBus.getDefault().post(new MessageEvent("刷新"));
+                    finish();
+                } else {
+                    ToastUtils.showToast("保存失败，请重试");
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+        HttpManager.addRequest(mAddAddressRequest);
     }
 
     private boolean checkInput(String userAddress, String detailAddress, String userName, String userPhoneNum) {

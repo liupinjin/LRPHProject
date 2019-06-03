@@ -126,7 +126,7 @@ public class AddressManagerActivity extends BaseActivity {
         switch (v.getId()) {
             case R.id.btn_newAddress:
                 SipInfo.isEditor = false;
-                startActivity(new Intent(this, UserAddress.class));
+                startActivity(new Intent(this, AddressDetailActivity.class));
                 break;
             case R.id.iv_back1:
                 finish();
@@ -146,7 +146,7 @@ public class AddressManagerActivity extends BaseActivity {
     public void onMessageEvent(MessageEvent event) {
         if (event.getMessage().equals("编辑")) {
             SipInfo.isEditor = true;
-            startActivity(new Intent(this, UserAddress.class));
+            startActivity(new Intent(this, AddressDetailActivity.class));
         } else if (event.getMessage().equals("刷新")) {
             getAddressList();
 //            mAddressItemAdapter.appendData(addressList);
