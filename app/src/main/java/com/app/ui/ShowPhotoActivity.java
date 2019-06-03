@@ -14,7 +14,6 @@ import com.app.ftp.Ftp;
 import com.app.ftp.FtpListener;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;
-import com.app.view.PNLoadingDialog;
 import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.File;
@@ -25,17 +24,16 @@ import butterknife.ButterKnife;
 /**
  * Created by acer on 2016/11/11.
  */
-public class ShowPhoto extends BaseActivity {
+public class ShowPhotoActivity extends BaseActivity {
     @Bind(R.id.photo)
     ImageView photo;
     private String mPhotoPath;
     private int type;
-    private PNLoadingDialog dialog;
-    String ftppath;
+    private String ftpPath;
     private String localPath;
     private String msgid;
     private Handler handler=new Handler();
-    Ftp mFtp;
+    private Ftp mFtp;
 
     private Bitmap currentBitmap=null;
     @Override
@@ -59,9 +57,9 @@ public class ShowPhoto extends BaseActivity {
             case 1:
                 final File file=new File(mPhotoPath);
                 if (file.exists()) {
-                    ftppath = intent.getStringExtra("ftppath");
-                    ftppath = ftppath.replace("/Thumbnail/", "/");
-                    Log.d("111", ftppath);
+                    ftpPath = intent.getStringExtra("ftpPath");
+                    ftpPath = ftpPath.replace("/Thumbnail/", "/");
+                    Log.d("111", ftpPath);
                     msgid = intent.getStringExtra("msgid");
                     localPath = SipInfo.localSdCard+"Files/Camera/Image/";
                     final String localphotoPath = localPath + file.getName();
@@ -93,19 +91,16 @@ public class ShowPhoto extends BaseActivity {
                     if (!new File(localphotoPath).exists()) {
                         currentBitmap=BitmapFactory.decodeFile(mPhotoPath);
                         photo.setImageBitmap(currentBitmap);
-                        dialog = new PNLoadingDialog(this);
-                        dialog.setCanceledOnTouchOutside(false);
-                        dialog.setCancelable(false);
-                        dialog.show();
+                        showLoadingDialog();
                         new Thread() {
                             @Override
                             public void run() {
                                 try {
-                                    mFtp.download(ftppath,localPath);
+                                    mFtp.download(ftpPath,localPath);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 } finally {
-                                    dialog.dismiss();
+                                    dismissLoadingDialog();
                                     handler.post(new Runnable() {
                                         @Override
                                         public void run() {

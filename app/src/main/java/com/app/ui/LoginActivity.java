@@ -58,7 +58,6 @@ import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.sip.SipUser;
 import com.app.tools.PermissionUtils;
-import com.app.view.PNLoadingDialog;
 import com.app.views.CleanEditText;
 import com.punuo.sys.app.activity.BaseActivity;
 import com.punuo.sys.app.httplib.HttpManager;
@@ -111,7 +110,6 @@ public class LoginActivity extends BaseActivity {
     private AlertDialog timeOutDialog;
     //密码错误次数
     private int errorTime = 0;
-    private PNLoadingDialog registering;
     protected CompositeSubscription mCompositeSubscription = new CompositeSubscription();
 
     @Bind(R.id.num_input2)
@@ -238,10 +236,7 @@ public class LoginActivity extends BaseActivity {
                     errorTime = 0;
                 }
                 beforeLogin();
-                registering = new PNLoadingDialog(LoginActivity.this);
-                registering.setCancelable(false);
-                registering.setCanceledOnTouchOutside(false);
-                registering.show();
+                showLoadingDialog();
 
                 new Thread(connecting).start();
             }
@@ -300,16 +295,16 @@ public class LoginActivity extends BaseActivity {
             } finally {
 
                 if (!SipInfo.isAccountExist) {
-                    registering.dismiss();
+                    dismissLoadingDialog();
                     /*账号不存在提示*/
                     handler.post(accountNotExist);
                 } else if (SipInfo.passwordError) {
                     //密码错误提示
-                    registering.dismiss();
+                    dismissLoadingDialog();
                     showDialogTip(errorTime++);
                     lastUserAccount = SipInfo.userAccount;
                 } else if (SipInfo.loginTimeout) {
-                    registering.dismiss();
+                    dismissLoadingDialog();
                     //超时
                     handler.post(timeOut);
                 } else {
@@ -359,14 +354,14 @@ public class LoginActivity extends BaseActivity {
                     getGroupInfo();
                 } else {
                     ToastUtils.showToastShort("获取用户数据失败请重试");
-                    registering.dismiss();
+                    dismissLoadingDialog();
                 }
             }
 
             @Override
             public void onError(Exception e) {
                 ToastUtils.showToastShort("获取用户数据失败请重试");
-                registering.dismiss();
+                dismissLoadingDialog();
             }
         });
         HttpManager.addRequest(mGetUserInfoRequest);
@@ -423,20 +418,20 @@ public class LoginActivity extends BaseActivity {
                                    Constant.nick);
                            LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
                                    Constant.id);
-                           registering.dismiss();
+                           dismissLoadingDialog();
                            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                        }
                    }
                 } else {
                     ToastUtils.showToastShort("获取用户数据失败请重试");
-                    registering.dismiss();
+                    dismissLoadingDialog();
                 }
             }
 
             @Override
             public void onError(Exception e) {
                 ToastUtils.showToastShort("获取用户数据失败请重试");
-                registering.dismiss();
+                dismissLoadingDialog();
             }
         });
         HttpManager.addRequest(mGetAllGroupFromUserRequest);
@@ -486,15 +481,15 @@ public class LoginActivity extends BaseActivity {
                                 Constant.nick);
                         LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
                                 Constant.id);
-                        registering.dismiss();
+                        dismissLoadingDialog();
                         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     } else {
                         ToastUtils.showToastShort("获取用户数据失败请重试");
-                        registering.dismiss();
+                        dismissLoadingDialog();
                     }
                 } else {
                     ToastUtils.showToastShort("获取用户数据失败请重试");
-                    registering.dismiss();
+                    dismissLoadingDialog();
                 }
             }
 
@@ -569,14 +564,14 @@ public class LoginActivity extends BaseActivity {
                     }
                 } else {
                     ToastUtils.showToast("获取用户devid失败请重试");
-                    registering.dismiss();
+                    dismissLoadingDialog();
                 }
             }
 
             @Override
             public void onError(Exception e) {
                 ToastUtils.showToastShort("获取用户devid失败请重试");
-                registering.dismiss();
+                dismissLoadingDialog();
             }
         });
         HttpManager.addRequest(mGetDevIdFromIdRequest);
@@ -616,7 +611,7 @@ public class LoginActivity extends BaseActivity {
                     Log.e(TAG, "设备注册失败!");
                     Looper.prepare();
                     ToastUtils.showToastShort("设备注册失败请重新登录");
-                    registering.dismiss();
+                    dismissLoadingDialog();
                     Looper.loop();
                 }
             }
@@ -720,9 +715,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (registering != null) {
-            registering.dismiss();
-        }
         if(wakeLock!=null){
             wakeLock.release();
             wakeLock=null;

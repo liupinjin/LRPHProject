@@ -1,7 +1,6 @@
 package com.app.ui;
 
 import android.annotation.TargetApi;
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -43,8 +42,8 @@ import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.tools.VersionXmlParse;
-import com.app.view.PNLoadingDialog;
 import com.punuo.sys.app.activity.ActivityCollector;
+import com.punuo.sys.app.fragment.BaseFragment;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -65,7 +64,7 @@ import static android.app.Activity.DEFAULT_KEYS_SEARCH_LOCAL;
  * 菜单
  */
 
-public class MenuFragment extends Fragment {
+public class MenuFragment extends BaseFragment {
     String TAG = getClass().getName();
     @Bind(R.id.userAccount)
     TextView account;
@@ -124,8 +123,7 @@ public class MenuFragment extends Fragment {
     String FtpVersion;
     //用于版本xml解析
     HashMap<String, String> versionHashMap = new HashMap<>();
-    //进度条
-    PNLoadingDialog loading;
+
     //进度条消失类型
     String result;
     //下载进度条
@@ -298,10 +296,7 @@ public class MenuFragment extends Fragment {
                                 break;
                             case UPDATE:
                                 result = "Finished";
-                                loading = new PNLoadingDialog(getActivity());
-                                loading.setCancelable(false);
-                                loading.setCanceledOnTouchOutside(false);
-                                loading.show();
+                                showLoadingDialog();
                                 //初始化FTP
                                 mFtp = new Ftp("101.69.255.132", 21, "ftpall", "123456", Dversion);
                                 //获取当前版本号
@@ -433,7 +428,7 @@ public class MenuFragment extends Fragment {
 
     private void showVersionDialog(String currentVersion, final String FtpVersion, final String result) {
         //取消进度条
-        loading.dismiss();
+        dismissLoadingDialog();
         if (result.equals("Finished")) {
             Log.i(TAG, "当前版本为 " + version + "FTP上版本为 " + FtpVersion);
             if (!currentVersion.equals(FtpVersion)) {

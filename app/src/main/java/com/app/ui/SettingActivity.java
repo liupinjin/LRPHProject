@@ -121,7 +121,7 @@ public class SettingActivity extends BaseActivity {
                 startActivity(new Intent(this, AddressSupervise.class));
                 break;
             case R.id.re_introduction:
-                startActivity(new Intent(this, SoftwareIntruct.class));
+                startActivity(new Intent(this, SoftwareInstructActivity.class));
                 break;
             case R.id.re_buffer:
                 //清除缓存

@@ -9,7 +9,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +38,7 @@ import com.app.video.RtpVideo;
 import com.app.video.SendActivePacket;
 import com.app.video.VideoInfo;
 import com.app.view.CircleImageView;
-import com.app.view.PNLoadingDialog;
+import com.punuo.sys.app.fragment.BaseFragment;
 import com.punuo.sys.app.util.StatusBarUtil;
 import com.punuo.sys.app.util.ToastUtils;
 
@@ -57,16 +56,14 @@ import static com.amap.api.mapcore2d.p.i;
 import static com.app.model.Constant.devid1;
 
 
-public class LaoRenFragment extends Fragment implements View.OnClickListener {
+public class LaoRenFragment extends BaseFragment implements View.OnClickListener {
 
     TextView title;
     private Boolean shan = true;
-    private PNLoadingDialog inviting;
     private Handler handlervideo = new Handler();
     String SdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
     private static final String TAG = "MicroActivity";
     private List<UserList> userList = new ArrayList<UserList>();
-    //    private PNLoadingDialog registering;//圈圈
     public CustomListView listview;
     private CircleImageView alarm;
     private ImageView camera;
@@ -91,7 +88,7 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-    Handler handler = new Handler() {
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 666) {
@@ -101,7 +98,7 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
             }
         }
     };
-    Runnable runnable = new Runnable() {
+    private Runnable runnable = new Runnable() {
         @Override
         public void run() {
             try {
@@ -203,10 +200,7 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
                     SipInfo.sipUser.sendMessage(response);
                     SipInfo.queryResponse = false;
                     SipInfo.inviteResponse = false;
-                    inviting = new PNLoadingDialog(getActivity());
-                    inviting.setCancelable(false);
-                    inviting.setCanceledOnTouchOutside(false);
-                    inviting.show();
+                   showLoadingDialog();
                     new Thread() {
                         @Override
                         public void run() {
@@ -246,7 +240,7 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             } finally {
-                                inviting.dismiss();
+                                dismissLoadingDialog();
                                 if (SipInfo.queryResponse && SipInfo.inviteResponse) {
                                     Log.i("DevAdapter", "视频请求成功");
                                     SipInfo.decoding = true;
@@ -275,7 +269,7 @@ public class LaoRenFragment extends Fragment implements View.OnClickListener {
                         }
                     }.start();
                 }
-//                SipCallMananger.getInstance().callVideoChat(getActivity(),true);
+//                SipCallManager.getInstance().callVideoChat(getActivity(),true);
                 break;
             case R.id.chat:
 //                userList.clear();

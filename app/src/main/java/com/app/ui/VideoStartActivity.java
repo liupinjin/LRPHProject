@@ -6,8 +6,7 @@ import android.util.Log;
 
 import com.app.R;
 import com.app.model.MessageEvent;
-import com.app.tools.SipCallMananger;
-import com.app.view.PNLoadingDialog;
+import com.app.tools.SipCallManager;
 import com.punuo.sys.app.activity.BaseActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -20,15 +19,14 @@ import static com.app.camera.FileOperateUtil.TAG;
  * Created by maojianhui on 2018/7/11.
  */
 
-public class VideoStart extends BaseActivity {
-    private PNLoadingDialog inviting;
+public class VideoStartActivity extends BaseActivity {
     private Handler handlervideo = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         EventBus.getDefault().register(this);  //注册
         super.onCreate(savedInstanceState);
         setContentView(R.layout.videostart);
-        SipCallMananger.getInstance().callVideoChat(this,true);
+        SipCallManager.getInstance().callVideoChat(this,true);
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {

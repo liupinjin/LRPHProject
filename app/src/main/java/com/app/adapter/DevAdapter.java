@@ -1,7 +1,6 @@
 package com.app.adapter;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
@@ -12,6 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.app.R;
 import com.app.model.Device;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
@@ -20,8 +20,7 @@ import com.app.ui.VideoPlay;
 import com.app.video.RtpVideo;
 import com.app.video.SendActivePacket;
 import com.app.video.VideoInfo;
-import com.app.view.PNLoadingDialog;
-import com.app.R;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -40,23 +39,22 @@ import butterknife.ButterKnife;
  */
 
 public class DevAdapter extends BaseAdapter {
-    private Context mContext;
-    private List<Device> list;
-    private PNLoadingDialog inviting;
+    private BaseActivity mActivity;
+    private List<Device> mDeviceList;
     private Handler handler=new Handler();
-    public DevAdapter(Context mContext, List<Device> list) {
-        this.mContext = mContext;
-        this.list = list;
+    public DevAdapter(BaseActivity activity, List<Device> list) {
+        mActivity = activity;
+        mDeviceList = list;
     }
 
     @Override
     public int getCount() {
-        return list.size();
+        return mDeviceList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return list.get(position);
+        return mDeviceList.get(position);
     }
 
     @Override
@@ -68,13 +66,13 @@ public class DevAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         if (convertView==null) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.listfragmentitem, parent,false);
+            convertView = LayoutInflater.from(mActivity).inflate(R.layout.listfragmentitem, parent,false);
             holder=new ViewHolder(convertView);
             convertView.setTag(holder);
         }else {
             holder= (ViewHolder) convertView.getTag();
         }
-        if (list.get(position).isLive()) {
+        if (mDeviceList.get(position).isLive()) {
             holder.devIcon.setImageResource(R.drawable.icon_online);
             holder.check.setVisibility(View.VISIBLE);
             holder.check.setImageResource(R.drawable.btn_play);
@@ -82,7 +80,7 @@ public class DevAdapter extends BaseAdapter {
             holder.devIcon.setImageResource(R.drawable.icon_offline);
             holder.check.setVisibility(View.GONE);
         }
-        holder.devName.setText(list.get(position).getName());
+        holder.devName.setText(mDeviceList.get(position).getName());
         holder.check.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,10 +92,7 @@ public class DevAdapter extends BaseAdapter {
                 SipInfo.toDev = new NameAddress(devName, sipURL);
                 SipInfo.queryResponse = false;
                 SipInfo.inviteResponse = false;
-                inviting = new PNLoadingDialog(mContext);
-                inviting.setCancelable(false);
-                inviting.setCanceledOnTouchOutside(false);
-                inviting.show();
+                mActivity.showLoadingDialog();
                 new Thread(){
                     @Override
                     public void run() {
@@ -137,7 +132,7 @@ public class DevAdapter extends BaseAdapter {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }finally {
-                            inviting.dismiss();
+                            mActivity.dismissLoadingDialog();
                             if (SipInfo.queryResponse && SipInfo.inviteResponse) {
                                 Log.i("DevAdapter", "视频请求成功");
                                 SipInfo.decoding = true;
@@ -145,7 +140,7 @@ public class DevAdapter extends BaseAdapter {
                                     VideoInfo.rtpVideo = new RtpVideo(VideoInfo.rtpIp, VideoInfo.rtpPort);
                                     VideoInfo.sendActivePacket = new SendActivePacket();
                                     VideoInfo.sendActivePacket.startThread();
-                                    mContext.startActivity(new Intent(mContext, VideoPlay.class));
+                                    mActivity.startActivity(new Intent(mActivity, VideoPlay.class));
                                 } catch (SocketException e) {
                                     e.printStackTrace();
                                 }
@@ -154,7 +149,7 @@ public class DevAdapter extends BaseAdapter {
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        new AlertDialog.Builder(mContext)
+                                        new AlertDialog.Builder(mActivity)
                                                 .setTitle("视频请求失败！")
                                                 .setMessage("请重新尝试")
                                                 .setPositiveButton("确定", null).show();

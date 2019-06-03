@@ -99,7 +99,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".ui.VideoStart"
+            android:name=".ui.VideoStartActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.LoginActivity"
@@ -186,7 +186,7 @@
             android:name=".ui.SmallVideoPlay"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.ShowPhoto"
+            android:name=".ui.ShowPhotoActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.ShowLocation"
@@ -236,7 +236,7 @@
         </receiver>
 
         <activity
-            android:name=".ui.SoftwareIntruct"
+            android:name=".ui.SoftwareInstructActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.SettingActivity"
             android:screenOrientation="portrait"/>

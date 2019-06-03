@@ -16,7 +16,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextPaint;
@@ -51,8 +50,8 @@ import com.app.ui.SettingActivity;
 import com.app.ui.UploadPictureActivity;
 import com.app.videoAndPictureUpload.SelectVideoActivity;
 import com.app.view.CircleImageView;
-import com.app.view.PNLoadingDialog;
 import com.punuo.sys.app.activity.ActivityCollector;
+import com.punuo.sys.app.fragment.BaseFragment;
 import com.punuo.sys.app.util.StatusBarUtil;
 import com.punuo.sys.app.util.ToastUtils;
 
@@ -64,13 +63,13 @@ import java.util.HashMap;
 import static com.app.camera.FileOperateUtil.TAG;
 import static com.app.sip.SipInfo.sipUser;
 
-public class PersonFragment extends Fragment implements View.OnClickListener{
+public class PersonFragment extends BaseFragment implements View.OnClickListener {
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE };
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-private CircleImageView iv_avatar;
+    private CircleImageView iv_avatar;
     private TextView tv_name;
     private View mStatusBar;
     TextView tv_fxid;
@@ -83,8 +82,6 @@ private CircleImageView iv_avatar;
     String FtpVersion;
     //用于版本xml解析
     HashMap<String, String> versionHashMap = new HashMap<>();
-    //进度条
-    PNLoadingDialog loading;
     //进度条消失类型
     String result;
     //下载进度条
@@ -96,21 +93,21 @@ private CircleImageView iv_avatar;
     private String avatar = "";
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_person, container, false);
 
     }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        RelativeLayout lay =(RelativeLayout) getView().findViewById(
+        RelativeLayout lay = (RelativeLayout) getView().findViewById(
                 R.id.main1);
-        title=(TextView)lay.findViewById(R.id.title);
+        title = (TextView) lay.findViewById(R.id.title);
         title.setText("个人中心");
-        TextPaint tp=title.getPaint();
+        TextPaint tp = title.getPaint();
         tp.setFakeBoldText(true);
         SdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
         apkPath = SdCard + "/fanxin/download/apk/";
@@ -144,15 +141,15 @@ private CircleImageView iv_avatar;
                 R.id.re_adddev);
         RelativeLayout re_servicecall = (RelativeLayout) getView().findViewById(
                 R.id.re_servicecall);
-        RelativeLayout re_order=(RelativeLayout)getView().findViewById(
+        RelativeLayout re_order = (RelativeLayout) getView().findViewById(
                 R.id.re_order);
-        RelativeLayout re_coupon=(RelativeLayout)getView().findViewById(
+        RelativeLayout re_coupon = (RelativeLayout) getView().findViewById(
                 R.id.re_coupon);
-        RelativeLayout re_shoppingcart=(RelativeLayout)getView().findViewById(
+        RelativeLayout re_shoppingcart = (RelativeLayout) getView().findViewById(
                 R.id.re_shoppingcart);
-        RelativeLayout re_collection=(RelativeLayout)getView().findViewById(
+        RelativeLayout re_collection = (RelativeLayout) getView().findViewById(
                 R.id.re_collection);
-        RelativeLayout re_settings=(RelativeLayout)getView().findViewById(
+        RelativeLayout re_settings = (RelativeLayout) getView().findViewById(
                 R.id.re_settings);
         re_xaingce.setOnClickListener(this);
         re_addev.setOnClickListener(this);
@@ -181,6 +178,7 @@ private CircleImageView iv_avatar;
                     REQUEST_EXTERNAL_STORAGE);
         }
     }
+
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.re_xiangce:
@@ -192,7 +190,7 @@ private CircleImageView iv_avatar;
                  * @param activity
                  */
                 ToastUtils.showToastShort("该功能即将上线");
-            showPhotoDialog();
+                showPhotoDialog();
                 break;
 //            case R.id.re_psd:
 //                startActivity(new Intent(getActivity(), ChangePasswordActivity.class));
@@ -207,7 +205,7 @@ private CircleImageView iv_avatar;
                 ToastUtils.showToastShort("该功能即将上线");
                 break;
             case R.id.re_coupon:
-                startActivity(new Intent(getActivity(),MyCouponActivity.class));
+                startActivity(new Intent(getActivity(), MyCouponActivity.class));
                 break;
             case R.id.re_shoppingcart:
                 ToastUtils.showToastShort("该功能即将上线");
@@ -216,18 +214,19 @@ private CircleImageView iv_avatar;
                 ToastUtils.showToastShort("该功能即将上线");
                 break;
 //            case R.id.re_instruction:
-//                startActivity(new Intent(getActivity(),SoftwareIntruct.class));
+//                startActivity(new Intent(getActivity(),SoftwareInstructActivity.class));
 //                break;
             case R.id.re_settings:
                 startActivity(new Intent(getActivity(), SettingActivity.class));
                 break;
         }
     }
+
     @SuppressLint("NewApi")
     private void requestReadExternalPermission() {
 
         if (ContextCompat.checkSelfPermission(getContext()
-                ,Manifest.permission.READ_EXTERNAL_STORAGE)
+                , Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "READ PermissionUtils IS NOT granted...");
 
@@ -293,7 +292,7 @@ private CircleImageView iv_avatar;
             @SuppressLint("SdCardPath")
             public void onClick(View v) {
 
-                startActivity(new Intent(getActivity(),UploadPictureActivity.class));
+                startActivity(new Intent(getActivity(), UploadPictureActivity.class));
                 dlg.cancel();
             }
         });
@@ -318,8 +317,9 @@ private CircleImageView iv_avatar;
         dlg.show();
 
     }
+
     private void showUserAvatar(ImageView iamgeView, String avatar) {
-        final String url_avatar = Constant.URL_Avatar +Constant.id+"/"+ avatar;
+        final String url_avatar = Constant.URL_Avatar + Constant.id + "/" + avatar;
         //iamgeView.setTag(url_avatar);
         if (avatar != null && !avatar.equals("")) {
             Bitmap bitmap = avatarLoader.loadImage(iamgeView, url_avatar,
@@ -329,7 +329,7 @@ private CircleImageView iv_avatar;
                         public void onImageDownloaded(ImageView imageView,
                                                       Bitmap bitmap) {
                             //if (imageView.getTag() == url_avatar) {
-                                imageView.setImageBitmap(bitmap);
+                            imageView.setImageBitmap(bitmap);
 
                             //}
                         }
@@ -346,17 +346,17 @@ private CircleImageView iv_avatar;
         super.onResume();
         String vatar_temp = LocalUserInfo.getInstance(getActivity())
                 .getUserInfo("avatar");
-        if (!vatar_temp.equals(Constant.avatar)&&vatar_temp!=null&&!vatar_temp.equals("")) {
+        if (!vatar_temp.equals(Constant.avatar) && vatar_temp != null && !vatar_temp.equals("")) {
             showUserAvatar(iv_avatar, vatar_temp);
-        }else {
-            showUserAvatar(iv_avatar,Constant.avatar);
+        } else {
+            showUserAvatar(iv_avatar, Constant.avatar);
         }
         String nick_temp = LocalUserInfo.getInstance(getActivity())
                 .getUserInfo("nick");
-        if (!nick_temp.equals(Constant.nick)&&nick_temp!=null&&!nick_temp.equals("")) {
-            tv_name.setText("昵称："+nick_temp);
-        }else {
-            tv_name.setText("昵称："+Constant.nick);
+        if (!nick_temp.equals(Constant.nick) && nick_temp != null && !nick_temp.equals("")) {
+            tv_name.setText("昵称：" + nick_temp);
+        } else {
+            tv_name.setText("昵称：" + Constant.nick);
         }
         tv_fxid.setText("手机号：  " + SipInfo.userAccount);
     }
@@ -443,7 +443,6 @@ private CircleImageView iv_avatar;
 
     private void showVersionDialog(String currentVersion, final String FtpVersion, final String result) {
         //取消进度条
-        loading.dismiss();
         if (result.equals("Finished")) {
             Log.i(TAG, "当前版本为 " + version + "FTP上版本为 " + FtpVersion);
             if (!currentVersion.equals(FtpVersion)) {
@@ -475,7 +474,7 @@ private CircleImageView iv_avatar;
     Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            Log.d(TAG, "handleMessage: "+msg.what);
+            Log.d(TAG, "handleMessage: " + msg.what);
             switch (msg.what) {
                 case 0x0001:
                     AlertDialog dialog = new AlertDialog.Builder(getActivity())
@@ -512,12 +511,12 @@ private CircleImageView iv_avatar;
                     break;
                 case 0x0002:
                     //apk文件路径
-                    Log.d(TAG, "handleMessage: "+msg.what);
-                    String localApkPath = apkPath + versionHashMap.get("name")+".apk";
-                    Log.d(TAG, "handleMessage: "+localApkPath);
+                    Log.d(TAG, "handleMessage: " + msg.what);
+                    String localApkPath = apkPath + versionHashMap.get("name") + ".apk";
+                    Log.d(TAG, "handleMessage: " + localApkPath);
                     File file = new File(localApkPath);
                     if (file.exists()) {
-                        Log.d(TAG, "handleMessage: "+localApkPath);
+                        Log.d(TAG, "handleMessage: " + localApkPath);
                         Intent intent = new Intent();
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         //设置intent的Action属性

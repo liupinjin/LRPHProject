@@ -31,7 +31,6 @@ import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.tools.VersionXmlParse;
-import com.app.view.PNLoadingDialog;
 import com.punuo.sys.app.activity.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
 
@@ -47,7 +46,7 @@ import butterknife.OnClick;
 import static com.app.camera.FileOperateUtil.TAG;
 import static com.app.sip.SipInfo.sipUser;
 
-public class SoftwareIntruct extends BaseActivity {
+public class SoftwareInstructActivity extends BaseActivity {
 
 
     @Bind(R.id.tv_version)
@@ -56,28 +55,25 @@ public class SoftwareIntruct extends BaseActivity {
     TextView tvIntroduct;
     @Bind(R.id.tv_update)
     TextView tvUpdate;
-
-    //手机内存卡路径
-    String SdCard;
-    //当前版本
-    String version;
-    //FTP上的版本
-    String FtpVersion;
-    //用于版本xml解析
-    HashMap<String, String> versionHashMap = new HashMap<>();
-
-    //进度条消失类型
-    String result;
-    //进度条
-    PNLoadingDialog loading;
-    //下载进度条
-    ProgressDialog downloadDialog;
-    String apkPath;
     @Bind(R.id.iv_back1)
     ImageView ivBack1;
     @Bind(R.id.titleset)
     TextView titleset;
 
+    //手机内存卡路径
+    private String SdCard;
+    //当前版本
+    private String version;
+    //FTP上的版本
+    private String FtpVersion;
+    //用于版本xml解析
+    private HashMap<String, String> versionHashMap = new HashMap<>();
+
+    //进度条消失类型
+    private String result;
+    //下载进度条
+    private ProgressDialog downloadDialog;
+    private String apkPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +85,7 @@ public class SoftwareIntruct extends BaseActivity {
         SdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
         apkPath = SdCard + "/fanxin/download/apk/";
         titleset.setText("关于");
-        TextPaint tp=titleset.getPaint();
+        TextPaint tp = titleset.getPaint();
         tp.setFakeBoldText(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
             Window window = getWindow();
@@ -99,26 +95,15 @@ public class SoftwareIntruct extends BaseActivity {
 
     }
 
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void onMessageEvent(MessageEvent event) {
-//        if(event.getMessage().equals("更新")) {
-//            Log.i(TAG, "111message is " + event.getMessage());
-//            // 更新界面
-//        }
-//    }
-
-    @OnClick({R.id.tv_version, R.id.tv_introduct, R.id.tv_update,R.id.iv_back1})
+    @OnClick({R.id.tv_version, R.id.tv_introduct, R.id.tv_update, R.id.iv_back1})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_introduct:
-                Toast.makeText(this,"该功能即将上线",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "该功能即将上线", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.tv_update:
                 result = "Finished";
-                loading = new PNLoadingDialog(this);
-                loading.setCancelable(false);
-                loading.setCanceledOnTouchOutside(false);
-                loading.show();
+                showLoadingDialog();
                 //初始化FTP
                 mFtp = new Ftp("101.69.255.132", 21, "ftpall", "123456", Dversion);
                 //获取当前版本号
@@ -224,7 +209,7 @@ public class SoftwareIntruct extends BaseActivity {
 
     private void showVersionDialog(String currentVersion, final String FtpVersion, final String result) {
         //取消进度条
-        loading.dismiss();
+        dismissLoadingDialog();
         if (result.equals("Finished")) {
             Log.i(TAG, "当前版本为 " + version + "FTP上版本为 " + FtpVersion);
             if (!currentVersion.equals(FtpVersion)) {
@@ -237,7 +222,7 @@ public class SoftwareIntruct extends BaseActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        AlertDialog dialog = new AlertDialog.Builder(SoftwareIntruct.this)
+                        AlertDialog dialog = new AlertDialog.Builder(SoftwareInstructActivity.this)
                                 .setTitle("当前为最新版本")
                                 .setPositiveButton("确定", null)
                                 .create();
@@ -259,13 +244,13 @@ public class SoftwareIntruct extends BaseActivity {
             Log.d(TAG, "handleMessage: " + msg.what);
             switch (msg.what) {
                 case 0x0001:
-                    AlertDialog dialog = new AlertDialog.Builder(SoftwareIntruct.this)
+                    AlertDialog dialog = new AlertDialog.Builder(SoftwareInstructActivity.this)
                             .setTitle("有新版本")
                             .setMessage("当前版本为" + version + ",新版本为" + FtpVersion)
                             .setPositiveButton("下载并安装", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    downloadDialog = new ProgressDialog(SoftwareIntruct.this);
+                                    downloadDialog = new ProgressDialog(SoftwareInstructActivity.this);
                                     downloadDialog.setTitle("下载进度");
                                     downloadDialog.setMessage("已经下载了");
                                     downloadDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -293,58 +278,10 @@ public class SoftwareIntruct extends BaseActivity {
                     break;
                 case 0x0002:
                     install(getApplicationContext());
-//                    //apk文件路径
-//                    Log.d(TAG, "handleMessage: " + msg.what);
-//                    String localApkPath = apkPath + versionHashMap.get("name") + ".apk";
-//                    Log.d(TAG, "handleMessage: " + localApkPath);
-//                    File file = new File(localApkPath);
-//                    Uri apkUri;
-//                    if (file.exists()) {
-////                        Log.d(TAG, "handleMessage: " + localApkPath);
-////                        Intent intent = new Intent();
-////                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-////                        //设置intent的Action属性
-////                        intent.setAction(Intent.ACTION_VIEW);
-////                        //设置intent的data和Type属性。
-////                        intent.setDataAndType(Uri.fromFile(file),
-////                                "application/vnd.android.package-archive");
-////                        //注销
-////                        sipUser.sendMessage(SipMessageFactory.createNotifyRequest(sipUser, SipInfo.user_to,
-////                                SipInfo.user_from, BodyFactory.createLogoutBody()));
-//////                        SipInfo.sipDev.sendMessage(SipMessageFactory.createNotifyRequest(SipInfo.sipDev, SipInfo.dev_to,
-//////                                SipInfo.dev_from, BodyFactory.createLogoutBody()));
-////                        //界面回到登录状态
-////                        ActivityCollector.finishToFirstView();
-////                        //跳转到安装界面
-////                        startActivity(intent);
-//                        Intent intent = new Intent(Intent.ACTION_VIEW);
-//                        // 由于没有在Activity环境下启动Activity,设置下面的标签
-//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        if(Build.VERSION.SDK_INT<= Build.VERSION_CODES.M){
-//                            apkUri = Uri.fromFile(file);
-//                        }else {
-//                            apkUri = FileProvider.getUriForFile(this, ProviderUtil.getFileProviderName(this), file);
-//                        }
-//                        intent.setDataAndType(Uri.fromFile(file),
-//                                "application/vnd.android.package-archive");
-////                        if(Build.VERSION.SDK_INT>=24) { //判读版本是否在7.0以上
-////                            //参数1 上下文, 参数2 Provider主机地址 和配置文件中保持一致   参数3  共享的文件
-////                            Uri apkUri =
-////                                    FileProvider.getUriForFile(getApplicationContext(), "${applicationId}.provider", file);
-////                            //添加这一句表示对目标应用临时授权该Uri所代表的文件
-////                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-////                            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-////                        }else{
-////                            intent.setDataAndType(Uri.fromFile(file),
-////                                    "application/vnd.android.package-archive");
-////                        }
-//                        getApplicationContext().startActivity(intent);
-                        sipUser.sendMessage(SipMessageFactory.createNotifyRequest(sipUser, SipInfo.user_to,
-                                SipInfo.user_from, BodyFactory.createLogoutBody()));
-//                        SipInfo.sipDev.sendMessage(SipMessageFactory.createNotifyRequest(SipInfo.sipDev, SipInfo.dev_to,
-//                                SipInfo.dev_from, BodyFactory.createLogoutBody()));
-                        //界面回到登录状态
-                        ActivityCollector.finishToFirstView();
+                    sipUser.sendMessage(SipMessageFactory.createNotifyRequest(sipUser, SipInfo.user_to,
+                            SipInfo.user_from, BodyFactory.createLogoutBody()));
+                    //界面回到登录状态
+                    ActivityCollector.finishToFirstView();
 //                    }
                     break;
             }
@@ -356,7 +293,7 @@ public class SoftwareIntruct extends BaseActivity {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(SoftwareIntruct.this, message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(SoftwareInstructActivity.this, message, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -364,27 +301,26 @@ public class SoftwareIntruct extends BaseActivity {
     /**
      * 通过隐式意图调用系统安装程序安装APK
      */
-    public  void install(Context context) {
+    public void install(Context context) {
         String localApkPath = apkPath + versionHashMap.get("name") + ".apk";
         Log.d(TAG, "handleMessage: " + localApkPath);
         File file = new File(localApkPath);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         // 由于没有在Activity环境下启动Activity,设置下面的标签
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if(Build.VERSION.SDK_INT>=24) { //判读版本是否在7.0以上
+        if (Build.VERSION.SDK_INT >= 24) { //判读版本是否在7.0以上
             //参数1 上下文, 参数2 Provider主机地址 和配置文件中保持一致   参数3  共享的文件
             Uri apkUri =
                     FileProvider.getUriForFile(context, "com.alex.demo.FileProvider", file);
             //添加这一句表示对目标应用临时授权该Uri所代表的文件
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-        }else{
+        } else {
             intent.setDataAndType(Uri.fromFile(file),
                     "application/vnd.android.package-archive");
         }
         context.startActivity(intent);
     }
-
 
 
 }
