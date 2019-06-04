@@ -192,7 +192,7 @@ public class LaoRenFragment extends BaseFragment implements View.OnClickListener
                     SipInfo.sipUser.sendMessage(response);
                     SipInfo.queryResponse = false;
                     SipInfo.inviteResponse = false;
-                   showLoadingDialog();
+                    showLoadingDialog();
                     new Thread() {
                         @Override
                         public void run() {
@@ -232,7 +232,12 @@ public class LaoRenFragment extends BaseFragment implements View.OnClickListener
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             } finally {
-                                dismissLoadingDialog();
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dismissLoadingDialog();
+                                    }
+                                });
                                 if (SipInfo.queryResponse && SipInfo.inviteResponse) {
                                     Log.i("DevAdapter", "视频请求成功");
                                     SipInfo.decoding = true;

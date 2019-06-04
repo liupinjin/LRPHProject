@@ -47,6 +47,8 @@ public class FamilyCircleActivity extends BaseSwipeBackActivity implements MyLis
     TextView titleset;
     @Bind(R.id.iv_fatie)
     ImageView ivFatie;
+//    @Bind(R.id.pull_to_refresh)
+//    PullToRefreshRecyclerView mPullToRefreshRecyclerView;
 
     TextView title;
 
@@ -144,6 +146,13 @@ public class FamilyCircleActivity extends BaseSwipeBackActivity implements MyLis
     }
 
     private void init() {
+//        mPullToRefreshRecyclerView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<RecyclerView>() {
+//            @Override
+//            public void onRefresh(PullToRefreshBase<RecyclerView> refreshView) {
+//                refresh();
+//            }
+//        });
+//        RecyclerView recyclerView = mPullToRefreshRecyclerView.getRefreshableView();
         listview = (CustomListView) findViewById(R.id.list);
         listview.setVerticalScrollBarEnabled(false);
         listview.setDivider(null);
