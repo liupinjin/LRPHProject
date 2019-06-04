@@ -42,7 +42,7 @@ import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.tools.VersionXmlParse;
-import com.app.ui.FamilyCircle;
+import com.app.ui.FamilyCircleActivity;
 import com.app.ui.MyCouponActivity;
 import com.app.ui.SaomaActivity;
 import com.app.ui.ServiceCallSet;
@@ -120,7 +120,7 @@ public class PersonFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getActivity(),
-                        FamilyCircle.class));
+                        FamilyCircleActivity.class));
             }
 
         });

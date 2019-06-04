@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.app.R;
-import com.app.ui.FamilyCircle;
+import com.app.ui.FamilyCircleActivity;
 import com.app.ui.message.SystemNotify;
 import com.app.view.CircleImageView;
 import com.punuo.sys.app.util.StatusBarUtil;
@@ -76,10 +76,10 @@ public class MessageFragment extends Fragment {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rl_huifu:
-                startActivity(new Intent(getActivity(), FamilyCircle.class));
+                startActivity(new Intent(getActivity(), FamilyCircleActivity.class));
                 break;
             case R.id.rl_dianzan:
-                startActivity(new Intent(getActivity(), FamilyCircle.class));
+                startActivity(new Intent(getActivity(), FamilyCircleActivity.class));
                 break;
             case R.id.rl_systemNotify:
                 startActivity(new Intent(getActivity(), SystemNotify.class));

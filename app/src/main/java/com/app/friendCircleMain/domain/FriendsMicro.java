@@ -2,21 +2,21 @@ package com.app.friendCircleMain.domain;
 
 public class FriendsMicro {
 
-//	private FirendMicroList friendPager;
+//	private FriendMicroList friendPager;
 //	private String error;
 //	private String tip;
-	private FirendMicroList postList;
-	public FirendMicroList getPostList(){
+	private FriendMicroList postList;
+	public FriendMicroList getPostList(){
 		return postList;
 	}
 
-	public void setPostList(FirendMicroList postList) {
+	public void setPostList(FriendMicroList postList) {
 		this.postList = postList;
 	}
-//	public FirendMicroList getFriendPager() {
+//	public FriendMicroList getFriendPager() {
 //		return friendPager;
 //	}
-//	public void setFriendPager(FirendMicroList friendPager) {
+//	public void setFriendPager(FriendMicroList friendPager) {
 //		this.friendPager = friendPager;
 //	}
 //	public String getError() {

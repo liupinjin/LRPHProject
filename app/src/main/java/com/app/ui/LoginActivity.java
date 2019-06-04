@@ -38,7 +38,6 @@ import com.app.db.DatabaseInfo;
 import com.app.db.MyDatabaseHelper;
 import com.app.db.SQLiteManager;
 import com.app.friendCircleMain.domain.Alldevid;
-import com.app.friendCircleMain.domain.FriendsMicro;
 import com.app.friendCircleMain.domain.Group;
 import com.app.friendCircleMain.domain.UserFromGroup;
 import com.app.friendCircleMain.domain.UserList;
@@ -49,7 +48,6 @@ import com.app.model.PNUserInfo;
 import com.app.request.GetAllGroupFromUserRequest;
 import com.app.request.GetAllUserFromGroupRequest;
 import com.app.request.GetDevIdFromIdRequest;
-import com.app.request.GetPostListFromGroupRequest;
 import com.app.request.GetUserInfoRequest;
 import com.app.sip.KeepAlive;
 import com.app.sip.SipDev;
@@ -460,8 +458,6 @@ public class LoginActivity extends BaseActivity {
                             friend.setAvatar(userList.getAvatar());
                             SipInfo.friends.add(friend);
                         }
-                        //建议不在这里请求
-                        getPostList();
 
                         GroupInfo.groupNum = "7000";
 //                        String peer = peerElement.getFirstChild().getNodeValue();
@@ -494,35 +490,6 @@ public class LoginActivity extends BaseActivity {
             }
         });
         HttpManager.addRequest(mGetAllUserFromGroupRequest);
-    }
-
-    private GetPostListFromGroupRequest mGetPostListFromGroupRequest;
-
-    private void getPostList() {
-        if (mGetPostListFromGroupRequest != null && !mGetPostListFromGroupRequest.isFinish()) {
-            return;
-        }
-        mGetPostListFromGroupRequest = new GetPostListFromGroupRequest();
-        mGetPostListFromGroupRequest.addUrlParam("id", Constant.id);
-        mGetPostListFromGroupRequest.addUrlParam("currentPage", 1);
-        mGetPostListFromGroupRequest.addUrlParam("groupid", Constant.groupid);
-        mGetPostListFromGroupRequest.setRequestListener(new RequestListener<FriendsMicro>() {
-            @Override
-            public void onComplete() {
-
-            }
-
-            @Override
-            public void onSuccess(FriendsMicro result) {
-
-            }
-
-            @Override
-            public void onError(Exception e) {
-
-            }
-        });
-        HttpManager.addRequest(mGetPostListFromGroupRequest);
     }
 
     private GetDevIdFromIdRequest mGetDevIdFromIdRequest;

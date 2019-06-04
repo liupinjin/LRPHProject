@@ -23,7 +23,7 @@ import com.app.model.MessageEvent;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.ui.FamilyCircle;
+import com.app.ui.FamilyCircleActivity;
 import com.app.ui.FriendCallActivity;
 import com.app.ui.VideoDial;
 import com.app.ui.VideoPlay;
@@ -164,7 +164,7 @@ public class LaoRenFragment extends BaseFragment implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_camera:
-                startActivity(new Intent(getActivity(), FamilyCircle.class));
+                startActivity(new Intent(getActivity(), FamilyCircleActivity.class));
                 break;
             case R.id.browse:
                 if ((devid1 == null) || ("".equals(devid1))) {
