@@ -1,13 +1,8 @@
 package com.app.ui;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -15,17 +10,17 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.app.LocalUserInfo;
 import com.app.R;
-import com.app.http.GetPostUtil;
-import com.app.model.Constant;
+import com.app.model.PNBaseModel;
+import com.app.request.UpdateNickRequest;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.views.CleanEditText;
 import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.httplib.HttpManager;
+import com.punuo.sys.app.httplib.RequestListener;
 import com.punuo.sys.app.util.ToastUtils;
 
 import org.zoolu.sip.address.NameAddress;
@@ -35,8 +30,6 @@ import static com.app.sip.SipInfo.devName;
 
 
 public class UpdateNickActivity extends BaseActivity {
-    String response;
-    ProgressDialog dialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,7 +56,7 @@ public class UpdateNickActivity extends BaseActivity {
                 if (nick.equals(newNick) || newNick.equals("") || newNick.equals("0")) {
                     return;
                 }
-                updateIvnServer(newNick);
+                updateNick(newNick);
             }
 
         });
@@ -72,76 +65,47 @@ public class UpdateNickActivity extends BaseActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(getResources().getColor(R.color.image_bar));
         }
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            Window window = getWindow();
-//            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-//                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-//            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION  //该参数指布局能延伸到navigationbar，我们场景中不应加这个参数
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-//            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//            window.setStatusBarColor(Color.TRANSPARENT);
-//            window.setNavigationBarColor(Color.TRANSPARENT); //设置navigationbar颜色为透明
-//        }
-
-
     }
-
-    Handler myhandle = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg.what == 1) {
-                dialog.dismiss();
-                finish();
-            }else if(msg.what==2){
-                dialog.dismiss();
-            }
+    private UpdateNickRequest mUpdateNickRequest;
+    private void updateNick(final String newNick) {
+        if (mUpdateNickRequest != null && !mUpdateNickRequest.isFinish()) {
+            return;
         }
-    };
-    private void updateIvnServer(final String newNick) {
-        dialog = new ProgressDialog(UpdateNickActivity.this);
-        dialog.setMessage("正在更新...");
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.show();
-        new Thread() {
+        showLoadingDialog("正在更新...");
+        mUpdateNickRequest = new UpdateNickRequest();
+        mUpdateNickRequest.addUrlParam("userid", SipInfo.userId);
+        mUpdateNickRequest.addUrlParam("name", newNick);
+        mUpdateNickRequest.setRequestListener(new RequestListener<PNBaseModel>() {
             @Override
-            public void run() {
-                response = GetPostUtil.sendGet1111(Constant.URL_UPDATE_Nick, "userid=" + SipInfo.userId +
-                        "&" + "name=" + newNick);
+            public void onComplete() {
+                dismissLoadingDialog();
+            }
 
-                Log.i("jonsresponse", response+"");
-                if (null!=response&&!"".equals(response)) {
-                    JSONObject obj = JSON.parseObject(response);
-
-                    String msg = obj.getString("msg");
-                    if (msg.equals("fail")) {
-                        ToastUtils.showToast(msg);
-                        myhandle.sendEmptyMessage(2);
-                    } else if (msg.equals("success")) {
-                        Looper.prepare();
-                        ToastUtils.showToast( msg);
-                        LocalUserInfo.getInstance(UpdateNickActivity.this).setUserInfo("nick", newNick);
-                        myhandle.sendEmptyMessage(1);
-
-                        //通知平板更新昵称
-                        String devId = SipInfo.paddevId;
-                        SipURL sipURL = new SipURL(devId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
-                        SipInfo.toDev = new NameAddress(devName, sipURL);
-                        org.zoolu.sip.message.Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
-                                SipInfo.user_from, BodyFactory.createListUpdate("addsuccess"));
-                        SipInfo.sipUser.sendMessage(query);
-                        Looper.loop();
-                    }
-                }else {
-                    myhandle.sendEmptyMessage(2);
+            @Override
+            public void onSuccess(PNBaseModel result) {
+                if (result == null) {
+                    return;
+                }
+                if (result.isSuccess()) {
+                    ToastUtils.showToast("更新成功");
+                    LocalUserInfo.getInstance(UpdateNickActivity.this).setUserInfo("nick", newNick);
+                    //通知平板更新昵称
+                    String devId = SipInfo.paddevId;
+                    SipURL sipURL = new SipURL(devId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
+                    SipInfo.toDev = new NameAddress(devName, sipURL);
+                    org.zoolu.sip.message.Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
+                            SipInfo.user_from, BodyFactory.createListUpdate("addsuccess"));
+                    SipInfo.sipUser.sendMessage(query);
+                    finish();
                 }
             }
-        }.start();
-    }
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+        HttpManager.addRequest(mUpdateNickRequest);
     }
 }
 

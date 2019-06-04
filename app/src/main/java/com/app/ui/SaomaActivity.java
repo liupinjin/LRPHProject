@@ -121,7 +121,7 @@ public class SaomaActivity extends BaseActivity implements View.OnClickListener 
 
         if ((devid1 != null) && !("".equals(devid1))){
             finish();
-         startActivity(new Intent(this,DevBindSuccess.class));
+         startActivity(new Intent(this, DevBindSuccessActivity.class));
         }
         // Check if we have write PermissionUtils
         int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
