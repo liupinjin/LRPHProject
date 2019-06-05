@@ -246,7 +246,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.NumberBind"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.DevBindSuccess"
+        <activity android:name=".ui.DevBindSuccessActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.SaomaActivity"
             android:screenOrientation="portrait"/>
@@ -258,7 +258,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.SetNewPasswordActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.FamilyCircle"
+        <activity android:name=".ui.FamilyCircleActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.SplashActivity"
             android:screenOrientation="portrait">

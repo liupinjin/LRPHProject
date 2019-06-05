@@ -81,7 +81,12 @@ public class SipCallManager {
                 SipInfo.inviteResponse = false;
 
                 if (mContext instanceof BaseActivity) {
-                    ((BaseActivity) mContext).showLoadingDialog();
+                    ((BaseActivity) mContext).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((BaseActivity) mContext).dismissLoadingDialog();
+                        }
+                    });
                 }
 
                 new Thread() {
@@ -140,7 +145,12 @@ public class SipCallManager {
                             e.printStackTrace();
                         } finally {
                             if (mContext instanceof BaseActivity) {
-                                ((BaseActivity) mContext).dismissLoadingDialog();
+                                ((BaseActivity) mContext).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ((BaseActivity) mContext).dismissLoadingDialog();
+                                    }
+                                });
                             }
                             if (SipInfo.queryResponse && SipInfo.inviteResponse && (!isIntiative || (isIntiative && !SipInfo.isWaitingFeedback))) {
                                 Log.i("echo_tag", "视频请求成功");

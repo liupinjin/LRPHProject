@@ -2,7 +2,7 @@ package com.app.friendCircleMain.domain;
 
 import java.util.List;
 
-public class FirendMicroList extends MyBaseBean {
+public class FriendMicroList extends MyBaseBean {
     private String total;
     private String per_page;
     private String current_page;

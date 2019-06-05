@@ -45,7 +45,6 @@ public class VideoDial extends BaseActivity implements View.OnClickListener{
 //    public static Activity activity_VideoDial=null;
 
     private String TAG;
-    private ProgressDialog dialog;
     String SdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
     String avaPath = SdCard + "/fanxin/Files/Camera/Images/";
 
@@ -155,10 +154,6 @@ public class VideoDial extends BaseActivity implements View.OnClickListener{
     protected void onDestroy() {
         stopSound(streamId);
         super.onDestroy();
-        // 注销订阅者
-        if (dialog != null) {
-            dialog.dismiss();
-        }
         EventBus.getDefault().unregister(this);
     }
 //    TimerTask task = new TimerTask() {
