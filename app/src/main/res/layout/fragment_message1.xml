@@ -44,7 +44,6 @@
             android:id="@+id/count1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/message"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/dp_40"
             android:layout_centerVertical="true"
@@ -52,7 +51,8 @@
             android:gravity="center"
             android:text="3"
             android:textColor="#ffffff"
-            android:textSize="@dimen/sp_14" />
+            android:textSize="@dimen/sp_14"
+            android:visibility="gone"/>
 
         <ImageView
             android:layout_width="16dp"
@@ -93,7 +93,6 @@
             android:id="@+id/count2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/message"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/dp_40"
             android:layout_centerVertical="true"

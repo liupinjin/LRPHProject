@@ -58,8 +58,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     FrameLayout contentFrame;
     @Bind(R.id.menu_layout)
     LinearLayout menuLayout;
-    @Bind(R.id.count)
-    TextView messageCount;
+    @Bind(R.id.newmessage_notify)
+    TextView newMessageNotify;
     @Bind(R.id.home_tab)
     View mHomeTab;
     @Bind(R.id.shop_tab)

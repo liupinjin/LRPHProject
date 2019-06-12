@@ -87,6 +87,8 @@ public static Runnable runnable=new Runnable() {
     public static final String URL_updateAddress=FORMT+"users/updateAddress";
     public static final String URL_updateSex= FORMT+"users/updateSex";
     public static final String URL_updateNotify=FORMT+"users/messageNotify";
+    public static final String URL_getNewComments=FORMT+"posts/getNewComments";
+    public static final String URL_countNewComments=FORMT+"posts/countNewComments";
     public static String nick;
     public static String avatar;
     public static String phone;

@@ -144,23 +144,23 @@ private CircleImageView iv_avatar;
                 R.id.re_adddev);
         RelativeLayout re_servicecall = (RelativeLayout) getView().findViewById(
                 R.id.re_servicecall);
-        RelativeLayout re_order=(RelativeLayout)getView().findViewById(
-                R.id.re_order);
-        RelativeLayout re_coupon=(RelativeLayout)getView().findViewById(
-                R.id.re_coupon);
-        RelativeLayout re_shoppingcart=(RelativeLayout)getView().findViewById(
-                R.id.re_shoppingcart);
-        RelativeLayout re_collection=(RelativeLayout)getView().findViewById(
-                R.id.re_collection);
+//        RelativeLayout re_order=(RelativeLayout)getView().findViewById(
+//                R.id.re_order);
+//        RelativeLayout re_coupon=(RelativeLayout)getView().findViewById(
+//                R.id.re_coupon);
+//        RelativeLayout re_shoppingcart=(RelativeLayout)getView().findViewById(
+//                R.id.re_shoppingcart);
+//        RelativeLayout re_collection=(RelativeLayout)getView().findViewById(
+//                R.id.re_collection);
         RelativeLayout re_settings=(RelativeLayout)getView().findViewById(
                 R.id.re_settings);
         re_xaingce.setOnClickListener(this);
         re_addev.setOnClickListener(this);
         re_servicecall.setOnClickListener(this);
-        re_order.setOnClickListener(this);
-        re_coupon.setOnClickListener(this);
-        re_shoppingcart.setOnClickListener(this);
-        re_collection.setOnClickListener(this);
+//        re_order.setOnClickListener(this);
+//        re_coupon.setOnClickListener(this);
+//        re_shoppingcart.setOnClickListener(this);
+//        re_collection.setOnClickListener(this);
         re_settings.setOnClickListener(this);
 
         mStatusBar = getView().findViewById(R.id.status_bar);
@@ -203,18 +203,18 @@ private CircleImageView iv_avatar;
             case R.id.re_servicecall:
                 startActivity(new Intent(getActivity(), ServiceCallSet.class));
                 break;
-            case R.id.re_order:
-                ToastUtils.showToastShort("该功能即将上线");
-                break;
-            case R.id.re_coupon:
-                startActivity(new Intent(getActivity(),MyCouponActivity.class));
-                break;
-            case R.id.re_shoppingcart:
-                ToastUtils.showToastShort("该功能即将上线");
-                break;
-            case R.id.re_collection:
-                ToastUtils.showToastShort("该功能即将上线");
-                break;
+//            case R.id.re_order:
+//                ToastUtils.showToastShort("该功能即将上线");
+//                break;
+//            case R.id.re_coupon:
+//                startActivity(new Intent(getActivity(),MyCouponActivity.class));
+//                break;
+//            case R.id.re_shoppingcart:
+//                ToastUtils.showToastShort("该功能即将上线");
+//                break;
+//            case R.id.re_collection:
+//                ToastUtils.showToastShort("该功能即将上线");
+//                break;
 //            case R.id.re_instruction:
 //                startActivity(new Intent(getActivity(),SoftwareIntruct.class));
 //                break;
