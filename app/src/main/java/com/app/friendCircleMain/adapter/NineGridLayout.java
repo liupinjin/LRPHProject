@@ -1,6 +1,5 @@
 package com.app.friendCircleMain.adapter;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Paint;
@@ -9,12 +8,8 @@ import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.LoadPicture;
 import com.app.R;
@@ -39,8 +34,6 @@ public abstract class NineGridLayout extends ViewGroup {
     private LoadPicture avatarLoader;
     private static final float DEFUALT_SPACING = 3f;
     private static final int MAX_COUNT = 9;
-    String SdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
-    String avaPath = SdCard + "/fanxin/Files/Camera/Image/";
     protected Context mContext;
     private float mSpacing = DEFUALT_SPACING;
     private int mColumns;
@@ -59,6 +52,8 @@ public abstract class NineGridLayout extends ViewGroup {
 
     public NineGridLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        String sdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
+        String avaPath = sdCard + "/fanxin/Files/Camera/Image/";
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.NineGridLayout);
         avatarLoader = new LoadPicture(context, avaPath);
         mSpacing = typedArray.getDimension(R.styleable.NineGridLayout_sapcing, DEFUALT_SPACING);
@@ -250,76 +245,6 @@ public abstract class NineGridLayout extends ViewGroup {
         return imageView;
     }
 
-//    private void showShareDialog() {
-//        AlertDialog dialog = new AlertDialog.Builder(mContext).create();//创建一个AlertDialog对象
-//        dialog.show();
-//        Window window = dialog.getWindow();
-//        window.setContentView(R.layout.alertdialog1);
-//        TextView bt_share = (TextView) findViewById(R.id.tv_share);
-////        bt_share.setOnClickListener(new OnClickListener() {
-////            @Override
-////            public void onClick(View v) {
-////                Toast.makeText(mContext, "分享照片", Toast.LENGTH_SHORT).show();
-////            }
-////        });
-//    }
-//    public void showPopMenu(View view){
-//        // 创建PopupMenu对象
-//        popup = new PopupMenu(mContext, view);
-//        // 将R.menu.popup_menu菜单资源加载到popup菜单中
-//        popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
-//        // 为popup菜单的菜单项单击事件绑定事件监听器
-//        popup.setOnMenuItemClickListener(
-//                new PopupMenu.OnMenuItemClickListener()
-//                {
-//                    @Override
-//                    public boolean onMenuItemClick(MenuItem item)
-//                    {
-//                        switch (item.getItemId())
-//                        {
-//                            case R.id.share:
-//                                //发送url
-//                                String devId = SipInfo.paddevId;
-////                devId = devId2.substring(0, devId2.length() - 4).concat("0160");//设备id后4位替换成0160
-//                                String devName = "pad";
-//                                final String devType2 = "2";
-//                                SipURL sipURL = new SipURL(devId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
-//                                SipInfo.toDev = new NameAddress(devName, sipURL);
-//                                org.zoolu.sip.message.Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
-//                                        SipInfo.user_from, BodyFactory.createImageShareNotify(url));
-//                                SipInfo.sipUser.sendMessage(query);
-//
-//                                break;
-//                        }
-//                        return true;
-//                    }
-//                });
-//        popup.show();
-//    }
-
-//    private void showUserAvatar(ImageView iamgeView, String avatar) {
-//        final String url_avatar = Constant.URL_Avatar + avatar;
-//        iamgeView.setTag(url_avatar);
-//        if (url_avatar != null && !url_avatar.equals("")) {
-//            Bitmap bitmap = avatarLoader.loadImage(iamgeView, url_avatar,
-//                    new ImageDownloadedCallBack() {
-//
-//                        @Override
-//                        public void onImageDownloaded(ImageView imageView,
-//                                                      Bitmap bitmap) {
-//                            if (imageView.getTag() == url_avatar) {
-//                                imageView.setImageBitmap(bitmap);
-//
-//                            }
-//                        }
-//
-//                    });
-//            if (bitmap != null)
-//                iamgeView.setImageBitmap(bitmap);
-//
-//        }
-//    }
-
     /**
      * @param imageView
      * @param url
@@ -338,24 +263,6 @@ public abstract class NineGridLayout extends ViewGroup {
         imageView.layout(left, top, right, bottom);
 
         addView(imageView);
-//        if (showNumFlag) {//添加超过最大显示数量的文本
-//            int overCount = getListSize(mUrlList) - MAX_COUNT;
-//            if (overCount > 0) {
-//                float textSize = 30;
-//                final TextView textView = new TextView(mContext);
-//                textView.setText("+" + String.valueOf(overCount));
-//                textView.setTextColor(Color.WHITE);
-//                textView.setPadding(0, singleHeight / 2 - getFontHeight(textSize), 0, 0);
-//                textView.setTextSize(textSize);
-//                textView.setGravity(Gravity.CENTER);
-//                textView.setBackgroundColor(Color.BLACK);
-//                textView.getBackground().setAlpha(120);
-//
-//                textView.layout(left, top, right, bottom);
-//                addView(textView);
-//            }
-//        }
-        //showUserAvatar(imageView, url);
         displayImage(imageView,url);
 
     }

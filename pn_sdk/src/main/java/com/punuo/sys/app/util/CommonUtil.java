@@ -19,4 +19,9 @@ public class CommonUtil {
         DisplayMetrics dm = PnApplication.getInstance().getResources().getDisplayMetrics();
         return dm.heightPixels;
     }
+
+    public static int dip2px(float dpValue) {
+        final float scale = PnApplication.getInstance().getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
 }

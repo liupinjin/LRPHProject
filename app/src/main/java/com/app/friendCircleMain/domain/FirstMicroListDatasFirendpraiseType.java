@@ -5,13 +5,13 @@ package com.app.friendCircleMain.domain;
  */
 
 public class FirstMicroListDatasFirendpraiseType {
-    String praisetype;
+    int praisetype;
 
-    public String getPraisetype() {
+    public int getPraisetype() {
         return praisetype;
     }
 
-    public void setPraisetype(String praisetype) {
+    public void setPraisetype(int praisetype) {
         this.praisetype = praisetype;
     }
 }

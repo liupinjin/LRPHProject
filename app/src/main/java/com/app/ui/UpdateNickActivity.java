@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.app.LocalUserInfo;
 import com.app.R;
+import com.app.model.Constant;
 import com.app.model.PNBaseModel;
 import com.app.request.UpdateNickRequest;
 import com.app.sip.BodyFactory;
@@ -89,6 +90,7 @@ public class UpdateNickActivity extends BaseActivity {
                 if (result.isSuccess()) {
                     ToastUtils.showToast("更新成功");
                     LocalUserInfo.getInstance(UpdateNickActivity.this).setUserInfo("nick", newNick);
+                    Constant.nick = newNick;
                     //通知平板更新昵称
                     String devId = SipInfo.paddevId;
                     SipURL sipURL = new SipURL(devId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
