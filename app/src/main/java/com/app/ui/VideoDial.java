@@ -1,54 +1,34 @@
 package com.app.ui;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-
 import android.media.SoundPool;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.app.LoadPicture;
 import com.app.R;
-import com.app.audiorecord.AudioManager;
-import com.app.http.ToastUtils;
-import com.app.model.Constant;
 import com.app.model.MessageEvent;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.w3c.dom.Text;
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
 import org.zoolu.sip.message.Message;
-
-
-
-
-import butterknife.Bind;
-
 
 import static com.app.sip.SipInfo.devName;
 
@@ -57,7 +37,7 @@ import static com.app.sip.SipInfo.devName;
  * Created by maojianhui on 2018/6/27.
  */
 
-public class VideoDial extends Activity implements View.OnClickListener{
+public class VideoDial extends BaseActivity implements View.OnClickListener{
     private SoundPool soundPool;
     private SharedPreferences.Editor editor;
     private SharedPreferences pref;
@@ -65,7 +45,6 @@ public class VideoDial extends Activity implements View.OnClickListener{
 //    public static Activity activity_VideoDial=null;
 
     private String TAG;
-    private ProgressDialog dialog;
     String SdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
     String avaPath = SdCard + "/fanxin/Files/Camera/Images/";
 
@@ -175,10 +154,6 @@ public class VideoDial extends Activity implements View.OnClickListener{
     protected void onDestroy() {
         stopSound(streamId);
         super.onDestroy();
-        // 注销订阅者
-        if (dialog != null) {
-            dialog.dismiss();
-        }
         EventBus.getDefault().unregister(this);
     }
 //    TimerTask task = new TimerTask() {

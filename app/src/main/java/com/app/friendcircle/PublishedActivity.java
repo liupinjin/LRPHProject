@@ -2,12 +2,10 @@ package com.app.friendcircle;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -18,7 +16,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -46,16 +43,16 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.app.R;
-import com.app.http.GetPostUtil;
-import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
-import com.app.tools.ActivityCollector;
-import com.app.ui.MyUserInfoActivity;
-import com.app.utils.ProviderUtil;
+import com.app.model.PNBaseModel;
+import com.app.request.UploadPostRequest;
+import com.punuo.sys.app.util.ProviderUtil;
+import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.httplib.HttpManager;
+import com.punuo.sys.app.httplib.RequestListener;
+import com.punuo.sys.app.util.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -68,7 +65,7 @@ import java.util.concurrent.Executors;
 
 import static com.app.friendcircle.Bimp.drr;
 
-public class PublishedActivity extends Activity {
+public class PublishedActivity extends BaseActivity {
 
     private GridView noScrollgridview;
     private GridAdapter adapter;
@@ -81,7 +78,6 @@ public class PublishedActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selectimg);
-        ActivityCollector.addActivity(this);
         Init();
         /*设置系统状态栏颜色
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
@@ -140,73 +136,75 @@ public class PublishedActivity extends Activity {
                 // 高清的压缩图片全部就在  list 路径里面了
                 // 高清的压缩过的 bmp 对象  都在 Bimp.bmp里面
                 // 完成上传服务器后 .........
-                 pool.execute(new Runnable() {
-                     @Override
-                     public void run() {
-                         String dongTai = dongtai.getText().toString();
-                         List<String> list = new ArrayList<String>();
-                         for (int i = 0; i < drr.size(); i++) {
-                             String Str = drr.get(i).substring(
-                                     drr.get(i).lastIndexOf("/") + 1,
-                                     drr.get(i).lastIndexOf("."));
-                             list.add(FileUtils.SDPATH + Str + ".JPEG");
-                         }
-                         if((drr.size()==0)& TextUtils.isEmpty(dongTai)){
-                             Looper.prepare();
-                             myhandler.sendEmptyMessage(0x333);
-                         }else{
-                             Looper.prepare();
-                             dialog = new ProgressDialog(PublishedActivity.this);
-                             dialog.setMessage("正在上传...");
-                             dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                             dialog.show();
-                             response = GetPostUtil.uploadFiletiezi(Constant.insertPost, list, Constant.id, dongTai);
-                             Log.w("111........", response);
-                             JSONObject obj = JSON.parseObject(response);
-                             String msg = obj.getString("msg");
-
-                             if (msg.equals("success")) {
-                                 myhandler.sendEmptyMessage(0x111);
-                             } else {
-                                 myhandler.sendEmptyMessage(0x222);
-                             }
-                         }
-                             Looper.loop();
-
-                     }
-                 });
-
+                String dongTai = dongtai.getText().toString();
+                List<String> list = new ArrayList<String>();
+                for (int i = 0; i < drr.size(); i++) {
+                    String Str = drr.get(i).substring(
+                            drr.get(i).lastIndexOf("/") + 1,
+                            drr.get(i).lastIndexOf("."));
+                    list.add(FileUtils.SDPATH + Str + ".JPEG");
+                }
+                dialog = new ProgressDialog(PublishedActivity.this);
+                dialog.setMessage("正在上传...");
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.show();
+                uploadPost(dongTai, list);
             }
         });
     }
 
-    Handler myhandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg.what == 0x111) {
-                ToastUtils.showShort(PublishedActivity.this, "状态上传成功");
-                EventBus.getDefault().post(new MessageEvent("刷新"));
-                Bimp.bmp.clear();
-                Bimp.drr.clear();
-                Bimp.max = 0;
-                FileUtils.deleteDir();
-                dialog.dismiss();
-                ActivityCollector.removeActivity(PublishedActivity.this);
-                finish();
-
-//                ActivityCollector.finishToMain();
-//                ActivityCollector.finishToFirstView();
-            } else if (msg.what == 0x222) {
-                ToastUtils.showShort(PublishedActivity.this, "状态上传失败请重试");
-                dialog.dismiss();
-                return;
-            }
-            else if(msg.what==0x333){
-                ToastUtils.showShort(PublishedActivity.this,"发送的内容不能为空");
+    private UploadPostRequest mUploadPostRequest;
+    private void uploadPost(String content, List<String> list) {
+        if (TextUtils.isEmpty(content)) {
+            ToastUtils.showToast("发送的内容不能为空");
+            return;
+        }
+        if (mUploadPostRequest != null && !mUploadPostRequest.isFinish()) {
+            return;
+        }
+        mUploadPostRequest = new UploadPostRequest();
+        mUploadPostRequest.addEntityParam("id", Constant.id);
+        mUploadPostRequest.addEntityParam("content", content);
+        List<File> files = new ArrayList<>();
+        if (list != null && !list.isEmpty()) {
+            for (int i = 0; i < list.size(); i++) {
+                String filePath = list.get(i);
+                files.add(new File(filePath));
             }
         }
-    };
+        if (!files.isEmpty()) {
+            mUploadPostRequest.addEntityParam("file[]", files);
+        }
+        mUploadPostRequest.setRequestListener(new RequestListener<PNBaseModel>() {
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSuccess(PNBaseModel result) {
+                if (result.isSuccess()) {
+                    ToastUtils.showToast("状态上传成功");
+                    EventBus.getDefault().post(new MessageEvent("刷新"));
+                    Bimp.bmp.clear();
+                    Bimp.drr.clear();
+                    Bimp.max = 0;
+                    FileUtils.deleteDir();
+                    dialog.dismiss();
+                    finish();
+                } else {
+                    ToastUtils.showToast("状态上传失败请重试");
+                    dialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+        HttpManager.addRequest(mUploadPostRequest);
+    }
 
     @SuppressLint("HandlerLeak")
     public class GridAdapter extends BaseAdapter {
@@ -452,7 +450,6 @@ public class PublishedActivity extends Activity {
         Bimp.drr.clear();
         Bimp.max = 0;
         FileUtils.deleteDir();
-        ActivityCollector.removeActivity(this);
         super.onDestroy();
     }
 }

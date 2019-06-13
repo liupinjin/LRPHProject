@@ -8,7 +8,7 @@ import android.net.NetworkInfo;
 
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.LogUtil;
+import com.punuo.sys.app.util.LogUtil;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;

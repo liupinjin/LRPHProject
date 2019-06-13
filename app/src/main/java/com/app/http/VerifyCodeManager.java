@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.app.R;
+import com.punuo.sys.app.util.RegexUtils;
+import com.punuo.sys.app.util.ToastUtils;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -41,13 +43,13 @@ public class VerifyCodeManager {
 		phone = phoneEdit.getText().toString().trim();
 
 		if (TextUtils.isEmpty(phone)) {
-			ToastUtils.showShort(mContext, "请输入手机号");
+			ToastUtils.showToast("请输入手机号");
 			return;
 		} else if (phone.length() < 11) {
-			ToastUtils.showShort(mContext, R.string.tip_phone_regex_not_right);
+			ToastUtils.showToast( R.string.tip_phone_regex_not_right);
 			return;
 		} else if (!RegexUtils.checkMobile(phone)) {
-			ToastUtils.showShort(mContext, R.string.tip_phone_regex_not_right);
+			ToastUtils.showToast(R.string.tip_phone_regex_not_right);
 			return;
 		}else {
 			SMSSDK.getVerificationCode("86", phone);
@@ -79,7 +81,7 @@ public class VerifyCodeManager {
 
 	private void setButtonStatusOff() {
 		getVerifiCodeButton.setText(String.format(
-				mContext.getResources().getString(R.string.count_down), recLen--));
+				mContext.getResources().getString(R.string.count_down), recLen-- + ""));
 		getVerifiCodeButton.setClickable(false);
 		getVerifiCodeButton.setTextColor(Color.parseColor("#f3f4f8"));
 		getVerifiCodeButton.setBackgroundColor(Color.parseColor("#b1b1b3"));
@@ -93,70 +95,5 @@ public class VerifyCodeManager {
 		recLen = 60;
 		getVerifiCodeButton.setClickable(true);
 	}
-
-//	private AsyncHttpResponseHandler getVerifyCodeHandler = new AsyncHttpResponseHandler() {
-//
-//		@Override
-//		public void onSuccess(int arg0, Header[] arg1, byte[] arg2) {
-//			try {
-//				if (arg2 != null) {
-//					String respone = new String(arg2);
-//					LogUtils.e("verifyCode", respone);
-//					// {"status":"false","code":15,"message":"\u8be5\u7535\u8bdd\u53f7\u7801\u5df2\u88ab\u5360\u7528\uff0c\u8bf7\u91cd\u65b0\u9009\u62e9"}
-//					JSONObject jsonObject = new JSONObject(respone);
-//					jsonObject.optBoolean("status");
-//					int code = jsonObject.optInt("code");
-//					switch (code) {
-//					case 15: // 账号已存在
-//						ToastUtils.showShort(mContext,
-//								R.string.tip_phone_exist_please_login);
-//						setButtonStatusOn();
-//						break;
-//					case 0:
-//						ToastUtils.showShort(mContext, "验证码发送成功");
-//						break;
-//					case 6:
-//						ToastUtils.showShort(mContext, "手机号不存在，请注册");
-//						setButtonStatusOn();
-//						break;
-//					case 2003: // 账号不存在
-//						ToastUtils.showShort(mContext,
-//								R.string.tip_phone_not_exist);
-//						setButtonStatusOn();
-//						break;
-//					case 2015: // 手机账号已经绑定
-//						ToastUtils.showShort(mContext, "手机号已被绑定，请直接使用该手机号登录");
-//						break;
-//					case 1001: // 客户端验证错误
-//						ToastUtils.showShort(mContext, "客户端验证失败");
-//						break;
-//					case 1005: // 验证码错误
-//						ToastUtils.showShort(mContext, "验证码不正确");
-//						break;
-//					case 2007: // 用户保存失败
-//
-//						break;
-//
-//					default:
-//						ToastUtils.showShort(mContext, "发送验证码失败，请重试");
-//						setButtonStatusOn();
-//						break;
-//					}
-//
-//				}
-//			} catch (JSONException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//
-//		@Override
-//		public void onFailure(int arg0, Header[] arg1, byte[] arg2,
-//				Throwable arg3) {
-//			if (arg2 != null) {
-//				ToastUtils.showShort(mContext, "发送验证码失败，请重试");
-//				setButtonStatusOn();
-//			}
-//		}
-//	};
 
 }

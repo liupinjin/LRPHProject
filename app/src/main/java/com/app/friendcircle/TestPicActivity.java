@@ -1,6 +1,5 @@
 package com.app.friendcircle;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,11 +15,12 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.app.R;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class TestPicActivity extends Activity {
+public class TestPicActivity extends BaseActivity {
 	// ArrayList<Entity> dataList;//用来装载数据源的列表
 	List<ImageBucket> dataList;
 	GridView gridView;

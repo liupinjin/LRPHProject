@@ -7,8 +7,6 @@ import android.media.MediaFormat;
 import android.os.Environment;
 import android.util.Log;
 
-import com.app.sip.SipInfo;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;

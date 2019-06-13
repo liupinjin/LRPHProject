@@ -13,7 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.app.R;
-import com.app.friendCircleMain.adapter.AppApplication;
+import com.punuo.sys.app.util.CommonUtil;
 
 
 /**
@@ -35,7 +35,7 @@ public class BottomListDialog extends Dialog {
         Window window = this.getWindow();
         window.setGravity(Gravity.LEFT | Gravity.BOTTOM);
         WindowManager.LayoutParams params = window.getAttributes();
-        params.width = AppApplication.getInstance().getScreenWidth();
+        params.width = CommonUtil.getWidth();
 //        params.height = (int) (MyApplication.getInstance().getScreenHeight() * 0.6);
         window.setAttributes(params);
     }
@@ -86,7 +86,7 @@ public class BottomListDialog extends Dialog {
             }
             View view = LayoutInflater.from(context).inflate(
                     R.layout.layout_dialog_buttom_list, null);
-            view.setMinimumWidth(AppApplication.getInstance().getScreenWidth());
+            view.setMinimumWidth(CommonUtil.getWidth());
             view.setMinimumHeight(height);
             ListView listview = (ListView) view.findViewById(R.id.listview);
             listview.setAdapter(adapter);

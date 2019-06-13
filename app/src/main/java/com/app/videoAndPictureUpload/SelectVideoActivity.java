@@ -3,6 +3,7 @@ package com.app.videoAndPictureUpload;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -17,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.R;
-import com.app.friendCircleMain.adapter.AppApplication;
 import com.app.ftp.Ftp;
 import com.app.ftp.FtpListener;
 import com.app.model.Constant;
@@ -26,6 +26,9 @@ import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.util.CommonUtil;
+import com.punuo.sys.app.util.StatusBarUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 
 import static android.widget.Toast.makeText;
 
-public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
+public class SelectVideoActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
     private Ftp mFtp;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView mRecyclerView;
@@ -52,10 +55,6 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
     private ArrayList<String> list;
     private int num;
     Map<String, String> map = new HashMap<String, String>();
-    @Override
-    protected void initialize() {
-        setContentView(R.layout.activity_select_video);
-    }
     private FtpListener upLoad=new FtpListener() {
         @Override
         public void onStateChange(String currentStep) {
@@ -90,7 +89,15 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
 
         }
     };
+
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_select_video);
+        initView();
+        initData();
+    }
+
     protected void initView() {
         actionbar = (RelativeLayout) findViewById(R.id.actionbar);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
@@ -98,7 +105,7 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
         swipeRefreshLayout.setColorSchemeResources(R.color.Gray, R.color.Gray, R.color.Gray, R.color.Gray);
         startRefreshing(swipeRefreshLayout);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(context, 4));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
 
         findViewById(R.id.title_back).setOnClickListener(this);
         findViewById(R.id.title_send).setOnClickListener(this);
@@ -108,9 +115,7 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
         select_video = (TextView) findViewById(R.id.select_video);
     }
 
-    @Override
     protected void initData() {
-        super.initData();
         new initVideosThread().start();
     }
 
@@ -174,15 +179,15 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
                     mRecyclerView.addOnItemTouchListener(new OnItemClickListener() {
                         @Override
                         public void SimpleOnItemClick(final BaseQuickAdapter adapter, View view, final int position) {
-                            makeText(context, "video_path====" + ((List<Video>) adapter.getData()).get(position).getPath(), Toast.LENGTH_LONG);
+                            makeText(SelectVideoActivity.this, "video_path====" + ((List<Video>) adapter.getData()).get(position).getPath(), Toast.LENGTH_LONG);
                         }
                     });
 
-                    final SelectVideoActivity_BottomListDialogAdapter bottomListDialogAdapter = new SelectVideoActivity_BottomListDialogAdapter(activity, AllList);
+                    final BottomListDialogAdapter bottomListDialogAdapter = new BottomListDialogAdapter(SelectVideoActivity.this, AllList);
 
-                    bottomListDialog = new BottomListDialog.Builder(activity
+                    bottomListDialog = new BottomListDialog.Builder(SelectVideoActivity.this
                             , bottomListDialogAdapter,
-                            AppApplication.getInstance().getScreenHeight() - actionbar.getHeight() - StatusBarHeightUtil.getStatusBarHeight(context)
+                            CommonUtil.getHeight() - actionbar.getHeight() - StatusBarUtil.getStatusBarHeight(SelectVideoActivity.this)
                     ).setOnItemClickListener(new BottomListDialog.OnItemClickListener() {
                         @Override
                         public void onClick(Dialog dialog, int which) {
@@ -207,7 +212,7 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
         @Override
         public void run() {
             super.run();
-            AbstructProvider provider = new VideoProvider(activity);
+            AbstructProvider provider = new VideoProvider(SelectVideoActivity.this);
             List<Video> list = (List<Video>) provider.getList();
 
             List<Video> templist = new ArrayList<>();
@@ -287,19 +292,19 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
 
             helper.setText(R.id.text_duration, hms);
             ImageView simpleDraweeView = AdapterUtils.getAdapterView(helper.getConvertView(), R.id.simpleDraweeView);
-            int width = (AppApplication.getInstance().getScreenWidth() - 4) / 4;
+            int width = (CommonUtil.getWidth() - 4) / 4;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, width);
             simpleDraweeView.setLayoutParams(layoutParams);
-             final ImageView selected = AdapterUtils.getAdapterView(helper.getConvertView(), R.id.isselected);
-             final TextView textView = AdapterUtils.getAdapterView(helper.getConvertView(), R.id.item_image_grid_text);
+            final ImageView selected = AdapterUtils.getAdapterView(helper.getConvertView(), R.id.isselected);
+            final TextView textView = AdapterUtils.getAdapterView(helper.getConvertView(), R.id.item_image_grid_text);
             if (item.isSelected) {
                 selected.setImageResource(R.drawable.icon_data_select);
                 textView.setBackgroundResource(R.drawable.bgd_relatly_line);
             } else {
-                selected.setImageResource(-1);
+                selected.setImageResource(android.R.color.transparent);
                 textView.setBackgroundColor(0x00000000);
             }
-            Glide.with(context)
+            Glide.with(SelectVideoActivity.this)
                     .load(Uri.fromFile(new File(item.getPath())))
                     .asBitmap()
                     .into(simpleDraweeView);
@@ -320,7 +325,7 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
                             map.put(path, path);
 
                         } else if (!item.isSelected) {
-                            selected.setImageResource(-1);
+                            selected.setImageResource(android.R.color.transparent);
                             textView.setBackgroundColor(0x00000000);
                             selectTotal--;
 //                            if (textcallback != null)
@@ -330,7 +335,7 @@ public class SelectVideoActivity extends DefaultBaseActivity implements SwipeRef
                     } else if ( selectTotal >= 9) {
                         if (item.isSelected == true) {
                             item.isSelected = !item.isSelected;
-                            selected.setImageResource(-1);
+                            selected.setImageResource(android.R.color.transparent);
                             selectTotal--;
                             map.remove(path);
 

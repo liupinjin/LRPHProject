@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -24,6 +23,7 @@ import com.app.ftp.Ftp;
 import com.app.ftp.FtpListener;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +38,7 @@ import java.util.Set;
  * @Description: 相册Activity
  * @date 2015-1-6 下午5:03:48
  */
-public class AlbumAty extends Activity implements View.OnClickListener, AlbumGridView.OnCheckedChangeListener {
+public class AlbumAty extends BaseActivity implements View.OnClickListener, AlbumGridView.OnCheckedChangeListener {
     public final static String TAG = "AlbumAty";
     /**
      * 显示相册的View

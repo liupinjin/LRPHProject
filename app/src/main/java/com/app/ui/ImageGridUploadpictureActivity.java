@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -24,7 +23,7 @@ import com.app.ftp.Ftp;
 import com.app.ftp.FtpListener;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;
-import com.app.tools.ActivityCollector;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +36,7 @@ import java.util.List;
  * Created by 林逸磊 on 2018/5/2.
  */
 
-public class ImageGridUploadpictureActivity extends Activity {
+public class ImageGridUploadpictureActivity extends BaseActivity {
     public static final String EXTRA_IMAGE_LIST = "imagelist";
 
     // ArrayList<Entity> dataList;//用来装载数据源的列表
@@ -105,7 +104,6 @@ public class ImageGridUploadpictureActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         Log.i("sasa","sasaa");
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_imagegriduploadpicture);
 
         helper = AlbumHelper.getHelper();
@@ -213,7 +211,6 @@ public class ImageGridUploadpictureActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        ActivityCollector.removeActivity(this);
         super.onDestroy();
     }
 }

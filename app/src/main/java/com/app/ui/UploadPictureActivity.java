@@ -1,10 +1,8 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +16,7 @@ import com.app.friendcircle.AlbumHelper;
 import com.app.friendcircle.ImageBucket;
 import com.app.friendcircle.ImageBucketAdapter;
 import com.app.friendcircle.TestPicActivity;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.Serializable;
 import java.util.List;
@@ -26,7 +25,7 @@ import java.util.List;
  * Created by 林逸磊 on 2018/5/2.
  */
 
-public class UploadPictureActivity extends Activity {
+public class UploadPictureActivity extends BaseActivity {
     // ArrayList<Entity> dataList;//用来装载数据源的列表
     List<ImageBucket> dataList;
     GridView gridView;

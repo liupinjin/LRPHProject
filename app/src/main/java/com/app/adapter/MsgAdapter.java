@@ -35,13 +35,13 @@ import com.app.model.FileType;
 import com.app.model.Msg;
 import com.app.model.MyFile;
 import com.app.sip.SipInfo;
-import com.app.tools.FileSizeUtil;
 import com.app.tools.PopupList;
 import com.app.ui.ShowLocation;
-import com.app.ui.ShowPhoto;
+import com.app.ui.ShowPhotoActivity;
 import com.app.ui.SmallVideoPlay;
 import com.app.view.CircleImageView;
 import com.bumptech.glide.Glide;
+import com.punuo.sys.app.util.FileSizeUtil;
 import com.tb.emoji.EmojiUtil;
 
 import java.io.File;
@@ -414,7 +414,7 @@ private String avatar;
                                 }
                                 break;
                             case 3://图片
-                                Intent openpic = new Intent(mContext, ShowPhoto.class);
+                                Intent openpic = new Intent(mContext, ShowPhotoActivity.class);
                                 openpic.putExtra("path", myFile.getLocalPath());
                                 openpic.putExtra("type", 0);
                                 mContext.startActivity(openpic);
@@ -507,7 +507,7 @@ private String avatar;
                                 }
                                 break;
                             case 3:
-                                Intent openpic = new Intent(mContext, ShowPhoto.class);
+                                Intent openpic = new Intent(mContext, ShowPhotoActivity.class);
                                 openpic.putExtra("path", SipInfo.localSdCard + "Files/Camera/Thumbnail/" + myFile.getFileName());
                                 openpic.putExtra("type", 1);
                                 openpic.putExtra("ftppath", myFile.getFtpPath());

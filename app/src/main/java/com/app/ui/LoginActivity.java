@@ -18,6 +18,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -26,14 +27,11 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.app.LocalUserInfo;
 import com.app.R;
 import com.app.db.DatabaseInfo;
@@ -41,23 +39,27 @@ import com.app.db.MyDatabaseHelper;
 import com.app.db.SQLiteManager;
 import com.app.friendCircleMain.domain.Alldevid;
 import com.app.friendCircleMain.domain.Group;
-import com.app.friendCircleMain.domain.GroupList;
 import com.app.friendCircleMain.domain.UserFromGroup;
 import com.app.friendCircleMain.domain.UserList;
 import com.app.groupvoice.GroupInfo;
-import com.app.http.GetPostUtil;
-import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.model.Friend;
+import com.app.model.PNUserInfo;
+import com.app.request.GetAllGroupFromUserRequest;
+import com.app.request.GetAllUserFromGroupRequest;
+import com.app.request.GetDevIdFromIdRequest;
+import com.app.request.GetUserInfoRequest;
 import com.app.sip.KeepAlive;
 import com.app.sip.SipDev;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.sip.SipUser;
-import com.app.tools.ActivityCollector;
 import com.app.tools.PermissionUtils;
-import com.app.view.CustomProgressDialog;
 import com.app.views.CleanEditText;
+import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.httplib.HttpManager;
+import com.punuo.sys.app.httplib.RequestListener;
+import com.punuo.sys.app.util.ToastUtils;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -76,22 +78,14 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static com.amap.api.mapcore2d.p.i;
 import static com.app.groupvoice.GroupInfo.wakeLock;
-import static com.app.model.Constant.avatar;
-import static com.app.model.Constant.devid1;
-import static com.app.model.Constant.devid2;
-import static com.app.model.Constant.devid3;
-import static com.app.model.Constant.groupid1;
-import static com.app.model.Constant.res;
 import static java.lang.Thread.sleep;
 
-public class LoginActivity extends Activity {
-    private static final String TAG ="LoginActivity";
-
-//    private String[] groupname = new String[3];
-//    private String[] groupid = new String[3];
-//    private String[] appdevid = new String[3];
+/**
+ * 用户登陆页
+ */
+public class LoginActivity extends BaseActivity {
+    private static final String TAG = "LoginActivity";
     private String groupname;
     private String groupid;
     private String appdevid;
@@ -109,7 +103,6 @@ public class LoginActivity extends Activity {
     private AlertDialog timeOutDialog;
     //密码错误次数
     private int errorTime = 0;
-    private CustomProgressDialog registering;
     protected CompositeSubscription mCompositeSubscription = new CompositeSubscription();
 
     @Bind(R.id.num_input2)
@@ -118,27 +111,20 @@ public class LoginActivity extends Activity {
     CleanEditText passwordInput;
     @Bind(R.id.hidepassword)
     ImageView hidepassword;
-    @Bind(R.id.showpassword)
-    ImageView showpassword;
     @Bind(R.id.vericode_login)
     TextView vericodeLogin;
     @Bind(R.id.password_forget)
     TextView passwordForget;
     @Bind(R.id.btn_login1)
-    Button btnLogin1;
-    @Bind(R.id.iv_back2)
-    ImageView ivBack2;
+    TextView loginBtn;
     @Bind(R.id.tv_register)
     TextView tvRegister;
     @Bind(R.id.layout_root)
     RelativeLayout layoutRoot;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_login1);
         ButterKnife.bind(this);
         pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -175,13 +161,12 @@ public class LoginActivity extends Activity {
         numInput2.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         numInput2.setTransformationMethod(HideReturnsTransformationMethod
                 .getInstance());
-        String account=pref.getString("account","");
+        String account = pref.getString("account", "");
         numInput2.setText(account);
 
         passwordInput.setImeOptions(EditorInfo.IME_ACTION_DONE);
         passwordInput.setImeOptions(EditorInfo.IME_ACTION_GO);
-        passwordInput.setTransformationMethod(PasswordTransformationMethod
-                .getInstance());
+        passwordInput.setTransformationMethod(PasswordTransformationMethod.getInstance());
         passwordInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
             @Override
@@ -194,11 +179,12 @@ public class LoginActivity extends Activity {
                 return false;
             }
         });
-        String password=pref.getString("password","");
+        String password = pref.getString("password", "");
         passwordInput.setText(password);
         SipInfo.localSdCard = Environment.getExternalStorageDirectory().getAbsolutePath() + "/faxin/";
         isNetworkreachable();
     }
+
     // 网络是否连接
     private Runnable networkConnectedFailed = new Runnable() {
         @Override
@@ -221,15 +207,16 @@ public class LoginActivity extends Activity {
             }
         }
     };
+
     private void clickLogin() {
 //        verifyStoragePermissions(this);
 //        requestPower();
         if (SipInfo.isNetworkConnected) {
             SipInfo.userAccount = numInput2.getText().toString();
             SipInfo.passWord = passwordInput.getText().toString();
-            editor=pref.edit();
-            editor.putString("account",SipInfo.userAccount);
-            editor.putString("password",SipInfo.passWord);
+            editor = pref.edit();
+            editor.putString("account", SipInfo.userAccount);
+            editor.putString("password", SipInfo.passWord);
             editor.apply();
             if (checkInput(SipInfo.userAccount, SipInfo.passWord)) {
                 // TODO: 请求服务器登录账号
@@ -237,10 +224,7 @@ public class LoginActivity extends Activity {
                     errorTime = 0;
                 }
                 beforeLogin();
-                registering = new CustomProgressDialog(LoginActivity.this);
-                registering.setCancelable(false);
-                registering.setCanceledOnTouchOutside(false);
-                registering.show();
+                showLoadingDialog();
 
                 new Thread(connecting).start();
             }
@@ -251,8 +235,8 @@ public class LoginActivity extends Activity {
     }
 
     private void beforeLogin() {
-        SipInfo.phoneType= Build.MODEL;
-        Log.i("手机型号","model"+SipInfo.phoneType);
+        SipInfo.phoneType = Build.MODEL;
+        Log.i("手机型号", "model" + SipInfo.phoneType);
         SipInfo.isAccountExist = true;
         SipInfo.passwordError = false;
         SipInfo.userLogined = false;
@@ -268,6 +252,7 @@ public class LoginActivity extends Activity {
 
         SipInfo.dev_to = new NameAddress(SipInfo.SERVER_NAME, remote_dev);
     }
+
     Runnable connecting = new Runnable() {
         @Override
         public void run() {
@@ -299,16 +284,16 @@ public class LoginActivity extends Activity {
             } finally {
 
                 if (!SipInfo.isAccountExist) {
-                    registering.dismiss();
+                    dismissLoadingDialog();
                     /*账号不存在提示*/
                     handler.post(accountNotExist);
                 } else if (SipInfo.passwordError) {
                     //密码错误提示
-                    registering.dismiss();
+                    dismissLoadingDialog();
                     showDialogTip(errorTime++);
                     lastUserAccount = SipInfo.userAccount;
                 } else if (SipInfo.loginTimeout) {
-                    registering.dismiss();
+                    dismissLoadingDialog();
                     //超时
                     handler.post(timeOut);
                 } else {
@@ -329,191 +314,233 @@ public class LoginActivity extends Activity {
 //                        SipInfo.sipUser.sendMessage(SipMessageFactory.createSubscribeRequest(SipInfo.sipUser,
 //                                SipInfo.user_to, SipInfo.user_from, BodyFactory.createAppsQueryBody()));
                         //启动设备注册线程
-                        new Thread(getuserinfo).start();
+//                        new Thread(getuserinfo).start();
+                        getUserInfo();
                     }
                 }
             }
         }
     };
-    //获取用户数据线程
-    String response = "";
-    private Runnable    getuserinfo = new Runnable() {
-        @Override
-        public void run() {
-            response = GetPostUtil.sendGet1111(Constant.URL_GetUserInfo, "userid=" + SipInfo.userId);
-//        LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("tiezi",
-//                Constant.res);
-            Log.i("jonsresponse...........", response);
-            if ((response != null) && !("".equals(response))) {
-                JSONObject obj = JSON.parseObject(response);
-                String msg = obj.getString("msg");
-                if ("success".equals(msg)) {
-                    JSONObject user = obj.getJSONObject("user");
-                    Constant.nick = user.getString("nickname");
-                    Constant.avatar = user.getString("avatar");
-                    Constant.id = user.getString("id");
-                    Constant.phone = user.getString("name");
-                    Constant.sex=user.getString("gender");
-                    Constant.isNotify=user.getString("notify");
-                    Log.e("msg.........", "获取用户数据成功   " + Constant.nick + "    " + avatar);
+    private GetUserInfoRequest mGetUserInfoRequest;
+
+    //获取用户信息
+    private void getUserInfo() {
+        if (mGetUserInfoRequest != null && !mGetUserInfoRequest.isFinish()) {
+            return;
+        }
+        mGetUserInfoRequest = new GetUserInfoRequest();
+        mGetUserInfoRequest.addUrlParam("userid", SipInfo.userId);
+        mGetUserInfoRequest.setRequestListener(new RequestListener<PNUserInfo>() {
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSuccess(PNUserInfo result) {
+                if (result != null && result.isSuccess()) {
+                    setUserInfo(result.userInfo);
                     SipInfo.friends.clear();
-                    new Thread(getgroupinfo).start();
+                    getGroupInfo();
                 } else {
-                    Looper.prepare();
-                    ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
-                    registering.dismiss();
-                    Looper.loop();
+                    ToastUtils.showToastShort("获取用户数据失败请重试");
+                    dismissLoadingDialog();
                 }
-            } else {
-                Looper.prepare();
-                ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
-                registering.dismiss();
-                Looper.loop();
             }
-        }
-    };
+
+            @Override
+            public void onError(Exception e) {
+                ToastUtils.showToastShort("获取用户数据失败请重试");
+                dismissLoadingDialog();
+            }
+        });
+        HttpManager.addRequest(mGetUserInfoRequest);
+
+    }
+
+    //临时，后面需要统一管理用户信息
+    private void setUserInfo(PNUserInfo.UserInfo userInfo) {
+        Constant.nick = userInfo.nickname;
+        Constant.avatar = userInfo.avatar;
+        Constant.id = userInfo.id;
+        Constant.phone = userInfo.name;
+        Constant.sex = userInfo.gender;
+        Constant.isNotify = userInfo.isNotify;
+    }
+
     //群组获取线程
-    private Runnable getgroupinfo = new Runnable() {
-        @Override
-        public void run() {
-            response = GetPostUtil.sendGet1111(Constant.URL_InquireGroup, "id=" + Constant.id);
-            Log.i("jonsresponse...........", response);
-            if ((response != null) && !("".equals(response))) {
-                Group group = JSON.parseObject(response, Group.class);
-                List<GroupList> groupList = group.getGroupList();
-                groupname=null;
-                groupid=null;
-                appdevid=null;
-                for (i = 0; i < groupList.size(); i++) {
-                    groupname= groupList.get(i).getGroup_name();
-                    groupid = groupList.get(i).getGroupid();
-                }
-                devid1 = groupname;
-                Constant.groupid1 = groupid;
-                Constant.groupid = groupid1;
-                if ((groupid1 != null) && !("".equals(groupid1))) {
-                    SipInfo.paddevId = devid1;
-//                    response = GetPostUtil.sendGet1111(Constant.URL_getallDevidfromid, "id=" + Constant.id);
-//                    Log.i("jonsresponse...........", response);
-                    new Thread(getalldevid).start();
+    private GetAllGroupFromUserRequest mGetAllGroupFromUserRequest;
 
-                } else {
-                    Constant.res = "";
-                    LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("avatar",
-                            Constant.avatar);
-                    LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("nick",
-                            Constant.nick);
-                    LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
-                            Constant.id);
-                    registering.dismiss();
-                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                }
-            } else {
-                Looper.prepare();
-                ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
-                registering.dismiss();
-                Looper.loop();
-            }
+    //获取组信息
+    private void getGroupInfo() {
+        if (mGetAllGroupFromUserRequest != null && !mGetAllGroupFromUserRequest.isFinish()) {
+            return;
         }
-    };
+        groupname = null;
+        groupid = null;
+        appdevid = null;
+        mGetAllGroupFromUserRequest = new GetAllGroupFromUserRequest();
+        mGetAllGroupFromUserRequest.addUrlParam("id", Constant.id);
+        mGetAllGroupFromUserRequest.setRequestListener(new RequestListener<Group>() {
+            @Override
+            public void onComplete() {
 
-    //群组用户信息获取
-    private Runnable getuserfromgroup = new Runnable() {
-        @Override
-        public void run() {
-            response = GetPostUtil.sendGet1111(Constant.URL_InquireUser, "groupid=" + Constant.groupid);
-            Log.i("jonsresponse...........", response);
-            if ((response != null) && !("".equals(response))) {
-                UserFromGroup userFromGroup = JSON.parseObject(response, UserFromGroup.class);
-
-                List<UserList> userList = userFromGroup.getUserList();
-
-                for (i = 0; i < userList.size(); i++) {
-                    Friend friend = new Friend();
-                    friend.setNickName (userList.get(i).getNickname());
-                    friend.setPhoneNum(userList.get(i).getName());
-                    friend.setUserId(userList.get(i).getUserid());
-                    friend.setId(userList.get(i).getId());
-                    friend.setAvatar(userList.get(i).getAvatar());
-                    SipInfo.friends.add(friend);
-                }
-                new Thread(getpostinfo).start();
-            } else {
-                Looper.prepare();
-                ToastUtils.makeShortText("获取用户数据失败请重试", LoginActivity.this);
-                registering.dismiss();
-                Looper.loop();
             }
-        }
-    };
 
-    //帖子获取线程
-    private Runnable getpostinfo = new Runnable() {
-        @Override
-        public void run() {
-            Constant.res = GetPostUtil.sendGet1111(Constant.URL_getPostList, "id=" + Constant.id + "&currentPage=1" + "&groupid=" + Constant.groupid);
-            Log.i("jonsresponse...........", Thread.currentThread().getName() + Constant.res + "");
-            if ((Constant.res != null) && !("".equals(res))) {
-                GroupInfo.groupNum = "7000";
-                //String peer = peerElement.getFirstChild().getNodeValue();
-                GroupInfo.ip = "101.69.255.134";
-//                GroupInfo.port = 7000;
-                GroupInfo.level = "1";
-                SipInfo.devName = Constant.nick;
-//
-                LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("avatar",
-                        Constant.avatar);
-                LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("nick",
-                        Constant.nick);
-                LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
-                        Constant.id);
-                registering.dismiss();
-                startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-            } else {
-                Looper.prepare();
-                ToastUtils.makeShortText("获取用户帖子失败请重试", LoginActivity.this);
-                registering.dismiss();
-                Looper.loop();
-            }
-        }
-    };
-    //获取所有devid
-    private Runnable getalldevid = new Runnable() {
-        @Override
-        public void run() {
-            response = GetPostUtil.sendGet1111(Constant.URL_getallDevidfromid, "id=" + Constant.id);
-            Log.i("jonsresponse...........", response);
-            if ((response != null) && !("".equals(response))) {
-                JSONObject jsonObject = JSONObject.parseObject(response);
-                Alldevid alldevid = JSON.parseObject(response, Alldevid.class);
-                List<String> list = alldevid.getDevid();
-                if(list.size()==0){
-                    Looper.prepare();
-                    ToastUtils.showShort(LoginActivity.this, "获取设备id失败");
-                    startActivity(new Intent(LoginActivity.this,HomeActivity.class));
-                    Looper.loop();
-                }else {
-                    appdevid = list.get(0);
-                    Constant.appdevid1 = appdevid;
-                    if (appdevid != null && !("".equals(appdevid))) {
-
-                        SipInfo.devId = appdevid;
-                        Log.i("qwe",SipInfo.devId);
-                        SipURL local_dev = new SipURL(SipInfo.devId, SipInfo.serverIp, SipInfo.SERVER_PORT_DEV);
-                        SipInfo.dev_from = new NameAddress(SipInfo.devId, local_dev);
-                        new Thread(devConnecting).start();
+            @Override
+            public void onSuccess(Group result) {
+                if (result != null) {
+                    if (result.groupList != null && !result.groupList.isEmpty()) {
+                        //重构疑问：这个循环的意义
+                        for (int i = 0; i < result.groupList.size(); i++) {
+                            groupname = result.groupList.get(i).getGroup_name();
+                            groupid = result.groupList.get(i).getGroupid();
+                        }
+                        Constant.devid1 = groupname;
+                        Constant.groupid1 = groupid;
+                        Constant.groupid = Constant.groupid1;
+                        if (!TextUtils.isEmpty(Constant.groupid1)) {
+                            SipInfo.paddevId = Constant.devid1;
+                            getDevIdInfo();
+                        } else {
+                            Constant.res = "";
+                            LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("avatar",
+                                    Constant.avatar);
+                            LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("nick",
+                                    Constant.nick);
+                            LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
+                                    Constant.id);
+                            dismissLoadingDialog();
+                            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                        }
                     }
-
-                    new Thread(getuserfromgroup).start();
+                } else {
+                    ToastUtils.showToastShort("获取用户数据失败请重试");
+                    dismissLoadingDialog();
                 }
-            } else {
-                Looper.prepare();
-                ToastUtils.makeShortText("获取用户devid失败请重试", LoginActivity.this);
-                registering.dismiss();
-                Looper.loop();
             }
+
+            @Override
+            public void onError(Exception e) {
+                ToastUtils.showToastShort("获取用户数据失败请重试");
+                dismissLoadingDialog();
+            }
+        });
+        HttpManager.addRequest(mGetAllGroupFromUserRequest);
+    }
+
+    private GetAllUserFromGroupRequest mGetAllUserFromGroupRequest;
+
+    //获取组内用户
+    private void getAllUserFormGroup() {
+        if (mGetAllUserFromGroupRequest != null && !mGetAllUserFromGroupRequest.isFinish()) {
+            return;
         }
-    };
+        mGetAllUserFromGroupRequest = new GetAllUserFromGroupRequest();
+        mGetAllUserFromGroupRequest.addUrlParam("groupid", Constant.groupid);
+        mGetAllUserFromGroupRequest.setRequestListener(new RequestListener<UserFromGroup>() {
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSuccess(UserFromGroup result) {
+                if (result != null) {
+                    if (result.userList != null && !result.userList.isEmpty()) {
+                        for (int i = 0; i < result.userList.size(); i++) {
+                            UserList userList = result.userList.get(i);
+                            Friend friend = new Friend();
+                            friend.setNickName(userList.getNickname());
+                            friend.setPhoneNum(userList.getName());
+                            friend.setUserId(userList.getUserid());
+                            friend.setId(userList.getId());
+                            friend.setAvatar(userList.getAvatar());
+                            SipInfo.friends.add(friend);
+                        }
+
+                        GroupInfo.groupNum = "7000";
+//                        String peer = peerElement.getFirstChild().getNodeValue();
+                        GroupInfo.ip = "101.69.255.134";
+//                        GroupInfo.port = 7000;
+                        GroupInfo.level = "1";
+                        SipInfo.devName = Constant.nick;
+
+                        LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("avatar",
+                                Constant.avatar);
+                        LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("nick",
+                                Constant.nick);
+                        LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
+                                Constant.id);
+                        dismissLoadingDialog();
+                        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                    } else {
+                        ToastUtils.showToastShort("获取用户数据失败请重试");
+                        dismissLoadingDialog();
+                    }
+                } else {
+                    ToastUtils.showToastShort("获取用户数据失败请重试");
+                    dismissLoadingDialog();
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+        HttpManager.addRequest(mGetAllUserFromGroupRequest);
+    }
+
+    private GetDevIdFromIdRequest mGetDevIdFromIdRequest;
+
+    //获取用户设备信息
+    private void getDevIdInfo() {
+        if (mGetDevIdFromIdRequest != null && !mGetDevIdFromIdRequest.isFinish()) {
+            return;
+        }
+        mGetDevIdFromIdRequest = new GetDevIdFromIdRequest();
+        mGetDevIdFromIdRequest.addUrlParam("id", Constant.id);
+        mGetDevIdFromIdRequest.setRequestListener(new RequestListener<Alldevid>() {
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSuccess(Alldevid result) {
+                if (result != null) {
+                    List<String> devIdLists = result.devid;
+                    if (devIdLists.isEmpty()) {
+                        ToastUtils.showToast("获取设备id失败");
+                        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                    } else {
+                        appdevid = devIdLists.get(0);
+                        Constant.appdevid1 = appdevid;
+                        if (!TextUtils.isEmpty(appdevid)) {
+                            SipInfo.devId = appdevid;
+                            SipURL local_dev = new SipURL(SipInfo.devId, SipInfo.serverIp, SipInfo.SERVER_PORT_DEV);
+                            SipInfo.dev_from = new NameAddress(SipInfo.devId, local_dev);
+                            new Thread(devConnecting).start();
+                        }
+                        //获取组内用户
+                        getAllUserFormGroup();
+                    }
+                } else {
+                    ToastUtils.showToast("获取用户devid失败请重试");
+                    dismissLoadingDialog();
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                ToastUtils.showToastShort("获取用户devid失败请重试");
+                dismissLoadingDialog();
+            }
+        });
+        HttpManager.addRequest(mGetDevIdFromIdRequest);
+    }
+
     //设备注册线程
     private Runnable devConnecting = new Runnable() {
         @Override
@@ -548,13 +575,14 @@ public class LoginActivity extends Activity {
                 } else {
                     Log.e(TAG, "设备注册失败!");
                     Looper.prepare();
-                    ToastUtils.makeShortText("设备注册失败请重新登录", LoginActivity.this);
-                    registering.dismiss();
+                    ToastUtils.showToastShort("设备注册失败请重新登录");
+                    dismissLoadingDialog();
                     Looper.loop();
                 }
             }
         }
     };
+
     private void showDialogTip(final int errorTime) {
         if (errorTime < 2) {
             handler.post(new Runnable() {
@@ -583,6 +611,7 @@ public class LoginActivity extends Activity {
             });
         }
     }
+
     private Runnable accountNotExist = new Runnable() {
         @Override
         public void run() {
@@ -643,16 +672,6 @@ public class LoginActivity extends Activity {
         return false;
     }
 
-
-    private void showTip(final String message) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -660,54 +679,49 @@ public class LoginActivity extends Activity {
             wakeLock.acquire();
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (registering != null) {
-            registering.dismiss();
-        }
-        if(wakeLock!=null){
+        if (wakeLock != null) {
             wakeLock.release();
-            wakeLock=null;
+            wakeLock = null;
         }
         //ButterKnife.unbind(this);//空间解绑
     }
-    @OnClick({R.id.num_input2,R.id.password_input,R.id.hidepassword,R.id.showpassword,
-            R.id.vericode_login,R.id.password_forget,R.id.btn_login1,R.id.tv_register})
-    public void onClick(View v){
-        switch (v.getId()){
+
+    @OnClick({R.id.num_input2, R.id.password_input, R.id.hidepassword,
+            R.id.vericode_login, R.id.password_forget, R.id.btn_login1, R.id.tv_register})
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.btn_login1:
                 clickLogin();
                 break;
             case R.id.hidepassword:
-                passwordInput.setTransformationMethod(PasswordTransformationMethod.getInstance());
-//                Toast.makeText(this,"隐藏密码",Toast.LENGTH_SHORT).show();
-                hidepassword.setVisibility(View.INVISIBLE);
-                showpassword.setVisibility(View.VISIBLE);
-                break;
-            case R.id.showpassword:
-                passwordInput.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-//                Toast.makeText(this,"显示密码",Toast.LENGTH_SHORT).show();
-                showpassword.setVisibility(View.INVISIBLE);
-                hidepassword.setVisibility(View.VISIBLE);
+                if (passwordInput.getTransformationMethod() == PasswordTransformationMethod.getInstance()) {
+                    hidepassword.setImageResource(R.drawable.ic_eye);
+                    passwordInput.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                } else if (passwordInput.getTransformationMethod() == HideReturnsTransformationMethod.getInstance()) {
+                    hidepassword.setImageResource(R.drawable.ic_hide);
+                    passwordInput.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                }
                 break;
             case R.id.vericode_login:
-                startActivity(new Intent(this,VerificodeLogin.class));
+                startActivity(new Intent(this, VerifyCodeLoginActivity.class));
                 break;
             case R.id.password_forget:
-                startActivity(new Intent(this,ChangePassword1.class));
+                startActivity(new Intent(this, ForgetPasswordActivity.class));
                 break;
             case R.id.tv_register:
-                startActivity(new Intent(this,SignUpActivity.class));
-                break;
-            case R.id.iv_back2:
+                startActivity(new Intent(this, RegisterAccountActivity.class));
                 break;
         }
     }
+
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             "android.PermissionUtils.READ_EXTERNAL_STORAGE",
-            "android.PermissionUtils.WRITE_EXTERNAL_STORAGE" };
+            "android.PermissionUtils.WRITE_EXTERNAL_STORAGE"};
 
 
     public static void verifyStoragePermissions(Activity activity) {
@@ -719,7 +733,7 @@ public class LoginActivity extends Activity {
                     "android.PermissionUtils.WRITE_EXTERNAL_STORAGE");
             if (permission != PERMISSION_GRANTED) {
                 // 没有写的权限，去申请写的权限，会弹出对话框
-                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE);
+                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -775,7 +789,7 @@ public class LoginActivity extends Activity {
         }
     };
 
-    private void requestPermission(){
+    private void requestPermission() {
         PermissionUtils.requestMultiPermissions(this,
                 new String[]{
                         PermissionUtils.PERMISSION_CAMERA,
@@ -786,9 +800,9 @@ public class LoginActivity extends Activity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == PermissionUtils.CODE_MULTI_PERMISSION){
+        if (requestCode == PermissionUtils.CODE_MULTI_PERMISSION) {
             PermissionUtils.requestPermissionsResult(this, requestCode, permissions, grantResults, mGrant);
-        }else{
+        } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
@@ -796,7 +810,7 @@ public class LoginActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == PermissionUtils.REQUEST_CODE_SETTING){
+        if (requestCode == PermissionUtils.REQUEST_CODE_SETTING) {
             new Handler().postDelayed(this::requestPermission, 500);
 
         }

@@ -16,8 +16,6 @@
 
 package com.app.zxing.android;
 
-import android.app.Activity;
-
 /**
  * The main settings activity.
  * 设置相关的常量
@@ -25,7 +23,7 @@ import android.app.Activity;
  * @author dswitkin@google.com (Daniel Switkin)
  * @author Sean Owen
  */
-public final class PreferencesActivity extends Activity {
+public final class PreferencesActivity{
 
   public static final String KEY_DECODE_1D_PRODUCT = "preferences_decode_1D_product";
   public static final String KEY_DECODE_1D_INDUSTRIAL = "preferences_decode_1D_industrial";

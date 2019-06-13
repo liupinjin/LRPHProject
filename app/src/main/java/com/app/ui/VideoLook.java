@@ -1,11 +1,11 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.app.view.FullScreenVideoView;
 import com.app.R;
+import com.app.view.FullScreenVideoView;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -14,7 +14,7 @@ import butterknife.ButterKnife;
  * Created by acer on 2016/11/15.
  */
 
-public class VideoLook extends Activity {
+public class VideoLook extends BaseActivity {
     @Bind(R.id.play)
     FullScreenVideoView play;
 

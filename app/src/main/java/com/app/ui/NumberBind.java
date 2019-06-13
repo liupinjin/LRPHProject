@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,16 +21,16 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.app.R;
 import com.app.http.GetPostUtil;
-import com.app.http.RegexUtils;
-import com.app.http.ToastUtils;
+import com.punuo.sys.app.util.RegexUtils;
 import com.app.http.VerifyCodeManager;
 import com.app.model.Constant;
 import com.app.sip.SipInfo;
-import com.app.tools.ActivityCollector;
 import com.app.views.CleanEditText;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mob.MobSDK;
+import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.util.ToastUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,7 +38,7 @@ import butterknife.OnClick;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
-public class NumberBind extends Activity {
+public class NumberBind extends BaseActivity {
     @Bind(R.id.iv_back1)
     ImageView ivBack1;
     @Bind(R.id.textView4)
@@ -67,7 +66,6 @@ public class NumberBind extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_number_bind);
         ButterKnife.bind(this);
-        ActivityCollector.addActivity(this);
         initView();
         codeManager = new VerifyCodeManager(this, tvPhone, btnSendVerifiCode);
         currentphone.setText(SipInfo.userAccount);
@@ -115,7 +113,6 @@ public class NumberBind extends Activity {
     public void onDestroy() {
         super.onDestroy();
         SMSSDK.unregisterEventHandler(eventHandler);
-        ActivityCollector.removeActivity(this);
     }
 
     private void commit() {
@@ -137,29 +134,6 @@ public class NumberBind extends Activity {
                             handler1.sendEmptyMessage(2222);
                             Log.d("1234","绑定的手机号更改失败");
                         }
-//                    if (msg.equals("注册失败")) {
-//                        Looper.prepare();
-//                        ToastUtils.showShort(NumberBind.this, msg);
-//                        Looper.loop();
-//                        return;
-//                    } else if (msg.equals("手机号已注册")) {
-//                        Looper.prepare();
-//                        ToastUtils.showShort(NumberBind.this, msg);
-//                        Looper.loop();
-//                        return;
-//                    } else {
-//                        Looper.prepare();
-//                        ToastUtils.showShort(NumberBind.this, msg);
-//                        myhandle.sendEmptyMessage(1);
-//                        Looper.loop();
-//                        return;
-//                    }
-//                }else {
-//                    Looper.prepare();
-//                    ToastUtils.makeShortText("请求无响应请重试", NumberBind.this);
-//                    Looper.loop();
-//                }
-
                     }
                 }
             }.start();
@@ -181,7 +155,6 @@ public class NumberBind extends Activity {
                     SMSSDK.submitVerificationCode("86", phone, code);
                 }
             case R.id.iv_back1:
-                ActivityCollector.removeActivity(this);
                 finish();
             default:
                 break;
@@ -192,9 +165,9 @@ public class NumberBind extends Activity {
             super.handleMessage(msg);
             if(msg.what==1111){
                 finish();
-                ToastUtils.makeShortText("更改成功", NumberBind.this);
+                ToastUtils.showToastShort("更改成功");
             }else if(msg.what==2222){
-                ToastUtils.makeShortText("更改失败", NumberBind.this);
+                ToastUtils.showToastShort("更改失败");
             }
         }
     };
@@ -210,7 +183,7 @@ public class NumberBind extends Activity {
             // 短信注册成功后，返回LoginActivity,然后提示
             if (result == SMSSDK.RESULT_COMPLETE) {
                 if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {// 提交验证码成功
-//                    Toast.makeText(SignUpActivity.this, "验证成功",
+//                    Toast.makeText(RegisterAccountActivity.this, "验证成功",
 //                            Toast.LENGTH_SHORT).show();
                     final String phone = tvPhone.getText().toString().trim();
                     String code = verificodeInput2.getText().toString().trim();
@@ -239,12 +212,12 @@ public class NumberBind extends Activity {
 
     private boolean checkInput(String phone, String code) {
         if (TextUtils.isEmpty(phone)) { // 电话号码为空
-            ToastUtils.showShort(this, R.string.tip_phone_can_not_be_empty);
+            ToastUtils.showToast(R.string.tip_phone_can_not_be_empty);
         } else {
             if (!RegexUtils.checkMobile(phone)) { // 电话号码格式有误
-                ToastUtils.showShort(this, R.string.tip_phone_regex_not_right);
+                ToastUtils.showToast(R.string.tip_phone_regex_not_right);
             } else if (TextUtils.isEmpty(code)) { // 验证码不正确
-                ToastUtils.showShort(this, R.string.tip_please_input_code);
+                ToastUtils.showToast(R.string.tip_please_input_code);
             } else {
                 return true;
             }

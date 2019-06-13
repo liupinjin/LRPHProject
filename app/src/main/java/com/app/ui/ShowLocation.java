@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,11 +22,12 @@ import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeResult;
 import com.app.R;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ShowLocation extends Activity implements LocationSource, GeocodeSearch.OnGeocodeSearchListener {
+public class ShowLocation extends BaseActivity implements LocationSource, GeocodeSearch.OnGeocodeSearchListener {
 
     @Bind(R.id.title)
     TextView title;

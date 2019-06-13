@@ -1,19 +1,18 @@
 package com.app.ui;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.os.Bundle;
 import android.text.TextPaint;
 import android.util.Log;
 import android.view.Display;
@@ -34,14 +33,14 @@ import com.app.LocalUserInfo;
 import com.app.R;
 import com.app.groupvoice.GroupInfo;
 import com.app.http.GetPostUtil;
-import com.app.http.ToastUtils;
 import com.app.model.Constant;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.ActivityCollector;
-import com.app.view.CustomProgressDialog;
 import com.app.zxing.android.CaptureActivity;
+import com.punuo.sys.app.activity.ActivityCollector;
+import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.util.ToastUtils;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -52,8 +51,7 @@ import static com.app.sip.SipInfo.devName;
 import static com.app.sip.SipInfo.paduserid;
 import static com.app.sip.SipInfo.sipUser;
 
-public class SaomaActivity extends Activity implements View.OnClickListener {
-    private CustomProgressDialog registering;
+public class SaomaActivity extends BaseActivity implements View.OnClickListener {
     private static final int REQUEST_CODE_SCAN1 = 0x0000;
     private static final String DECODED_CONTENT_KEY = "codedContent";
     private View inflate;
@@ -79,7 +77,6 @@ public class SaomaActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_saoma2);
-        ActivityCollector.addActivity(this);
         TextView title=(TextView) findViewById(R.id.tv_binddev);
         TextPaint tp=title.getPaint();
         tp.setFakeBoldText(true);
@@ -123,9 +120,8 @@ public class SaomaActivity extends Activity implements View.OnClickListener {
 
 
         if ((devid1 != null) && !("".equals(devid1))){
-            ActivityCollector.removeActivity(this);
             finish();
-         startActivity(new Intent(this,DevBindSuccess.class));
+         startActivity(new Intent(this, DevBindSuccessActivity.class));
         }
         // Check if we have write PermissionUtils
         int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -218,7 +214,6 @@ public class SaomaActivity extends Activity implements View.OnClickListener {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 1111) {
-                //ToastUtils.makeShortText("绑定设备成功请重新登录", saomaActivity.this);
                 org.zoolu.sip.message.Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
                         SipInfo.user_from, BodyFactory.createListUpdate("addsuccess"));
                 SipInfo.sipUser.sendMessage(query);
@@ -255,10 +250,10 @@ public class SaomaActivity extends Activity implements View.OnClickListener {
                 return;
             }
             else if (msg.what == 222) {
-                ToastUtils.makeShortText("已经绑定过该设备", SaomaActivity.this);
+                ToastUtils.showToastShort("已经绑定过该设备");
                 return;
             } else if (msg.what == 333) {
-                ToastUtils.makeShortText("绑定失败，不是一个合法的设备", SaomaActivity.this);
+                ToastUtils.showToastShort("绑定失败，不是一个合法的设备");
                 return;
             }else if(msg.what==444){
               Log.d("jiebang","111");
@@ -376,7 +371,6 @@ public class SaomaActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
     }
 
     private void boolOpenCarmer(){

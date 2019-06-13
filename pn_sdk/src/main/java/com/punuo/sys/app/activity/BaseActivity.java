@@ -5,18 +5,46 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 
 import com.punuo.sys.app.R;
+import com.punuo.sys.app.view.PNLoadingDialog;
 
 /**
  * Created by Wxcily on 16/1/5.
  */
 public class BaseActivity extends AppCompatActivity {
-
+    private PNLoadingDialog mLoadingDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         ActivityCollector.addActivity(this);
+        initLoadingDialog();
     }
+
+    private void initLoadingDialog() {
+        mLoadingDialog = new PNLoadingDialog(this);
+        mLoadingDialog.setCancelable(true);
+        mLoadingDialog.setCanceledOnTouchOutside(false);
+    }
+
+    public void showLoadingDialog() {
+        if (mLoadingDialog != null && !mLoadingDialog.isShowing()) {
+            mLoadingDialog.show();
+        }
+    }
+
+    public void showLoadingDialog(String msg) {
+        if (mLoadingDialog != null && !mLoadingDialog.isShowing()) {
+            mLoadingDialog.setLoadingMsg(msg);
+            showLoadingDialog();
+        }
+    }
+
+    public void dismissLoadingDialog() {
+        if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
+            mLoadingDialog.dismiss();
+        }
+    }
+
     /**
      * 复写返回键操作,返回true则不继续下发
      *
@@ -43,6 +71,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        ActivityCollector.removeActivity(this);
+        dismissLoadingDialog();
     }
 }

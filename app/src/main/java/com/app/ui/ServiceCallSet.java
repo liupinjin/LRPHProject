@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,7 +20,7 @@ import com.app.R;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.tools.ActivityCollector;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
@@ -37,7 +36,7 @@ import static com.app.sip.SipInfo.devName;
  * Created by maojianhui on 2018/6/26.
  */
 
-public class ServiceCallSet extends Activity {
+public class ServiceCallSet extends BaseActivity {
     @Bind(R.id.bt_set1)
     Button bt_set1;
     @Bind(R.id.bt_set2)
@@ -81,7 +80,6 @@ public class ServiceCallSet extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_servicecall1);
         ButterKnife.bind(this);
-        ActivityCollector.addActivity(this);
         titleset.setText("服务电话");
         TextPaint tp=titleset.getPaint();
         tp.setFakeBoldText(true);
@@ -197,7 +195,6 @@ public class ServiceCallSet extends Activity {
                 }
                 break;
             case R.id.iv_back1:
-                ActivityCollector.removeActivity(this);
                 finish();
                 break;
             default:

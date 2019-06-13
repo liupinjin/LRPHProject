@@ -1,14 +1,14 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.app.view.FullScreenVideoView;
 import com.app.R;
+import com.app.view.FullScreenVideoView;
+import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.File;
 
@@ -21,7 +21,7 @@ import butterknife.OnClick;
  * Date 2016/12/19.
  */
 
-public class VideoShow extends Activity {
+public class VideoShow extends BaseActivity {
     @Bind(R.id.play)
     FullScreenVideoView play;
     @Bind(R.id.returnback)

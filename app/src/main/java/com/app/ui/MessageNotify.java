@@ -1,6 +1,5 @@
 package com.app.ui;
 
-import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
@@ -17,10 +16,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.app.R;
 import com.app.http.GetPostUtil;
-import com.app.http.ToastUtils;
 import com.app.model.Constant;
-import com.app.tools.ActivityCollector;
-import com.google.gson.JsonObject;
+import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.util.ToastUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -29,7 +27,7 @@ import butterknife.OnClick;
 import static com.app.model.Constant.isNotify;
 
 
-public class MessageNotify extends Activity {
+public class MessageNotify extends BaseActivity {
 
     @Bind(R.id.btn_switch)
     SwitchCompat btnSwitch;
@@ -43,7 +41,6 @@ public class MessageNotify extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_notify);
-        ActivityCollector.addActivity(this);
         ButterKnife.bind(this);
         titleset.setText("新消息通知");
         if("1".equals(isNotify)) {
@@ -118,7 +115,7 @@ public class MessageNotify extends Activity {
         });
     }
 
-    private Runnable  updateNotify=new Runnable(){
+    private Runnable updateNotify=new Runnable(){
         @Override
         public void run()
         {
@@ -128,9 +125,9 @@ public class MessageNotify extends Activity {
                 JSONObject  obj= JSON.parseObject("msg");
                 String msg=obj.toString();
                 if(msg.equals("success"))
-                    ToastUtils.makeShortText("成功",getApplicationContext());
+                    ToastUtils.showToastShort("成功");
             }
-            ToastUtils.makeShortText("开",getApplicationContext());
+            ToastUtils.showToastShort("开");
         }
     };
 
@@ -138,7 +135,6 @@ public class MessageNotify extends Activity {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back1:
-                ActivityCollector.removeActivity(this);
                 finish();
                 break;
         }
