@@ -27,6 +27,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.app.R;
+import com.app.Util;
 import com.app.audiorecord.MediaPlayerManager;
 import com.app.db.DatabaseInfo;
 import com.app.model.Constant;
@@ -134,8 +135,8 @@ private String avatar;
         avatar=Constant.currentfriendavatar;
         id=Constant.currentfriendid;
 
-        Glide.with(mContext).load(Constant.URL_Avatar+id+"/"+avatar).error(R.drawable.empty_photo).into(viewHolder.chatfrom);
-        Glide.with(mContext).load(Constant.URL_Avatar+Constant.id+"/"+Constant.avatar).error(R.drawable.empty_photo).into(viewHolder.chatto);
+        Glide.with(mContext).load(Util.getImageUrl(id, avatar)).error(R.drawable.empty_photo).into(viewHolder.chatfrom);
+        Glide.with(mContext).load(Util.getImageUrl(avatar)).error(R.drawable.empty_photo).into(viewHolder.chatto);
         if (msg.getToUserId().equals(SipInfo.userId)) {
             // 如果是收到的消息，则显示左边的消息布局，将右边的消息布局隐藏
             viewHolder.leftLayout.setVisibility(View.VISIBLE);

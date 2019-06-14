@@ -20,8 +20,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.LocalUserInfo;
 import com.app.R;
+import com.app.UserInfoManager;
 import com.app.db.DatabaseInfo;
 import com.app.db.MyDatabaseHelper;
 import com.app.db.SQLiteManager;
@@ -39,7 +39,6 @@ import com.app.model.PNUserInfo;
 import com.app.request.GetAllGroupFromUserRequest;
 import com.app.request.GetAllUserFromGroupRequest;
 import com.app.request.GetDevIdFromIdRequest;
-import com.app.request.GetUserInfoRequest;
 import com.app.sip.KeepAlive;
 import com.app.sip.SipDev;
 import com.app.sip.SipInfo;
@@ -90,7 +89,6 @@ public class VerifyCodeLoginActivity extends BaseSwipeBackActivity {
     TextView newAccountRegister;
     private VerifyCodeManager1 codeManager1;
     private EventHandler eventHandler;
-    private String userinfomsg;
     //前一次的账号
     private String lastUserAccount;
     //密码错误次数
@@ -383,17 +381,9 @@ public class VerifyCodeLoginActivity extends BaseSwipeBackActivity {
             }
         }
     };
-
-    private GetUserInfoRequest mGetUserInfoRequest;
-
     //获取用户信息
     private void getUserInfo() {
-        if (mGetUserInfoRequest != null && !mGetUserInfoRequest.isFinish()) {
-            return;
-        }
-        mGetUserInfoRequest = new GetUserInfoRequest();
-        mGetUserInfoRequest.addUrlParam("userid", SipInfo.userId);
-        mGetUserInfoRequest.setRequestListener(new RequestListener<PNUserInfo>() {
+        RequestListener listener = new RequestListener<PNUserInfo>() {
             @Override
             public void onComplete() {
 
@@ -402,7 +392,7 @@ public class VerifyCodeLoginActivity extends BaseSwipeBackActivity {
             @Override
             public void onSuccess(PNUserInfo result) {
                 if (result != null && result.isSuccess()) {
-                    setUserInfo(result.userInfo);
+                    UserInfoManager.setUserInfo(result.userInfo);
                     SipInfo.friends.clear();
                     getGroupInfo();
                 } else {
@@ -416,19 +406,8 @@ public class VerifyCodeLoginActivity extends BaseSwipeBackActivity {
                 ToastUtils.showToastShort("获取用户数据失败请重试");
                 dismissLoadingDialog();
             }
-        });
-        HttpManager.addRequest(mGetUserInfoRequest);
-
-    }
-
-    //临时，后面需要统一管理用户信息
-    private void setUserInfo(PNUserInfo.UserInfo userInfo) {
-        Constant.nick = userInfo.nickname;
-        Constant.avatar = userInfo.avatar;
-        Constant.id = userInfo.id;
-        Constant.phone = userInfo.name;
-        Constant.sex = userInfo.gender;
-        Constant.isNotify = userInfo.isNotify;
+        };
+        UserInfoManager.getInstance().refreshUserInfo(listener);
     }
 
     private GetAllGroupFromUserRequest mGetAllGroupFromUserRequest;
@@ -439,7 +418,7 @@ public class VerifyCodeLoginActivity extends BaseSwipeBackActivity {
             return;
         }
         mGetAllGroupFromUserRequest = new GetAllGroupFromUserRequest();
-        mGetAllGroupFromUserRequest.addUrlParam("id", Constant.id);
+        mGetAllGroupFromUserRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mGetAllGroupFromUserRequest.setRequestListener(new RequestListener<Group>() {
             @Override
             public void onComplete() {
@@ -470,13 +449,6 @@ public class VerifyCodeLoginActivity extends BaseSwipeBackActivity {
                             SipInfo.paddevId = Constant.devid1;
                             getDevIdInfo();
                         } else {
-                            Constant.res = "";
-                            LocalUserInfo.getInstance(VerifyCodeLoginActivity.this).setUserInfo("avatar",
-                                    Constant.avatar);
-                            LocalUserInfo.getInstance(VerifyCodeLoginActivity.this).setUserInfo("nick",
-                                    Constant.nick);
-                            LocalUserInfo.getInstance(VerifyCodeLoginActivity.this).setUserInfo("id",
-                                    Constant.id);
                             dismissLoadingDialog();
                             startActivity(new Intent(VerifyCodeLoginActivity.this, HomeActivity.class));
                         }
@@ -503,7 +475,7 @@ public class VerifyCodeLoginActivity extends BaseSwipeBackActivity {
             return;
         }
         mGetDevIdFromIdRequest = new GetDevIdFromIdRequest();
-        mGetDevIdFromIdRequest.addUrlParam("id", Constant.id);
+        mGetDevIdFromIdRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mGetDevIdFromIdRequest.setRequestListener(new RequestListener<Alldevid>() {
             @Override
             public void onComplete() {
@@ -579,14 +551,7 @@ public class VerifyCodeLoginActivity extends BaseSwipeBackActivity {
                         GroupInfo.ip = "101.69.255.134";
 //                        GroupInfo.port = 7000;
                         GroupInfo.level = "1";
-                        SipInfo.devName = Constant.nick;
-
-                        LocalUserInfo.getInstance(VerifyCodeLoginActivity.this).setUserInfo("avatar",
-                                Constant.avatar);
-                        LocalUserInfo.getInstance(VerifyCodeLoginActivity.this).setUserInfo("nick",
-                                Constant.nick);
-                        LocalUserInfo.getInstance(VerifyCodeLoginActivity.this).setUserInfo("id",
-                                Constant.id);
+                        SipInfo.devName = UserInfoManager.getUserInfo().nickname;
                         dismissLoadingDialog();
                         startActivity(new Intent(VerifyCodeLoginActivity.this, HomeActivity.class));
                     } else {

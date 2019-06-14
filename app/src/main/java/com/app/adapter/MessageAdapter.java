@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.app.R;
-import com.app.model.Constant;
+import com.app.Util;
 import com.app.model.Friend;
 import com.app.model.LastestMsg;
 import com.app.sip.SipInfo;
@@ -77,7 +77,7 @@ public class MessageAdapter extends BaseAdapter {
 
                 Glide.
                         with(mContext).
-                        load(Constant.URL_Avatar+f.getId()+"/"+f.getAvatar()).
+                        load(Util.getImageUrl(f.getId(), f.getAvatar())).
                         error(R.drawable.empty_photo).
                         into(holder.icon);
                 holder.name.setText(f.getNickName());

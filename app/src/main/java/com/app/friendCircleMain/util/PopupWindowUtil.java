@@ -11,13 +11,13 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.app.R;
+import com.app.UserInfoManager;
 import com.app.friendCircleMain.domain.FirstMicroListDatasFirendcomment;
 import com.app.friendCircleMain.domain.FirstMicroListDatasFirendpraise;
 import com.app.friendCircleMain.domain.FirstMicroListDatasFirendpraiseType;
 import com.app.friendCircleMain.domain.FriendMicroListDatas;
 import com.app.friendCircleMain.event.FriendRefreshEvent;
 import com.app.friendCircleMain.viewholder.FriendPraiseViewHolder;
-import com.app.model.Constant;
 import com.app.request.AddCommentRequest;
 import com.app.request.AddLikeRequest;
 import com.app.request.DeleteLikeRequest;
@@ -157,7 +157,7 @@ public class PopupWindowUtil {
             own = new FirstMicroListDatasFirendpraiseType();
         }
         FirstMicroListDatasFirendpraise praise = new FirstMicroListDatasFirendpraise();
-        praise.setNickname(Constant.nick);
+        praise.setNickname(UserInfoManager.getUserInfo().nickname);
         if ("N".equals(bean.getPraiseflag())) {
             addLike(praiseType);
         } else if ("Y".equals(bean.getPraiseflag())) {
@@ -177,7 +177,7 @@ public class PopupWindowUtil {
         }
         mAddLikeRequest = new AddLikeRequest();
         mAddLikeRequest.addUrlParam("postid", bean.getPostid());
-        mAddLikeRequest.addUrlParam("id", Constant.id);
+        mAddLikeRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mAddLikeRequest.addUrlParam("praisetype", praiseType);
         mAddLikeRequest.setRequestListener(new RequestListener<String>() {
             @Override
@@ -191,8 +191,8 @@ public class PopupWindowUtil {
                     return;
                 }
                 FirstMicroListDatasFirendpraise praise = new FirstMicroListDatasFirendpraise();
-                praise.setId(Constant.id);
-                praise.setNickname(Constant.nick);
+                praise.setId(UserInfoManager.getUserInfo().id);
+                praise.setNickname(UserInfoManager.getUserInfo().nickname);
                 praise.setPraisetype(praiseType);
                 own.setPraisetype(praiseType);
                 ownType.add(own);
@@ -218,7 +218,7 @@ public class PopupWindowUtil {
         }
         mDeleteLikeRequest = new DeleteLikeRequest();
         mDeleteLikeRequest.addUrlParam("postid", bean.getPostid());
-        mDeleteLikeRequest.addUrlParam("id", Constant.id);
+        mDeleteLikeRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mDeleteLikeRequest.addUrlParam("praisetype", praiseType);
         mDeleteLikeRequest.setRequestListener(new RequestListener<String>() {
             @Override
@@ -232,8 +232,8 @@ public class PopupWindowUtil {
                     return;
                 }
                 FirstMicroListDatasFirendpraise praise = new FirstMicroListDatasFirendpraise();
-                praise.setId(Constant.id);
-                praise.setNickname(Constant.nick);
+                praise.setId(UserInfoManager.getUserInfo().id);
+                praise.setNickname(UserInfoManager.getUserInfo().nickname);
                 int index = friendPraise.indexOf(praise);
                 if (index != -1) {
                     friendPraise.remove(index);
@@ -260,7 +260,7 @@ public class PopupWindowUtil {
         }
         mUpdateLikeRequest = new UpdateLikeRequest();
         mUpdateLikeRequest.addUrlParam("postid", bean.getPostid());
-        mUpdateLikeRequest.addUrlParam("id", Constant.id);
+        mUpdateLikeRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mUpdateLikeRequest.addUrlParam("praisetype", praiseType);
         mUpdateLikeRequest.setRequestListener(new RequestListener<String>() {
             @Override
@@ -274,8 +274,8 @@ public class PopupWindowUtil {
                     return;
                 }
                 FirstMicroListDatasFirendpraise praise = new FirstMicroListDatasFirendpraise();
-                praise.setId(Constant.id);
-                praise.setNickname(Constant.nick);
+                praise.setId(UserInfoManager.getUserInfo().id);
+                praise.setNickname(UserInfoManager.getUserInfo().nickname);
                 int index = friendPraise.indexOf(praise);
                 if (index != -1) {
                     FirstMicroListDatasFirendpraise firstMicroListDatasFirendpraise = friendPraise.get(index);
@@ -302,7 +302,7 @@ public class PopupWindowUtil {
             return;
         }
         mAddCommentRequest = new AddCommentRequest();
-        mAddCommentRequest.addUrlParam("id", Constant.id);
+        mAddCommentRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mAddCommentRequest.addUrlParam("postid", bean.getPostid());
         mAddCommentRequest.addUrlParam("content", content);
         mAddCommentRequest.setRequestListener(new RequestListener<String>() {
@@ -319,8 +319,8 @@ public class PopupWindowUtil {
                     bean.setFriendcomment(firendcomments);
                 }
                 FirstMicroListDatasFirendcomment comments = new FirstMicroListDatasFirendcomment();
-                comments.setId(Constant.id);
-                comments.setReplyName(Constant.nick);
+                comments.setId(UserInfoManager.getUserInfo().id);
+                comments.setReplyName(UserInfoManager.getUserInfo().nickname);
                 comments.setComment(content);
                 firendcomments.add(comments);
                 EventBus.getDefault().post(new FriendRefreshEvent());

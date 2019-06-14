@@ -4,21 +4,14 @@ package com.app.ui.fragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.text.TextPaint;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,22 +19,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.app.LoadPicture;
-import com.app.LoadPicture.ImageDownloadedCallBack;
-import com.app.LocalUserInfo;
 import com.app.R;
-import com.app.ftp.Ftp;
-import com.app.ftp.FtpListener;
-import com.app.model.Constant;
-import com.app.sip.BodyFactory;
+import com.app.UserInfoManager;
+import com.app.Util;
+import com.app.model.PNUserInfo;
 import com.app.sip.SipInfo;
-import com.app.sip.SipMessageFactory;
-import com.app.tools.VersionXmlParse;
 import com.app.ui.FamilyCircleActivity;
 import com.app.ui.MyCouponActivity;
 import com.app.ui.SaomaActivity;
@@ -50,71 +35,41 @@ import com.app.ui.SettingActivity;
 import com.app.ui.UploadPictureActivity;
 import com.app.videoAndPictureUpload.SelectVideoActivity;
 import com.app.view.CircleImageView;
-import com.punuo.sys.app.activity.ActivityCollector;
+import com.bumptech.glide.Glide;
 import com.punuo.sys.app.fragment.BaseFragment;
 import com.punuo.sys.app.util.StatusBarUtil;
 import com.punuo.sys.app.util.ToastUtils;
+import com.punuo.sys.app.util.ViewUtil;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.HashMap;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import static com.app.camera.FileOperateUtil.TAG;
-import static com.app.sip.SipInfo.sipUser;
 
 public class PersonFragment extends BaseFragment implements View.OnClickListener {
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE};
-
-    private CircleImageView iv_avatar;
+    private View mView;
     private TextView tv_name;
-    private View mStatusBar;
-    TextView tv_fxid;
-    TextView title;
-    //手机内存卡路径
-    String SdCard;
-    //当前版本
-    String version;
-    //FTP上的版本
-    String FtpVersion;
-    //用于版本xml解析
-    HashMap<String, String> versionHashMap = new HashMap<>();
-    //进度条消失类型
-    String result;
-    //下载进度条
-    ProgressDialog downloadDialog;
-    //apk路径
-    String apkPath;
-    String avaPath;
-    private LoadPicture avatarLoader;
-    private String avatar = "";
-
+    private TextView tv_fxid;
+    private CircleImageView iv_avatar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_person, container, false);
-
+        mView = inflater.inflate(R.layout.fragment_person, container, false);
+        initView();
+        return mView;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        RelativeLayout lay = (RelativeLayout) getView().findViewById(
-                R.id.main1);
-        title = (TextView) lay.findViewById(R.id.title);
+    private void initView() {
+        TextView title = mView.findViewById(R.id.title);
         title.setText("个人中心");
-        TextPaint tp = title.getPaint();
-        tp.setFakeBoldText(true);
-        SdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
-        apkPath = SdCard + "/fanxin/download/apk/";
-        avaPath = SdCard + "/fanxin/Files/Camera/Image/";
-        avatarLoader = new LoadPicture(getActivity(), avaPath);
-        RelativeLayout re_myinfo = (RelativeLayout) getView().findViewById(
-                R.id.re_myinfo);
+        String sdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
+        RelativeLayout re_myinfo = mView.findViewById(R.id.re_myinfo);
         re_myinfo.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -124,33 +79,19 @@ public class PersonFragment extends BaseFragment implements View.OnClickListener
             }
 
         });
-        iv_avatar = (CircleImageView) re_myinfo.findViewById(R.id.iv_avatar);
-        tv_name = (TextView) re_myinfo.findViewById(R.id.tv_name);
-        tv_fxid = (TextView) re_myinfo.findViewById(R.id.tv_fxid);
-        avatar = LocalUserInfo.getInstance(getActivity()).getUserInfo("avatar");
-        tv_name.setText("昵称: " + Constant.nick);
-        tv_fxid.setText("手机号：" + Constant.phone);
-        try {
-            showUserAvatar(iv_avatar, avatar);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        RelativeLayout re_xaingce = (RelativeLayout) getView().findViewById(
-                R.id.re_xiangce);
-        RelativeLayout re_addev = (RelativeLayout) getView().findViewById(
-                R.id.re_adddev);
-        RelativeLayout re_servicecall = (RelativeLayout) getView().findViewById(
-                R.id.re_servicecall);
-        RelativeLayout re_order = (RelativeLayout) getView().findViewById(
-                R.id.re_order);
-        RelativeLayout re_coupon = (RelativeLayout) getView().findViewById(
-                R.id.re_coupon);
-        RelativeLayout re_shoppingcart = (RelativeLayout) getView().findViewById(
-                R.id.re_shoppingcart);
-        RelativeLayout re_collection = (RelativeLayout) getView().findViewById(
-                R.id.re_collection);
-        RelativeLayout re_settings = (RelativeLayout) getView().findViewById(
-                R.id.re_settings);
+        iv_avatar = mView.findViewById(R.id.iv_avatar);
+        tv_name = mView.findViewById(R.id.tv_name);
+        tv_fxid = mView.findViewById(R.id.tv_fxid);
+        String avatar = UserInfoManager.getUserInfo().avatar;
+        Glide.with(getActivity()).load(Util.getImageUrl(avatar)).into(iv_avatar);
+        RelativeLayout re_xaingce = mView.findViewById(R.id.re_xiangce);
+        RelativeLayout re_addev = mView.findViewById(R.id.re_adddev);
+        RelativeLayout re_servicecall = mView.findViewById(R.id.re_servicecall);
+        RelativeLayout re_order = mView.findViewById(R.id.re_order);
+        RelativeLayout re_coupon = mView.findViewById(R.id.re_coupon);
+        RelativeLayout re_shoppingcart = mView.findViewById(R.id.re_shoppingcart);
+        RelativeLayout re_collection = mView.findViewById(R.id.re_collection);
+        RelativeLayout re_settings = mView.findViewById(R.id.re_settings);
         re_xaingce.setOnClickListener(this);
         re_addev.setOnClickListener(this);
         re_servicecall.setOnClickListener(this);
@@ -160,11 +101,20 @@ public class PersonFragment extends BaseFragment implements View.OnClickListener
         re_collection.setOnClickListener(this);
         re_settings.setOnClickListener(this);
 
-        mStatusBar = getView().findViewById(R.id.status_bar);
+        mView.findViewById(R.id.back).setVisibility(View.GONE); // 隐藏返回按钮
+
+        Glide.with(getActivity()).load(Util.getImageUrl(UserInfoManager.getUserInfo().avatar)).into(iv_avatar);
+        ViewUtil.setText(tv_name, "昵称：" + UserInfoManager.getUserInfo().nickname);
+        ViewUtil.setText(tv_fxid, "手机号：  " + SipInfo.userAccount);
+
+        View statusBar = mView.findViewById(R.id.status_bar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mStatusBar.setVisibility(View.VISIBLE);
-            mStatusBar.getLayoutParams().height = StatusBarUtil.getStatusBarHeight(getActivity());
-            mStatusBar.requestLayout();
+            statusBar.setVisibility(View.VISIBLE);
+            statusBar.getLayoutParams().height = StatusBarUtil.getStatusBarHeight(getActivity());
+            statusBar.requestLayout();
+        }
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
         }
     }
 
@@ -270,7 +220,6 @@ public class PersonFragment extends BaseFragment implements View.OnClickListener
         }
     }
 
-
     private void showPhotoDialog() {
         final AlertDialog dlg = new AlertDialog.Builder(getActivity()).create();
 
@@ -318,234 +267,18 @@ public class PersonFragment extends BaseFragment implements View.OnClickListener
 
     }
 
-    private void showUserAvatar(ImageView iamgeView, String avatar) {
-        final String url_avatar = Constant.URL_Avatar + Constant.id + "/" + avatar;
-        //iamgeView.setTag(url_avatar);
-        if (avatar != null && !avatar.equals("")) {
-            Bitmap bitmap = avatarLoader.loadImage(iamgeView, url_avatar,
-                    new ImageDownloadedCallBack() {
-
-                        @Override
-                        public void onImageDownloaded(ImageView imageView,
-                                                      Bitmap bitmap) {
-                            //if (imageView.getTag() == url_avatar) {
-                            imageView.setImageBitmap(bitmap);
-
-                            //}
-                        }
-
-                    });
-            if (bitmap != null)
-                iamgeView.setImageBitmap(bitmap);
-
-        }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(PNUserInfo.UserInfo userInfo) {
+        Glide.with(getActivity()).load(Util.getImageUrl(UserInfoManager.getUserInfo().avatar)).into(iv_avatar);
+        ViewUtil.setText(tv_name, "昵称：" + UserInfoManager.getUserInfo().nickname);
+        ViewUtil.setText(tv_fxid, "手机号：  " + SipInfo.userAccount);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        String vatar_temp = LocalUserInfo.getInstance(getActivity())
-                .getUserInfo("avatar");
-        if (!vatar_temp.equals(Constant.avatar) && vatar_temp != null && !vatar_temp.equals("")) {
-            showUserAvatar(iv_avatar, vatar_temp);
-        } else {
-            showUserAvatar(iv_avatar, Constant.avatar);
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
         }
-        String nick_temp = LocalUserInfo.getInstance(getActivity())
-                .getUserInfo("nick");
-        if (!nick_temp.equals(Constant.nick) && nick_temp != null && !nick_temp.equals("")) {
-            tv_name.setText("昵称：" + nick_temp);
-        } else {
-            tv_name.setText("昵称：" + Constant.nick);
-        }
-        tv_fxid.setText("手机号：  " + SipInfo.userAccount);
-    }
-
-    //Ftp对象
-    Ftp mFtp;
-    //版本信息下载监听器
-    FtpListener Dversion = new FtpListener() {
-        @Override
-        public void onStateChange(String currentStep) {
-            Log.i(TAG, currentStep);
-        }
-
-        @Override
-        public void onUploadProgress(String currentStep, long uploadSize, File targetFile) {
-
-        }
-
-        @Override
-        public void onDownLoadProgress(String currentStep, long downProcess, File targetFile) {
-            if (currentStep.equals(Constant.FTP_DOWN_SUCCESS)) {
-                Log.i(TAG, currentStep);
-            } else if (currentStep.equals(Constant.FTP_DOWN_LOADING)) {
-                Log.i(TAG, "-----下载---" + downProcess + "%");
-            }
-        }
-
-        @Override
-        public void onDeleteProgress(String currentStep) {
-
-        }
-    };
-    //版本apk下载监听器
-    FtpListener Dapk = new FtpListener() {
-        @Override
-        public void onStateChange(String currentStep) {
-
-        }
-
-        @Override
-        public void onUploadProgress(String currentStep, long uploadSize, File targetFile) {
-
-        }
-
-        @Override
-        public void onDownLoadProgress(String currentStep, long downProcess, File targetFile) {
-            if (currentStep.equals(Constant.FTP_DOWN_SUCCESS)) {
-                Log.d(TAG, currentStep);
-                downloadDialog.dismiss();
-                Message message = new Message();
-                message.what = 0x0002;
-                handler.sendMessage(message);
-            }
-            if (currentStep.equals(Constant.FTP_DOWN_LOADING)) {
-                downloadDialog.setProgress((int) downProcess);
-                Log.i(TAG, "-----下载---" + downProcess + "%");
-            }
-        }
-
-        @Override
-        public void onDeleteProgress(String currentStep) {
-
-        }
-    };
-    Runnable checkVersion = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                //下载版本信息xml文件
-                mFtp.download("/apk/version_fanxin.xml", SdCard + "/fanxin/version/");
-                File xml = new File(SdCard + "/fanxin/version/version_fanxin.xml");
-                InputStream inputStream = new FileInputStream(xml);
-                //解析xml文件
-                versionHashMap = VersionXmlParse.parseXml(inputStream);
-            } catch (Exception e) {
-                result = e.getMessage();
-            }
-            //获取ftp上的版本号
-            FtpVersion = versionHashMap.get("version");
-            //根据result显示相应的对话框
-            showVersionDialog(version, FtpVersion, result);
-        }
-    };
-
-    private void showVersionDialog(String currentVersion, final String FtpVersion, final String result) {
-        //取消进度条
-        if (result.equals("Finished")) {
-            Log.i(TAG, "当前版本为 " + version + "FTP上版本为 " + FtpVersion);
-            if (!currentVersion.equals(FtpVersion)) {
-                //版本不一致
-                Message message = new Message();
-                message.what = 0x0001;
-                handler.sendMessage(message);
-            } else {
-                //版本一致
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                                .setTitle("当前为最新版本")
-                                .setPositiveButton("确定", null)
-                                .create();
-                        dialog.setCanceledOnTouchOutside(false);
-                        dialog.show();
-                    }
-                });
-            }
-        } else {
-            //失败
-            showTip(result);
-        }
-    }
-
-    //下载完成
-    Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            Log.d(TAG, "handleMessage: " + msg.what);
-            switch (msg.what) {
-                case 0x0001:
-                    AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                            .setTitle("有新版本")
-                            .setMessage("当前版本为" + version + ",新版本为" + FtpVersion)
-                            .setPositiveButton("下载并安装", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    downloadDialog = new ProgressDialog(getActivity());
-                                    downloadDialog.setTitle("下载进度");
-                                    downloadDialog.setMessage("已经下载了");
-                                    downloadDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                                    downloadDialog.setCancelable(false);
-                                    downloadDialog.setIndeterminate(false);
-                                    downloadDialog.setMax(100);
-                                    downloadDialog.show();
-                                    new Thread() {
-                                        @Override
-                                        public void run() {
-                                            mFtp.setListener(Dapk);
-                                            try {
-                                                mFtp.download(versionHashMap.get("path"), apkPath);
-                                            } catch (final Exception e) {
-                                                downloadDialog.dismiss();
-                                                showTip("网络连接失败,请检查网络或重试");
-                                            }
-                                        }
-                                    }.start();
-                                }
-                            })
-                            .setNegativeButton("取消", null).create();
-                    dialog.setCanceledOnTouchOutside(false);
-                    dialog.show();
-                    break;
-                case 0x0002:
-                    //apk文件路径
-                    Log.d(TAG, "handleMessage: " + msg.what);
-                    String localApkPath = apkPath + versionHashMap.get("name") + ".apk";
-                    Log.d(TAG, "handleMessage: " + localApkPath);
-                    File file = new File(localApkPath);
-                    if (file.exists()) {
-                        Log.d(TAG, "handleMessage: " + localApkPath);
-                        Intent intent = new Intent();
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        //设置intent的Action属性
-                        intent.setAction(Intent.ACTION_VIEW);
-                        //设置intent的data和Type属性。
-                        intent.setDataAndType(Uri.fromFile(file),
-                                "application/vnd.android.package-archive");
-                        //注销
-                        sipUser.sendMessage(SipMessageFactory.createNotifyRequest(sipUser, SipInfo.user_to,
-                                SipInfo.user_from, BodyFactory.createLogoutBody()));
-//                        SipInfo.sipDev.sendMessage(SipMessageFactory.createNotifyRequest(SipInfo.sipDev, SipInfo.dev_to,
-//                                SipInfo.dev_from, BodyFactory.createLogoutBody()));
-                        //界面回到登录状态
-                        ActivityCollector.finishToFirstView();
-                        //跳转到安装界面
-                        startActivity(intent);
-                    }
-                    break;
-            }
-            return true;
-        }
-    });
-
-    private void showTip(final String message) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }

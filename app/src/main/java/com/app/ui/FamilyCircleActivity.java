@@ -14,9 +14,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.app.R;
+import com.app.UserInfoManager;
 import com.app.friendCircleMain.adapter.FriendCircleAdapter;
 import com.app.friendCircleMain.domain.FriendMicroList;
 import com.app.friendCircleMain.domain.FriendMicroListDatas;
@@ -47,20 +47,16 @@ import butterknife.OnClick;
 import static com.app.model.Constant.devid1;
 
 public class FamilyCircleActivity extends BaseSwipeBackActivity {
+    private static final String TAG = "MicroActivity";
 
-    @Bind(R.id.iv_back7)
+    @Bind(R.id.back)
     ImageView ivBack7;
-    @Bind(R.id.titleset)
-    TextView titleset;
-    @Bind(R.id.iv_fatie)
-    ImageView ivFatie;
+    @Bind(R.id.add)
+    ImageView add;
     @Bind(R.id.pull_to_refresh)
     PullToRefreshRecyclerView mPullToRefreshRecyclerView;
-    private static final String TAG = "MicroActivity";
-    private int pageNum = 1; //
+    private int pageNum = 1;
     private FriendCircleAdapter mFriendCircleAdapter;
-    private int i;
-    private static int position;
     private boolean hasMore = false;
 
     @Override
@@ -85,7 +81,7 @@ public class FamilyCircleActivity extends BaseSwipeBackActivity {
         }
         boolean isFirstPage = (page == 1);
         mGetPostListFromGroupRequest = new GetPostListFromGroupRequest();
-        mGetPostListFromGroupRequest.addUrlParam("id", Constant.id);
+        mGetPostListFromGroupRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mGetPostListFromGroupRequest.addUrlParam("currentPage", page);
         mGetPostListFromGroupRequest.addUrlParam("groupid", Constant.groupid);
         mGetPostListFromGroupRequest.setRequestListener(new RequestListener<FriendsMicro>() {
@@ -197,13 +193,13 @@ public class FamilyCircleActivity extends BaseSwipeBackActivity {
         EventBus.getDefault().unregister(this);
     }
 
-    @OnClick({R.id.iv_back7, R.id.iv_fatie})
+    @OnClick({R.id.back, R.id.add})
     public void onClock(View v) {
         switch (v.getId()) {
-            case R.id.iv_back7:
+            case R.id.back:
                 finish();
                 break;
-            case R.id.iv_fatie:
+            case R.id.add:
                 startActivity(new Intent(this, PublishedActivity.class));
                 break;
         }

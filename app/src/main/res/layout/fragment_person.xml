@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ebebeb"
-    android:orientation="vertical" >
+    android:orientation="vertical">
+
     <View
         android:id="@+id/status_bar"
         android:layout_width="match_parent"
@@ -11,8 +12,7 @@
         android:background="@color/newbackground"
         android:visibility="gone" />
 
-    <include android:id="@+id/main1"
-        layout="@layout/fragment_title" />
+    <include layout="@layout/layout_title_bar" />
 
     <RelativeLayout
         android:id="@+id/re_myinfo"
@@ -22,8 +22,8 @@
         android:layout_marginBottom="8dp"
         android:background="@drawable/btn_list_item_bg"
         android:clickable="true"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp">
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
 
         <com.app.view.CircleImageView
             android:id="@+id/iv_avatar"
@@ -56,8 +56,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="10dp"
             android:layout_marginLeft="16dp"
+            android:layout_marginBottom="10dp"
             android:layout_toRightOf="@id/iv_avatar"
             android:text="手机号:"
             android:textColor="#AAAAAA"
@@ -70,7 +70,7 @@
         android:layout_height="48dp"
         android:background="@drawable/btn_list_item_bg"
         android:clickable="true"
-        android:paddingLeft="12dp" >
+        android:paddingLeft="12dp">
 
         <ImageView
             android:id="@+id/iv_xiangce"
@@ -100,13 +100,13 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_marginTop="1dp"
         android:id="@+id/re_adddev"
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:layout_marginTop="1dp"
         android:background="@drawable/btn_list_item_bg"
         android:clickable="true"
-        android:paddingLeft="12dp" >
+        android:paddingLeft="12dp">
 
         <ImageView
             android:id="@+id/iv_adddev"
@@ -115,8 +115,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="12dp"
-            android:src="@drawable/ic_devbind"
-            />
+            android:src="@drawable/ic_devbind" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -186,6 +185,7 @@
             android:textColor="#353535"
             android:textSize="16sp" />
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/re_coupon"
         android:layout_width="match_parent"
@@ -199,13 +199,14 @@
             android:id="@+id/iv_coupon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginLeft="12dp"
-            android:src="@drawable/ic_coupon"
             android:layout_alignBottom="@+id/textView2"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="10dp" />
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="12dp"
+            android:src="@drawable/ic_coupon" />
 
         <TextView
+            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -213,8 +214,7 @@
             android:layout_toRightOf="@id/iv_coupon"
             android:text="优惠券"
             android:textColor="#353535"
-            android:textSize="16sp"
-            android:id="@+id/textView2" />
+            android:textSize="16sp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -230,13 +230,14 @@
             android:id="@+id/iv_shoppingcart"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginLeft="12dp"
-            android:src="@drawable/ic_shoppingcar"
             android:layout_alignTop="@+id/textView"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="12dp" />
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="12dp"
+            android:src="@drawable/ic_shoppingcar" />
 
         <TextView
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -244,8 +245,7 @@
             android:layout_toRightOf="@id/iv_shoppingcart"
             android:text="购物车"
             android:textColor="#353535"
-            android:textSize="16sp"
-            android:id="@+id/textView" />
+            android:textSize="16sp" />
     </RelativeLayout>
 
     <RelativeLayout

@@ -10,9 +10,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.app.LocalUserInfo;
 import com.app.R;
-import com.app.model.Constant;
+import com.app.UserInfoManager;
 import com.app.model.PNBaseModel;
 import com.app.request.UpdateNickRequest;
 import com.app.sip.BodyFactory;
@@ -36,14 +35,14 @@ public class UpdateNickActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_nick);
-        final String nick = LocalUserInfo.getInstance(UpdateNickActivity.this).getUserInfo("nick");
+        final String nick = UserInfoManager.getUserInfo().nickname;
         final CleanEditText et_nick = (CleanEditText) this.findViewById(R.id.et_nick);
         et_nick.setText(nick);
         ImageView back = (ImageView) this.findViewById(R.id.iv_back);
         back.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(UpdateNickActivity.this, MyUserInfoActivity.class));
+                startActivity(new Intent(UpdateNickActivity.this, UserInfoActivity.class));
                 finish();
             }
         });
@@ -89,8 +88,7 @@ public class UpdateNickActivity extends BaseActivity {
                 }
                 if (result.isSuccess()) {
                     ToastUtils.showToast("更新成功");
-                    LocalUserInfo.getInstance(UpdateNickActivity.this).setUserInfo("nick", newNick);
-                    Constant.nick = newNick;
+                    UserInfoManager.getInstance().refreshUserInfo();
                     //通知平板更新昵称
                     String devId = SipInfo.paddevId;
                     SipURL sipURL = new SipURL(devId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);

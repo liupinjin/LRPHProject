@@ -1,17 +1,47 @@
 package com.app.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by han.chen.
  * Date on 2019/5/28.
+ * 修改参数什么的 需要重新写Parcelable的方法
  **/
-public class PNUserInfo extends PNBaseModel {
+public class PNUserInfo extends PNBaseModel implements Parcelable {
 
     @SerializedName("user")
     public UserInfo userInfo;
 
-    public static class UserInfo {
+    protected PNUserInfo(Parcel in) {
+        userInfo = in.readParcelable(UserInfo.class.getClassLoader());
+    }
+
+    public static final Creator<PNUserInfo> CREATOR = new Creator<PNUserInfo>() {
+        @Override
+        public PNUserInfo createFromParcel(Parcel in) {
+            return new PNUserInfo(in);
+        }
+
+        @Override
+        public PNUserInfo[] newArray(int size) {
+            return new PNUserInfo[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(userInfo, flags);
+    }
+
+    public static class UserInfo implements Parcelable {
         /**
          "id": 410,
          "userid": "321000000000594992",
@@ -27,21 +57,65 @@ public class PNUserInfo extends PNBaseModel {
          */
 
         @SerializedName("id")
-        public String id;
+        public String id = "";
         @SerializedName("userid")
-        public String userId;
+        public String userId = "";
         @SerializedName("name")
-        public String name;
+        public String name = "";
         @SerializedName("password")
-        public String password;
+        public String password = "";
         @SerializedName("avatar")
-        public String avatar;
+        public String avatar = "";
         @SerializedName("nickname")
-        public String nickname;
+        public String nickname = "";
         @SerializedName("gender")
-        public String gender;
+        public String gender = "";
         @SerializedName("notify")
-        public String isNotify;
+        public String isNotify = "";
+
+        public UserInfo() {
+
+        }
+
+        protected UserInfo(Parcel in) {
+            id = in.readString();
+            userId = in.readString();
+            name = in.readString();
+            password = in.readString();
+            avatar = in.readString();
+            nickname = in.readString();
+            gender = in.readString();
+            isNotify = in.readString();
+        }
+
+        public static final Creator<UserInfo> CREATOR = new Creator<UserInfo>() {
+            @Override
+            public UserInfo createFromParcel(Parcel in) {
+                return new UserInfo(in);
+            }
+
+            @Override
+            public UserInfo[] newArray(int size) {
+                return new UserInfo[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(id);
+            dest.writeString(userId);
+            dest.writeString(name);
+            dest.writeString(password);
+            dest.writeString(avatar);
+            dest.writeString(nickname);
+            dest.writeString(gender);
+            dest.writeString(isNotify);
+        }
     }
 
 }

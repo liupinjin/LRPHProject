@@ -20,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.R;
-import com.app.model.Constant;
+import com.app.UserInfoManager;
 import com.app.model.MessageEvent;
 import com.app.model.PNBaseModel;
 import com.app.request.AddAddressRequest;
@@ -176,7 +176,7 @@ public class AddressDetailActivity extends BaseSwipeBackActivity {
             return;
         }
         mDeleteAddressRequest = new DeleteAddressRequest();
-        mDeleteAddressRequest.addUrlParam("id", Constant.id);
+        mDeleteAddressRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mDeleteAddressRequest.addUrlParam("position", SipInfo.addressPosition);
         mDeleteAddressRequest.setRequestListener(new RequestListener<PNBaseModel>() {
             @Override
@@ -211,7 +211,7 @@ public class AddressDetailActivity extends BaseSwipeBackActivity {
             return;
         }
         mUpdateAddressRequest = new UpdateAddressRequest();
-        mUpdateAddressRequest.addUrlParam("id", Constant.id);
+        mUpdateAddressRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mUpdateAddressRequest.addUrlParam("userAddress", SipInfo.userAddress);
         mUpdateAddressRequest.addUrlParam("detailAddress",SipInfo.detailAddress);
         mUpdateAddressRequest.addUrlParam("userName", SipInfo.userName);
@@ -250,7 +250,7 @@ public class AddressDetailActivity extends BaseSwipeBackActivity {
             return;
         }
         mAddAddressRequest = new AddAddressRequest();
-        mAddAddressRequest.addUrlParam("id", Constant.id);
+        mAddAddressRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mAddAddressRequest.addUrlParam("userAddress", SipInfo.userAddress);
         mAddAddressRequest.addUrlParam("detailAddress",SipInfo.detailAddress);
         mAddAddressRequest.addUrlParam("userName", SipInfo.userName);

@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.app.R;
+import com.app.UserInfoManager;
+import com.app.Util;
 import com.app.friendCircleMain.adapter.FriendCommentAdapter;
 import com.app.friendCircleMain.adapter.FriendPraiseAdapter;
 import com.app.friendCircleMain.adapter.NineGridTestLayout;
@@ -19,7 +21,6 @@ import com.app.friendCircleMain.domain.FirstMicroListDatasFirendimage;
 import com.app.friendCircleMain.domain.FirstMicroListDatasFirendpraise;
 import com.app.friendCircleMain.domain.FriendMicroListDatas;
 import com.app.friendCircleMain.util.PopupWindowUtil;
-import com.app.model.Constant;
 import com.app.view.CircleImageView;
 import com.bumptech.glide.Glide;
 import com.punuo.sys.app.recyclerview.BaseViewHolder;
@@ -88,7 +89,7 @@ public class FriendCircleViewHolder extends BaseViewHolder<FriendMicroListDatas>
     @Override
     protected void bindData(FriendMicroListDatas bean, int position) {
         //头像
-        String avatarPath = Constant.URL_Avatar + Constant.id + "/" + bean.getAvatar();
+        String avatarPath = Util.getImageUrl(bean.getAvatar());
         Glide.with(mContext).load(avatarPath).error(R.drawable.empty_photo).into(mAvatar);
 
         /*
@@ -110,7 +111,7 @@ public class FriendCircleViewHolder extends BaseViewHolder<FriendMicroListDatas>
         List<String> urls = new ArrayList<>();
         if (postPic != null && !postPic.isEmpty()) {
             for (int i = 0; i < postPic.size(); i++) {
-                urls.add(Constant.URL_Avatar + Constant.id + "/" + postPic.get(i).getPic_name());
+                urls.add(Util.getImageUrl(UserInfoManager.getUserInfo().id, postPic.get(i).getPic_name()));
             }
         }
 

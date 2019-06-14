@@ -44,14 +44,14 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.app.R;
-import com.app.model.Constant;
+import com.app.UserInfoManager;
 import com.app.model.MessageEvent;
 import com.app.model.PNBaseModel;
 import com.app.request.UploadPostRequest;
-import com.punuo.sys.app.util.ProviderUtil;
 import com.punuo.sys.app.activity.BaseActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;
+import com.punuo.sys.app.util.ProviderUtil;
 import com.punuo.sys.app.util.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -163,7 +163,7 @@ public class PublishedActivity extends BaseActivity {
             return;
         }
         mUploadPostRequest = new UploadPostRequest();
-        mUploadPostRequest.addEntityParam("id", Constant.id);
+        mUploadPostRequest.addEntityParam("id", UserInfoManager.getUserInfo().id);
         mUploadPostRequest.addEntityParam("content", content);
         List<File> files = new ArrayList<>();
         if (list != null && !list.isEmpty()) {
