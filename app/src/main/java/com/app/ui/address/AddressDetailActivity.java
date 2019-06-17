@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -46,10 +45,10 @@ import static com.app.sip.SipInfo.addressList;
 
 
 public class AddressDetailActivity extends BaseSwipeBackActivity {
-    @Bind(R.id.iv_back1)
-    ImageView ivBack1;
-    @Bind(R.id.titleset)
-    TextView titleSet;
+    @Bind(R.id.back)
+    ImageView back;
+    @Bind(R.id.title)
+    TextView title;
     @Bind(R.id.tv_addressSelect)
     TextView tvAddressSelect;
     @Bind(R.id.Rl_address)
@@ -80,32 +79,30 @@ public class AddressDetailActivity extends BaseSwipeBackActivity {
             window.setStatusBarColor(getResources().getColor(R.color.white));
         }
         if (SipInfo.isEditor) {
-            titleSet.setText("编辑地址");
+            title.setText("编辑地址");
             etUserName.setText(addressList.get(SipInfo.listPosition).userName);
             etUserPhoneNum.setText(addressList.get(SipInfo.listPosition).userPhoneNum);
             etDetailAddress.setText(addressList.get(SipInfo.listPosition).detailAddress);
             tvAddressSelect.setText(addressList.get(SipInfo.listPosition).userAddress);
-            if(SipInfo.isDefault==1){
-                isDefault =true;
-            }else if(SipInfo.isDefault==2){
-                isDefault =false;
+            if (SipInfo.isDefault == 1) {
+                isDefault = true;
+            } else if (SipInfo.isDefault == 2) {
+                isDefault = false;
             }
             box1.setChecked(isDefault);
         } else {
-            titleSet.setText("新增地址");
+            title.setText("新增地址");
             rlAddressDelete.setVisibility(View.INVISIBLE);
         }
-        TextPaint tp = titleSet.getPaint();
-        tp.setFakeBoldText(true);
         box1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    SipInfo.isDefault=1;
-                    Log.d("是否默认",SipInfo.isDefault+"-----");
-                }else
-                    SipInfo.isDefault=2;
-                Log.d("是否默认",SipInfo.isDefault+"-----");
+                if (isChecked) {
+                    SipInfo.isDefault = 1;
+                    Log.d("是否默认", SipInfo.isDefault + "-----");
+                } else
+                    SipInfo.isDefault = 2;
+                Log.d("是否默认", SipInfo.isDefault + "-----");
             }
         });
 
@@ -127,7 +124,7 @@ public class AddressDetailActivity extends BaseSwipeBackActivity {
     }
 
     @OnClick({R.id.et_detailAddress, R.id.et_userPhoneNum, R.id.et_userName,
-            R.id.iv_back1, R.id.bt_addressSave,R.id.rl_addressDelete})
+            R.id.back, R.id.bt_addressSave, R.id.rl_addressDelete})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.et_detailAddress:
@@ -163,8 +160,8 @@ public class AddressDetailActivity extends BaseSwipeBackActivity {
                         .create();
                 dialog.show();
                 break;
-            case R.id.iv_back1:
-                finish();
+            case R.id.back:
+                scrollToFinishActivity();
                 break;
         }
     }
@@ -206,6 +203,7 @@ public class AddressDetailActivity extends BaseSwipeBackActivity {
     }
 
     private UpdateAddressRequest mUpdateAddressRequest;
+
     private void updateAddress() {
         if (mUpdateAddressRequest != null && !mUpdateAddressRequest.isFinish()) {
             return;
@@ -213,7 +211,7 @@ public class AddressDetailActivity extends BaseSwipeBackActivity {
         mUpdateAddressRequest = new UpdateAddressRequest();
         mUpdateAddressRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mUpdateAddressRequest.addUrlParam("userAddress", SipInfo.userAddress);
-        mUpdateAddressRequest.addUrlParam("detailAddress",SipInfo.detailAddress);
+        mUpdateAddressRequest.addUrlParam("detailAddress", SipInfo.detailAddress);
         mUpdateAddressRequest.addUrlParam("userName", SipInfo.userName);
         mUpdateAddressRequest.addUrlParam("userPhoneNum", SipInfo.userPhoneNum);
         mUpdateAddressRequest.addUrlParam("position", SipInfo.addressPosition);
@@ -244,7 +242,9 @@ public class AddressDetailActivity extends BaseSwipeBackActivity {
         });
         HttpManager.addRequest(mUpdateAddressRequest);
     }
+
     private AddAddressRequest mAddAddressRequest;
+
     private void saveAddress() {
         if (mAddAddressRequest != null && !mAddAddressRequest.isFinish()) {
             return;
@@ -252,7 +252,7 @@ public class AddressDetailActivity extends BaseSwipeBackActivity {
         mAddAddressRequest = new AddAddressRequest();
         mAddAddressRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mAddAddressRequest.addUrlParam("userAddress", SipInfo.userAddress);
-        mAddAddressRequest.addUrlParam("detailAddress",SipInfo.detailAddress);
+        mAddAddressRequest.addUrlParam("detailAddress", SipInfo.detailAddress);
         mAddAddressRequest.addUrlParam("userName", SipInfo.userName);
         mAddAddressRequest.addUrlParam("userPhoneNum", SipInfo.userPhoneNum);
         mAddAddressRequest.addUrlParam("isDefault", SipInfo.isDefault);
@@ -284,17 +284,17 @@ public class AddressDetailActivity extends BaseSwipeBackActivity {
     }
 
     private boolean checkInput(String userAddress, String detailAddress, String userName, String userPhoneNum) {
-        if(TextUtils.isEmpty(userPhoneNum)){
+        if (TextUtils.isEmpty(userPhoneNum)) {
             ToastUtils.showToast("手机号码不能为空");
-        }else if(!RegexUtils.checkMobile(userPhoneNum)){
-                ToastUtils.showToast("手机号码格式不正确" );
-            }else if(TextUtils.isEmpty(userName)){
-                ToastUtils.showToast("请输入收货人姓名");
-            }else if(TextUtils.isEmpty(detailAddress)){
-                ToastUtils.showToast("请输入具体收货地址");
-            }else  if(TextUtils.isEmpty(userAddress)){
-                ToastUtils.showToast("请选择所在地区");
-            }else {
+        } else if (!RegexUtils.checkMobile(userPhoneNum)) {
+            ToastUtils.showToast("手机号码格式不正确");
+        } else if (TextUtils.isEmpty(userName)) {
+            ToastUtils.showToast("请输入收货人姓名");
+        } else if (TextUtils.isEmpty(detailAddress)) {
+            ToastUtils.showToast("请输入具体收货地址");
+        } else if (TextUtils.isEmpty(userAddress)) {
+            ToastUtils.showToast("请选择所在地区");
+        } else {
             return true;
         }
         return false;

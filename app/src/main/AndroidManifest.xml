@@ -146,9 +146,6 @@
             android:name=".ui.PhoneCall"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.AppList"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.VideoPlay"
             android:screenOrientation="portrait" />
         <activity

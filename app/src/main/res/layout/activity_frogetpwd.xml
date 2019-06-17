@@ -6,8 +6,7 @@
     android:background="#f8f8f8"
     android:orientation="vertical">
 
-    <include android:id="@+id/main1"
-        layout="@layout/fragment_title2" />
+    <include layout="@layout/layout_title_bar" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -19,12 +18,30 @@
             android:id="@+id/oldpassword_input"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_centerVertical="true"
             android:layout_marginStart="15dp"
+            android:background="@color/white"
             android:hint="请输入旧密码"
             android:inputType="textPassword"
-            android:textSize="14sp"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white">
+
+        <com.app.views.CleanEditText
+            android:id="@+id/newpassword_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="15dp"
             android:background="@color/white"
-            android:layout_centerVertical="true"/>
+            android:hint="请输入新密码"
+            android:inputType="textPassword"
+            android:textSize="14sp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -33,34 +50,16 @@
         android:layout_marginTop="10dp"
         android:background="@color/white">
 
-    <com.app.views.CleanEditText
-        android:id="@+id/newpassword_input"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="15dp"
-        android:hint="请输入新密码"
-        android:inputType="textPassword"
-        android:textSize="14sp"
-        android:background="@color/white"
-        android:layout_centerVertical="true"/>
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="49dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/white">
-
-    <com.app.views.CleanEditText
-        android:id="@+id/newpassword_again"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="15dp"
-        android:background="@color/white"
-        android:gravity="center_vertical"
-        android:inputType="textPassword"
-        android:hint="再次输入新密码"
-        android:textSize="14sp" />
+        <com.app.views.CleanEditText
+            android:id="@+id/newpassword_again"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="15dp"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:hint="再次输入新密码"
+            android:inputType="textPassword"
+            android:textSize="14sp" />
 
     </RelativeLayout>
 
