@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.app.R;
 import com.app.adapter.MessageAdapter;
@@ -22,6 +23,7 @@ import com.app.http.GetPostUtil;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
 import com.app.sip.SipInfo;
+import com.app.ui.AddlikeView;
 import com.app.ui.CommentView;
 import com.app.ui.FamilyCircle;
 import com.app.ui.message.SystemNotify;
@@ -41,6 +43,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.app.sip.SipInfo.addLikesItems;
 import static com.app.sip.SipInfo.commentsItems;
 
 /**
@@ -95,6 +98,12 @@ public class MessageFragment extends Fragment {
         }else{
             count1.setVisibility(View.INVISIBLE);
         }
+        if(addLikesItems!=0){
+            count2.setText(String.valueOf(addLikesItems));
+            count2.setVisibility(View.VISIBLE);
+        }else {
+            count2.setVisibility(View.INVISIBLE);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mStatusBar.setVisibility(View.VISIBLE);
@@ -109,6 +118,8 @@ public class MessageFragment extends Fragment {
         if (event.getMessage().equals("取消新评论提示")) {
             Log.i(TAG, "message is " + event.getMessage());
             handler.sendEmptyMessage(0x111);
+        }else if(event.getMessage().equals("取消新点赞提示")){
+            handler.sendEmptyMessage(0x222);
         }
     }
 
@@ -141,6 +152,16 @@ public class MessageFragment extends Fragment {
                                     handler.sendEmptyMessage(0x111);
                                 }
                             }
+                            String response1=GetPostUtil.sendGet1111(Constant.URL_countNewLikes,
+                                    "id=" + Constant.id + "&currentTime=" + df.format(new Date()));
+                            if((response1!=null)&&!"".equals(response1)){
+                                JSONObject obj1= JSON.parseObject(response1);
+                                String msg1=obj1.getString("msg");
+                                if(msg1.equals("success")){
+                                    addLikesItems=obj1.getInteger("count");
+                                    handler.sendEmptyMessage(0x222);
+                                }
+                            }
                         }
                     }).start();
                     break;
@@ -148,8 +169,17 @@ public class MessageFragment extends Fragment {
                     if(commentsItems!=0){
                         count1.setText(String.valueOf(commentsItems));
                         count1.setVisibility(View.VISIBLE);
+                        EventBus.getDefault().post(new MessageEvent("小红点出来吧"));
                     }else {
                         count1.setVisibility(View.INVISIBLE);
+                    }
+                case 0x222:
+                    if(addLikesItems!=0){
+                        count2.setText(String.valueOf(addLikesItems));
+                        count2.setVisibility(View.VISIBLE);
+                        EventBus.getDefault().post(new MessageEvent("小红点出来吧"));
+                    }else {
+                        count2.setVisibility(View.INVISIBLE);
                     }
                     default:
                         break;
@@ -176,7 +206,7 @@ public class MessageFragment extends Fragment {
 //                }).start();
                 break;
             case R.id.rl_dianzan:
-                startActivity(new Intent(getActivity(), FamilyCircle.class));
+                startActivity(new Intent(getActivity(), AddlikeView.class));
                 break;
             case R.id.rl_systemNotify:
                 startActivity(new Intent(getActivity(), SystemNotify.class));

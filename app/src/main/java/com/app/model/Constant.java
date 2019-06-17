@@ -89,6 +89,8 @@ public static Runnable runnable=new Runnable() {
     public static final String URL_updateNotify=FORMT+"users/messageNotify";
     public static final String URL_getNewComments=FORMT+"posts/getNewComments";
     public static final String URL_countNewComments=FORMT+"posts/countNewComments";
+    public static final String URL_getNewLikes=FORMT+"posts/getNewLikes";
+    public static final String URL_countNewLikes=FORMT+"posts/countNewLikes";
     public static String nick;
     public static String avatar;
     public static String phone;

@@ -35,7 +35,8 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".ui.CommentView"></activity>
+        <activity android:name=".ui.AddlikeView"></activity>
+        <activity android:name=".ui.CommentView" />
 
         <meta-data
             android:name="com.amap.api.v2.apikey"

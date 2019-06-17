@@ -7,10 +7,13 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.app.R;
 import com.app.friendCircleMain.adapter.CommentAdapter;
 import com.app.http.GetPostUtil;
@@ -19,6 +22,7 @@ import com.app.model.Constant;
 import com.app.model.MessageEvent;
 import com.app.sip.SipInfo;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import org.greenrobot.eventbus.EventBus;
@@ -27,8 +31,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,14 +38,22 @@ import butterknife.ButterKnife;
 public class CommentView extends AppCompatActivity {
     @Bind(R.id.rv_comments)
     RecyclerView rvComments;
+    @Bind(R.id.tv_noNewMessage)
+    TextView tvNoNewMessage;
     private SimpleDateFormat df;
     private List<Comments> commentsList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment_view);
         ButterKnife.bind(this);
-        df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if(SipInfo.commentsItems==0){
+            tvNoNewMessage.setVisibility(View.VISIBLE);
+        }else {
+            tvNoNewMessage.setVisibility(View.INVISIBLE);
+        }
         initComments();
 //        sendRequestWithOkHttp();
 //        recyclerView=(RecyclerView)findViewById(R.id.rv_comments);
@@ -65,15 +75,21 @@ public class CommentView extends AppCompatActivity {
             super.handleMessage(msg);
             switch (msg.what) {
                 case 0x111:
+                    tvNoNewMessage.setVisibility(View.INVISIBLE);
                     CommentAdapter adapter = new CommentAdapter(commentsList);
                     rvComments.setAdapter(adapter);
-                    SipInfo.commentsItems=0;
+                    SipInfo.commentsItems = 0;
                     EventBus.getDefault().post(new MessageEvent("取消新评论提示"));
                     break;
+                case 0x222:
+                    tvNoNewMessage.setVisibility(View.VISIBLE);
+                    SipInfo.commentsItems=0;
+                    break;
+                    default:
+                        break;
             }
         }
     };
-
 
 
     private void initComments() {
@@ -81,9 +97,22 @@ public class CommentView extends AppCompatActivity {
             @Override
             public void run() {
                 String response = GetPostUtil.sendGet1111(Constant.URL_getNewComments,
-                        "id=" + Constant.id + "&currentTime=" + df.format(new Date()) );
+                        "id=" + Constant.id + "&currentTime=" + df.format(new Date()));
                 if ((response != null) && !("".equals(response))) {
+                    JSONObject obj= JSON.parseObject(response);
+                    String msg=obj.getString("msg");
+                    if(msg.equals("success")){
                         praseJSONWithGSON(response);
+                    }else {
+                        handler.sendEmptyMessage(0x222);
+                    }
+//                    if((msg!=null)&&!("".equals(msg))&&(msg.equals("首次刷新"))){
+//                        handler.sendEmptyMessage(0x222);
+//                    }else {
+//                        praseJSONWithGSON(response);
+//                    }
+//                    praseJSONWithGSON(response);
+
                 }
             }
         }).start();
@@ -91,7 +120,6 @@ public class CommentView extends AppCompatActivity {
 
     private void praseJSONWithGSON(String response) {
         String jsonData = "[" + response.split("\\[")[1].split("\\]")[0] + "]";
-
         Gson gson = new Gson();
         commentsList = gson.fromJson(jsonData, new TypeToken<List<Comments>>() {
         }.getType());
@@ -113,12 +141,12 @@ public class CommentView extends AppCompatActivity {
     }
 
     @Override
-    public void onStop(){
+    public void onStop() {
         super.onStop();
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
     }
 }

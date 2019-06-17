@@ -425,6 +425,9 @@ public class LoginActivity extends BaseActivity {
                            registering.dismiss();
                            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                        }
+                   }else {
+                       registering.dismiss();
+                       startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                    }
                 } else {
                     ToastUtils.showToastShort("获取用户数据失败请重试");
@@ -553,6 +556,7 @@ public class LoginActivity extends BaseActivity {
                     List<String> devIdLists = result.devid;
                     if (devIdLists.isEmpty()) {
                         ToastUtils.showToast("获取设备id失败");
+                        registering.dismiss();
                         startActivity(new Intent(LoginActivity.this,HomeActivity.class));
                     } else {
                         appdevid = devIdLists.get(0);
