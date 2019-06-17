@@ -11,6 +11,6 @@ public class GetDevIdFromIdRequest extends BaseRequest<Alldevid> {
 
     public GetDevIdFromIdRequest() {
         setRequestType(RequestType.GET);
-        setRequestPath("/xiaoyupeihu/public/index.php/devs/getDevIdFromId");
+        setRequestPath("/devs/getDevIdFromId");
     }
 }

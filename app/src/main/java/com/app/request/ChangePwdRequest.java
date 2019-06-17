@@ -11,6 +11,6 @@ public class ChangePwdRequest extends BaseRequest<PNBaseModel> {
 
     public ChangePwdRequest() {
         setRequestType(RequestType.GET);
-        setRequestPath("/xiaoyupeihu/public/index.php/users/updateUserPwd");
+        setRequestPath("/users/updateUserPwd");
     }
 }

@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.app.R;
 import com.app.ui.LoginActivity;
-import com.app.ui.SignUpActivity;
+import com.app.ui.RegisterAccountActivity;
 
 /**
  * author：luck
@@ -37,7 +37,7 @@ public class PageFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(getActivity(), "注册", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(getActivity(), SignUpActivity.class));
+                    startActivity(new Intent(getActivity(), RegisterAccountActivity.class));
                 }
             });
             rootView.findViewById(R.id.id_login).setOnClickListener(new View.OnClickListener() {

@@ -85,13 +85,11 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.app.groupvoice.GroupInfo.wakeLock;
 import static java.lang.Thread.sleep;
 
+/**
+ * 用户登陆页
+ */
 public class LoginActivity extends BaseActivity {
-    private static final String TAG ="LoginActivity";
-
-//    private String[] groupname = new String[3];
-//    private String[] groupid = new String[3];
-//    private String[] appdevid = new String[3];
-
+    private static final String TAG = "LoginActivity";
     private String groupname;
     private String groupid;
     private String appdevid;
@@ -109,7 +107,6 @@ public class LoginActivity extends BaseActivity {
     private AlertDialog timeOutDialog;
     //密码错误次数
     private int errorTime = 0;
-    private CustomProgressDialog registering;
     protected CompositeSubscription mCompositeSubscription = new CompositeSubscription();
 
     @Bind(R.id.num_input2)
@@ -118,25 +115,19 @@ public class LoginActivity extends BaseActivity {
     CleanEditText passwordInput;
     @Bind(R.id.hidepassword)
     ImageView hidepassword;
-    @Bind(R.id.showpassword)
-    ImageView showpassword;
     @Bind(R.id.vericode_login)
     TextView vericodeLogin;
     @Bind(R.id.password_forget)
     TextView passwordForget;
     @Bind(R.id.btn_login1)
-    Button btnLogin1;
-    @Bind(R.id.iv_back2)
-    ImageView ivBack2;
+    TextView loginBtn;
     @Bind(R.id.tv_register)
     TextView tvRegister;
     @Bind(R.id.layout_root)
     RelativeLayout layoutRoot;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login1);
         ButterKnife.bind(this);
@@ -173,13 +164,12 @@ public class LoginActivity extends BaseActivity {
         numInput2.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         numInput2.setTransformationMethod(HideReturnsTransformationMethod
                 .getInstance());
-        String account=pref.getString("account","");
+        String account = pref.getString("account", "");
         numInput2.setText(account);
 
         passwordInput.setImeOptions(EditorInfo.IME_ACTION_DONE);
         passwordInput.setImeOptions(EditorInfo.IME_ACTION_GO);
-        passwordInput.setTransformationMethod(PasswordTransformationMethod
-                .getInstance());
+        passwordInput.setTransformationMethod(PasswordTransformationMethod.getInstance());
         passwordInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
             @Override
@@ -192,11 +182,12 @@ public class LoginActivity extends BaseActivity {
                 return false;
             }
         });
-        String password=pref.getString("password","");
+        String password = pref.getString("password", "");
         passwordInput.setText(password);
         SipInfo.localSdCard = Environment.getExternalStorageDirectory().getAbsolutePath() + "/faxin/";
         isNetworkreachable();
     }
+
     // 网络是否连接
     private Runnable networkConnectedFailed = new Runnable() {
         @Override
@@ -219,15 +210,16 @@ public class LoginActivity extends BaseActivity {
             }
         }
     };
+
     private void clickLogin() {
 //        verifyStoragePermissions(this);
 //        requestPower();
         if (SipInfo.isNetworkConnected) {
             SipInfo.userAccount = numInput2.getText().toString();
             SipInfo.passWord = passwordInput.getText().toString();
-            editor=pref.edit();
-            editor.putString("account",SipInfo.userAccount);
-            editor.putString("password",SipInfo.passWord);
+            editor = pref.edit();
+            editor.putString("account", SipInfo.userAccount);
+            editor.putString("password", SipInfo.passWord);
             editor.apply();
             if (checkInput(SipInfo.userAccount, SipInfo.passWord)) {
                 // TODO: 请求服务器登录账号
@@ -235,10 +227,7 @@ public class LoginActivity extends BaseActivity {
                     errorTime = 0;
                 }
                 beforeLogin();
-                registering = new CustomProgressDialog(LoginActivity.this);
-                registering.setCancelable(false);
-                registering.setCanceledOnTouchOutside(false);
-                registering.show();
+                showLoadingDialog();
 
                 new Thread(connecting).start();
             }
@@ -249,8 +238,8 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void beforeLogin() {
-        SipInfo.phoneType= Build.MODEL;
-        Log.i("手机型号","model"+SipInfo.phoneType);
+        SipInfo.phoneType = Build.MODEL;
+        Log.i("手机型号", "model" + SipInfo.phoneType);
         SipInfo.isAccountExist = true;
         SipInfo.passwordError = false;
         SipInfo.userLogined = false;
@@ -266,6 +255,7 @@ public class LoginActivity extends BaseActivity {
 
         SipInfo.dev_to = new NameAddress(SipInfo.SERVER_NAME, remote_dev);
     }
+
     Runnable connecting = new Runnable() {
         @Override
         public void run() {
@@ -297,16 +287,16 @@ public class LoginActivity extends BaseActivity {
             } finally {
 
                 if (!SipInfo.isAccountExist) {
-                    registering.dismiss();
+                    dismissLoadingDialog();
                     /*账号不存在提示*/
                     handler.post(accountNotExist);
                 } else if (SipInfo.passwordError) {
                     //密码错误提示
-                    registering.dismiss();
+                    dismissLoadingDialog();
                     showDialogTip(errorTime++);
                     lastUserAccount = SipInfo.userAccount;
                 } else if (SipInfo.loginTimeout) {
-                    registering.dismiss();
+                    dismissLoadingDialog();
                     //超时
                     handler.post(timeOut);
                 } else {
@@ -335,6 +325,7 @@ public class LoginActivity extends BaseActivity {
         }
     };
     private GetUserInfoRequest mGetUserInfoRequest;
+
     //获取用户信息
     private void getUserInfo() {
         if (mGetUserInfoRequest != null && !mGetUserInfoRequest.isFinish()) {
@@ -356,14 +347,14 @@ public class LoginActivity extends BaseActivity {
                     getGroupInfo();
                 } else {
                     ToastUtils.showToastShort("获取用户数据失败请重试");
-                    registering.dismiss();
+                    dismissLoadingDialog();
                 }
             }
 
             @Override
             public void onError(Exception e) {
                 ToastUtils.showToastShort("获取用户数据失败请重试");
-                registering.dismiss();
+                dismissLoadingDialog();
             }
         });
         HttpManager.addRequest(mGetUserInfoRequest);
@@ -379,10 +370,10 @@ public class LoginActivity extends BaseActivity {
         Constant.sex = userInfo.gender;
         Constant.isNotify = userInfo.isNotify;
     }
-    //获取用户数据线程
-    String response = "";
+
     //群组获取线程
     private GetAllGroupFromUserRequest mGetAllGroupFromUserRequest;
+
     //获取组信息
     private void getGroupInfo() {
         if (mGetAllGroupFromUserRequest != null && !mGetAllGroupFromUserRequest.isFinish()) {
@@ -402,49 +393,47 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onSuccess(Group result) {
                 if (result != null) {
-                   if (result.groupList != null && !result.groupList.isEmpty()) {
-                       //重构疑问：这个循环的意义
-                       for (int i = 0; i < result.groupList.size(); i++) {
-                           groupname= result.groupList.get(i).getGroup_name();
-                           groupid = result.groupList.get(i).getGroupid();
-                       }
-                       Constant.devid1 = groupname;
-                       Constant.groupid1 = groupid;
-                       Constant.groupid = Constant.groupid1;
-                       if (!TextUtils.isEmpty(Constant.groupid1)) {
-                           SipInfo.paddevId = Constant.devid1;
-                           getDevIdInfo();
-                       } else {
-                           Constant.res = "";
-                           LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("avatar",
-                                   Constant.avatar);
-                           LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("nick",
-                                   Constant.nick);
-                           LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
-                                   Constant.id);
-                           registering.dismiss();
-                           startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                       }
-                   }else {
-                       registering.dismiss();
-                       startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                   }
+                    if (result.groupList != null && !result.groupList.isEmpty()) {
+                        //重构疑问：这个循环的意义
+                        for (int i = 0; i < result.groupList.size(); i++) {
+                            groupname = result.groupList.get(i).getGroup_name();
+                            groupid = result.groupList.get(i).getGroupid();
+                        }
+                        Constant.devid1 = groupname;
+                        Constant.groupid1 = groupid;
+                        Constant.groupid = Constant.groupid1;
+                        if (!TextUtils.isEmpty(Constant.groupid1)) {
+                            SipInfo.paddevId = Constant.devid1;
+                            getDevIdInfo();
+                        } else {
+                            Constant.res = "";
+                            LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("avatar",
+                                    Constant.avatar);
+                            LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("nick",
+                                    Constant.nick);
+                            LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
+                                    Constant.id);
+                            dismissLoadingDialog();
+                            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                        }
+                    }
                 } else {
                     ToastUtils.showToastShort("获取用户数据失败请重试");
-                    registering.dismiss();
+                    dismissLoadingDialog();
                 }
             }
 
             @Override
             public void onError(Exception e) {
                 ToastUtils.showToastShort("获取用户数据失败请重试");
-                registering.dismiss();
+                dismissLoadingDialog();
             }
         });
         HttpManager.addRequest(mGetAllGroupFromUserRequest);
     }
 
     private GetAllUserFromGroupRequest mGetAllUserFromGroupRequest;
+
     //获取组内用户
     private void getAllUserFormGroup() {
         if (mGetAllUserFromGroupRequest != null && !mGetAllUserFromGroupRequest.isFinish()) {
@@ -465,15 +454,13 @@ public class LoginActivity extends BaseActivity {
                         for (int i = 0; i < result.userList.size(); i++) {
                             UserList userList = result.userList.get(i);
                             Friend friend = new Friend();
-                            friend.setNickName (userList.getNickname());
+                            friend.setNickName(userList.getNickname());
                             friend.setPhoneNum(userList.getName());
                             friend.setUserId(userList.getUserid());
                             friend.setId(userList.getId());
                             friend.setAvatar(userList.getAvatar());
                             SipInfo.friends.add(friend);
                         }
-                        //建议不在这里请求
-                        getPostList();
 
                         GroupInfo.groupNum = "7000";
 //                        String peer = peerElement.getFirstChild().getNodeValue();
@@ -488,15 +475,15 @@ public class LoginActivity extends BaseActivity {
                                 Constant.nick);
                         LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
                                 Constant.id);
-                        registering.dismiss();
+                        dismissLoadingDialog();
                         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     } else {
                         ToastUtils.showToastShort("获取用户数据失败请重试");
-                        registering.dismiss();
+                        dismissLoadingDialog();
                     }
                 } else {
                     ToastUtils.showToastShort("获取用户数据失败请重试");
-                    registering.dismiss();
+                    dismissLoadingDialog();
                 }
             }
 
@@ -508,35 +495,8 @@ public class LoginActivity extends BaseActivity {
         HttpManager.addRequest(mGetAllUserFromGroupRequest);
     }
 
-    private GetPostListFromGroupRequest mGetPostListFromGroupRequest;
-    private void getPostList() {
-        if (mGetPostListFromGroupRequest != null && !mGetPostListFromGroupRequest.isFinish()) {
-            return;
-        }
-        mGetPostListFromGroupRequest = new GetPostListFromGroupRequest();
-        mGetPostListFromGroupRequest.addUrlParam("id", Constant.id);
-        mGetPostListFromGroupRequest.addUrlParam("currentPage", 1);
-        mGetPostListFromGroupRequest.addUrlParam("groupid", Constant.groupid);
-        mGetPostListFromGroupRequest.setRequestListener(new RequestListener<FriendsMicro>() {
-            @Override
-            public void onComplete() {
-
-            }
-
-            @Override
-            public void onSuccess(FriendsMicro result) {
-
-            }
-
-            @Override
-            public void onError(Exception e) {
-
-            }
-        });
-        HttpManager.addRequest(mGetPostListFromGroupRequest);
-    }
-
     private GetDevIdFromIdRequest mGetDevIdFromIdRequest;
+
     //获取用户设备信息
     private void getDevIdInfo() {
         if (mGetDevIdFromIdRequest != null && !mGetDevIdFromIdRequest.isFinish()) {
@@ -556,8 +516,7 @@ public class LoginActivity extends BaseActivity {
                     List<String> devIdLists = result.devid;
                     if (devIdLists.isEmpty()) {
                         ToastUtils.showToast("获取设备id失败");
-                        registering.dismiss();
-                        startActivity(new Intent(LoginActivity.this,HomeActivity.class));
+                        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     } else {
                         appdevid = devIdLists.get(0);
                         Constant.appdevid1 = appdevid;
@@ -572,18 +531,19 @@ public class LoginActivity extends BaseActivity {
                     }
                 } else {
                     ToastUtils.showToast("获取用户devid失败请重试");
-                    registering.dismiss();
+                    dismissLoadingDialog();
                 }
             }
 
             @Override
             public void onError(Exception e) {
                 ToastUtils.showToastShort("获取用户devid失败请重试");
-                registering.dismiss();
+                dismissLoadingDialog();
             }
         });
         HttpManager.addRequest(mGetDevIdFromIdRequest);
     }
+
     //设备注册线程
     private Runnable devConnecting = new Runnable() {
         @Override
@@ -619,12 +579,13 @@ public class LoginActivity extends BaseActivity {
                     Log.e(TAG, "设备注册失败!");
                     Looper.prepare();
                     ToastUtils.showToastShort("设备注册失败请重新登录");
-                    registering.dismiss();
+                    dismissLoadingDialog();
                     Looper.loop();
                 }
             }
         }
     };
+
     private void showDialogTip(final int errorTime) {
         if (errorTime < 2) {
             handler.post(new Runnable() {
@@ -653,6 +614,7 @@ public class LoginActivity extends BaseActivity {
             });
         }
     }
+
     private Runnable accountNotExist = new Runnable() {
         @Override
         public void run() {
@@ -720,54 +682,49 @@ public class LoginActivity extends BaseActivity {
             wakeLock.acquire();
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (registering != null) {
-            registering.dismiss();
-        }
-        if(wakeLock!=null){
+        if (wakeLock != null) {
             wakeLock.release();
-            wakeLock=null;
+            wakeLock = null;
         }
         //ButterKnife.unbind(this);//空间解绑
     }
-    @OnClick({R.id.num_input2,R.id.password_input,R.id.hidepassword,R.id.showpassword,
-            R.id.vericode_login,R.id.password_forget,R.id.btn_login1,R.id.tv_register})
-    public void onClick(View v){
-        switch (v.getId()){
+
+    @OnClick({R.id.num_input2, R.id.password_input, R.id.hidepassword,
+            R.id.vericode_login, R.id.password_forget, R.id.btn_login1, R.id.tv_register})
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.btn_login1:
                 clickLogin();
                 break;
             case R.id.hidepassword:
-                passwordInput.setTransformationMethod(PasswordTransformationMethod.getInstance());
-//                Toast.makeText(this,"隐藏密码",Toast.LENGTH_SHORT).show();
-                hidepassword.setVisibility(View.INVISIBLE);
-                showpassword.setVisibility(View.VISIBLE);
-                break;
-            case R.id.showpassword:
-                passwordInput.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-//                Toast.makeText(this,"显示密码",Toast.LENGTH_SHORT).show();
-                showpassword.setVisibility(View.INVISIBLE);
-                hidepassword.setVisibility(View.VISIBLE);
+                if (passwordInput.getTransformationMethod() == PasswordTransformationMethod.getInstance()) {
+                    hidepassword.setImageResource(R.drawable.ic_eye);
+                    passwordInput.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                } else if (passwordInput.getTransformationMethod() == HideReturnsTransformationMethod.getInstance()) {
+                    hidepassword.setImageResource(R.drawable.ic_hide);
+                    passwordInput.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                }
                 break;
             case R.id.vericode_login:
-                startActivity(new Intent(this,VerificodeLogin.class));
+                startActivity(new Intent(this, VerifyCodeLoginActivity.class));
                 break;
             case R.id.password_forget:
-                startActivity(new Intent(this,ChangePassword1.class));
+                startActivity(new Intent(this, ForgetPasswordActivity.class));
                 break;
             case R.id.tv_register:
-                startActivity(new Intent(this,SignUpActivity.class));
-                break;
-            case R.id.iv_back2:
+                startActivity(new Intent(this, RegisterAccountActivity.class));
                 break;
         }
     }
+
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             "android.PermissionUtils.READ_EXTERNAL_STORAGE",
-            "android.PermissionUtils.WRITE_EXTERNAL_STORAGE" };
+            "android.PermissionUtils.WRITE_EXTERNAL_STORAGE"};
 
 
     public static void verifyStoragePermissions(Activity activity) {
@@ -779,7 +736,7 @@ public class LoginActivity extends BaseActivity {
                     "android.PermissionUtils.WRITE_EXTERNAL_STORAGE");
             if (permission != PERMISSION_GRANTED) {
                 // 没有写的权限，去申请写的权限，会弹出对话框
-                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE);
+                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -835,7 +792,7 @@ public class LoginActivity extends BaseActivity {
         }
     };
 
-    private void requestPermission(){
+    private void requestPermission() {
         PermissionUtils.requestMultiPermissions(this,
                 new String[]{
                         PermissionUtils.PERMISSION_CAMERA,
@@ -846,9 +803,9 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == PermissionUtils.CODE_MULTI_PERMISSION){
+        if (requestCode == PermissionUtils.CODE_MULTI_PERMISSION) {
             PermissionUtils.requestPermissionsResult(this, requestCode, permissions, grantResults, mGrant);
-        }else{
+        } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
@@ -856,7 +813,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == PermissionUtils.REQUEST_CODE_SETTING){
+        if (requestCode == PermissionUtils.REQUEST_CODE_SETTING) {
             new Handler().postDelayed(this::requestPermission, 500);
 
         }

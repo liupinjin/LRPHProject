@@ -1,13 +1,13 @@
 package com.app.ui;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,13 +16,10 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.app.LocalUserInfo;
 import com.app.R;
 import com.app.db.DatabaseInfo;
@@ -34,23 +31,28 @@ import com.app.friendCircleMain.domain.GroupList;
 import com.app.friendCircleMain.domain.UserFromGroup;
 import com.app.friendCircleMain.domain.UserList;
 import com.app.groupvoice.GroupInfo;
-import com.app.http.GetPostUtil;
-import com.punuo.sys.app.util.RegexUtils;
 import com.app.http.VerifyCodeManager;
 import com.app.http.VerifyCodeManager1;
 import com.app.model.Constant;
 import com.app.model.Friend;
+import com.app.model.PNUserInfo;
+import com.app.request.GetAllGroupFromUserRequest;
+import com.app.request.GetAllUserFromGroupRequest;
+import com.app.request.GetDevIdFromIdRequest;
+import com.app.request.GetUserInfoRequest;
 import com.app.sip.KeepAlive;
 import com.app.sip.SipDev;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.sip.SipUser;
-import com.app.view.CustomProgressDialog;
 import com.app.views.CleanEditText;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mob.MobSDK;
-import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.activity.BaseSwipeBackActivity;
+import com.punuo.sys.app.httplib.HttpManager;
+import com.punuo.sys.app.httplib.RequestListener;
+import com.punuo.sys.app.util.RegexUtils;
 import com.punuo.sys.app.util.ToastUtils;
 
 import org.zoolu.sip.address.NameAddress;
@@ -66,17 +68,12 @@ import butterknife.OnClick;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
-import static com.amap.api.mapcore2d.p.i;
-import static com.app.model.Constant.avatar;
 import static com.app.model.Constant.devid1;
 import static com.app.model.Constant.devid2;
 import static com.app.model.Constant.devid3;
-import static com.app.model.Constant.groupid1;
-import static com.app.model.Constant.res;
 import static java.lang.Thread.sleep;
 
-public class VerificodeLogin extends BaseActivity {
-    private Context mContext;
+public class VerifyCodeLoginActivity extends BaseSwipeBackActivity {
     @Bind(R.id.num_input4)
     CleanEditText numInput4;
     @Bind(R.id.vericode_input)
@@ -86,7 +83,7 @@ public class VerificodeLogin extends BaseActivity {
     @Bind(R.id.password_login)
     TextView passwordLogin;
     @Bind(R.id.btn_login2)
-    Button btnLogin2;
+    TextView btnLogin2;
     @Bind(R.id.iv_back5)
     ImageView ivBack5;
     @Bind(R.id.newAccount_register)
@@ -98,8 +95,6 @@ public class VerificodeLogin extends BaseActivity {
     private String lastUserAccount;
     //密码错误次数
     private int errorTime = 0;
-    //注册等待窗口
-    private CustomProgressDialog registering;
     //网络连接失败窗口
     private AlertDialog newWorkConnectedDialog;
 
@@ -115,11 +110,11 @@ public class VerificodeLogin extends BaseActivity {
     private String[] groupid = new String[3];
     private String[] appdevid = new String[3];
     private Handler handler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verificode_login);
-        mContext=this;
         ButterKnife.bind(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
             Window window = getWindow();
@@ -154,7 +149,7 @@ public class VerificodeLogin extends BaseActivity {
                 msg.arg1 = event;
                 msg.arg2 = result;
                 msg.obj = data;
-                handler1.sendMessage(msg);
+                mHandler.sendMessage(msg);
             }
         };
         //注册回调监听接口
@@ -162,33 +157,28 @@ public class VerificodeLogin extends BaseActivity {
     }
 
 
-
-    @OnClick({R.id.get_verificode,R.id.password_login,R.id.btn_login2,R.id.newAccount_register})
-    public void onClick(View v){
-        switch (v.getId()){
+    @OnClick({R.id.get_verificode, R.id.password_login, R.id.btn_login2, R.id.newAccount_register})
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.get_verificode:
-//                if (countSeconds == 60) {
-//                    String mobile = numInput4.getText().toString();
-//                    Log.e("tag", "mobile==" + mobile);
-//
-//                } else {
-//                    Toast.makeText(VerificodeLogin.this, "不能重复发送验证码", Toast.LENGTH_SHORT).show();
-//                }
                 codeManager1.getVerifyCode(VerifyCodeManager.REGISTER);
                 break;
             case R.id.password_login:
-                startActivity(new Intent(this,LoginActivity.class));
+                startActivity(new Intent(this, LoginActivity.class));
                 break;
             case R.id.btn_login2:
-                SipInfo.passWord=null;//验证码登录没有设置密码，将密码设置为空
+                SipInfo.passWord = null;//验证码登录没有设置密码，将密码设置为空
                 final String phone = numInput4.getText().toString().trim();
                 final String code = vericodeinput.getText().toString().trim();
-                if (checkInput(phone,code)) {
+                if (checkInput(phone, code)) {
                     SMSSDK.submitVerificationCode("86", phone, code);
                 }
                 break;
             case R.id.newAccount_register:
-                startActivity(new Intent(this,SignUpActivity.class));
+                startActivity(new Intent(this, RegisterAccountActivity.class));
+                break;
+            case R.id.iv_back5:
+                scrollToFinishActivity();
                 break;
         }
     }
@@ -203,11 +193,8 @@ public class VerificodeLogin extends BaseActivity {
                     errorTime = 0;
                 }
                 beforeLogin();
-                registering = new CustomProgressDialog(VerificodeLogin.this);
-                registering.setCancelable(false);
-                registering.setCanceledOnTouchOutside(false);
-                registering.show();
-                SipInfo.isVericodeLogin=true;
+                showLoadingDialog();
+                SipInfo.isVericodeLogin = true;
                 new Thread(connecting).start();
             }
         } else {
@@ -216,7 +203,6 @@ public class VerificodeLogin extends BaseActivity {
         }
 
     }
-
 
 
     private void beforeLogin() {
@@ -241,7 +227,7 @@ public class VerificodeLogin extends BaseActivity {
         @Override
         public void run() {
             if (newWorkConnectedDialog == null || !newWorkConnectedDialog.isShowing()) {
-                newWorkConnectedDialog = new AlertDialog.Builder(VerificodeLogin.this)
+                newWorkConnectedDialog = new AlertDialog.Builder(VerifyCodeLoginActivity.this)
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -263,7 +249,7 @@ public class VerificodeLogin extends BaseActivity {
         @Override
         public void run() {
             if (accountNotExistDialog == null || !accountNotExistDialog.isShowing()) {
-                accountNotExistDialog = new AlertDialog.Builder(VerificodeLogin.this)
+                accountNotExistDialog = new AlertDialog.Builder(VerifyCodeLoginActivity.this)
                         .setTitle("不存在该账号")
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
@@ -282,7 +268,7 @@ public class VerificodeLogin extends BaseActivity {
         @Override
         public void run() {
             if (timeOutDialog == null || !timeOutDialog.isShowing()) {
-                timeOutDialog = new AlertDialog.Builder(VerificodeLogin.this)
+                timeOutDialog = new AlertDialog.Builder(VerifyCodeLoginActivity.this)
                         .setTitle("连接超时,请检查网络")
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
@@ -303,7 +289,7 @@ public class VerificodeLogin extends BaseActivity {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    AlertDialog dialog = new AlertDialog.Builder(VerificodeLogin.this)
+                    AlertDialog dialog = new AlertDialog.Builder(VerifyCodeLoginActivity.this)
                             .setTitle("密码输入错误/还有" + (2 - errorTime) + "次输入机会")
                             .setPositiveButton("确定", null)
                             .create();
@@ -315,7 +301,7 @@ public class VerificodeLogin extends BaseActivity {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    AlertDialog dialog = new AlertDialog.Builder(VerificodeLogin.this)
+                    AlertDialog dialog = new AlertDialog.Builder(VerifyCodeLoginActivity.this)
                             .setTitle("由于密码输入错误过多,该账号已被冻结")
                             .setPositiveButton("确定", null)//锁账号暂未完成
                             .create();
@@ -333,7 +319,7 @@ public class VerificodeLogin extends BaseActivity {
             try {
 
                 int hostPort = new Random().nextInt(5000) + 2000;
-                SipInfo.sipUser = new SipUser(null, hostPort, VerificodeLogin.this);
+                SipInfo.sipUser = new SipUser(null, hostPort, VerifyCodeLoginActivity.this);
                 org.zoolu.sip.message.Message register = SipMessageFactory.createRegisterRequest(
                         SipInfo.sipUser, SipInfo.user_to, SipInfo.user_from);
                 SipInfo.sipUser.sendMessage(register);
@@ -359,16 +345,16 @@ public class VerificodeLogin extends BaseActivity {
             } finally {
 
                 if (!SipInfo.isAccountExist) {
-                    registering.dismiss();
+                    dismissLoadingDialog();
                     /**账号不存在提示*/
                     handler.post(accountNotExist);
                 } else if (SipInfo.passwordError) {
                     //密码错误提示
-                    registering.dismiss();
+                    dismissLoadingDialog();
                     showDialogTip(errorTime++);
                     lastUserAccount = SipInfo.userAccount;
                 } else if (SipInfo.loginTimeout) {
-                    registering.dismiss();
+                    dismissLoadingDialog();
                     //超时
                     handler.post(timeOut);
                 } else {
@@ -382,7 +368,7 @@ public class VerificodeLogin extends BaseActivity {
                         //数据库
                         String dbPath = SipInfo.userId + ".db";
 //                        deleteDatabase(dbPath);
-                        MyDatabaseHelper myDatabaseHelper = new MyDatabaseHelper(VerificodeLogin.this, dbPath, null, 1);
+                        MyDatabaseHelper myDatabaseHelper = new MyDatabaseHelper(VerifyCodeLoginActivity.this, dbPath, null, 1);
                         DatabaseInfo.sqLiteManager = new SQLiteManager(myDatabaseHelper);
 
 //                        SipInfo.applist.clear();
@@ -390,204 +376,236 @@ public class VerificodeLogin extends BaseActivity {
 //                        SipInfo.sipUser.sendMessage(SipMessageFactory.createSubscribeRequest(SipInfo.sipUser,
 //                                SipInfo.user_to, SipInfo.user_from, BodyFactory.createAppsQueryBody()));
                         //启动设备注册线程
-                        new Thread(getuserinfo).start();
+//                        new Thread(getuserinfo).start();
+                        getUserInfo();
                     }
                 }
             }
         }
     };
-    //获取用户数据线程
-    String response = "";
-    private Runnable getuserinfo = new Runnable() {
-        @Override
-        public void run() {
-            response = GetPostUtil.sendGet1111(Constant.URL_GetUserInfo, "userid=" + SipInfo.userId);
-//        LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("tiezi",
-//                Constant.res);
-            Log.i("jonsresponse...........", response);
-            if ((response != null) && !("".equals(response))) {
-                JSONObject obj = JSON.parseObject(response);
-                String msg = obj.getString("msg");
-                if ("success".equals(msg)) {
-                    JSONObject user = obj.getJSONObject("user");
-                    Constant.nick = user.getString("nickname");
-                    Constant.avatar = user.getString("avatar");
-                    Constant.id = user.getString("id");
-                    Constant.phone = user.getString("name");
-                    Log.e("msg.........", "获取用户数据成功   " + Constant.nick + "    " + avatar);
+
+    private GetUserInfoRequest mGetUserInfoRequest;
+
+    //获取用户信息
+    private void getUserInfo() {
+        if (mGetUserInfoRequest != null && !mGetUserInfoRequest.isFinish()) {
+            return;
+        }
+        mGetUserInfoRequest = new GetUserInfoRequest();
+        mGetUserInfoRequest.addUrlParam("userid", SipInfo.userId);
+        mGetUserInfoRequest.setRequestListener(new RequestListener<PNUserInfo>() {
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSuccess(PNUserInfo result) {
+                if (result != null && result.isSuccess()) {
+                    setUserInfo(result.userInfo);
                     SipInfo.friends.clear();
-                    new Thread(getgroupinfo).start();
+                    getGroupInfo();
                 } else {
-                    Looper.prepare();
                     ToastUtils.showToastShort("获取用户数据失败请重试");
-                    registering.dismiss();
-                    Looper.loop();
+                    dismissLoadingDialog();
                 }
-            } else {
-                Looper.prepare();
-                ToastUtils.showToastShort("获取用户数据失败请重试");
-                registering.dismiss();
-                Looper.loop();
             }
+
+            @Override
+            public void onError(Exception e) {
+                ToastUtils.showToastShort("获取用户数据失败请重试");
+                dismissLoadingDialog();
+            }
+        });
+        HttpManager.addRequest(mGetUserInfoRequest);
+
+    }
+
+    //临时，后面需要统一管理用户信息
+    private void setUserInfo(PNUserInfo.UserInfo userInfo) {
+        Constant.nick = userInfo.nickname;
+        Constant.avatar = userInfo.avatar;
+        Constant.id = userInfo.id;
+        Constant.phone = userInfo.name;
+        Constant.sex = userInfo.gender;
+        Constant.isNotify = userInfo.isNotify;
+    }
+
+    private GetAllGroupFromUserRequest mGetAllGroupFromUserRequest;
+
+    //获取组信息
+    private void getGroupInfo() {
+        if (mGetAllGroupFromUserRequest != null && !mGetAllGroupFromUserRequest.isFinish()) {
+            return;
         }
-    };
-    //群组获取线程
-    private Runnable getgroupinfo = new Runnable() {
-        @Override
-        public void run() {
-            response = GetPostUtil.sendGet1111(Constant.URL_InquireGroup, "id=" + Constant.id);
-            Log.i("jonsresponse...........", response);
-            if ((response != null) && !("".equals(response))) {
-                Group group = JSON.parseObject(response, Group.class);
-                groupList = group.getGroupList();
-                groupname[0] = null;
-                groupname[1] = null;
-                groupname[2] = null;
-                groupid[0] = null;
-                groupid[1] = null;
-                groupid[2] = null;
-                appdevid[0] = null;
-                appdevid[1] = null;
-                appdevid[2] = null;
-                for (i = 0; i < groupList.size(); i++) {
-                    groupname[i] = groupList.get(i).getGroup_name();
-                    groupid[i] = groupList.get(i).getGroupid();
-                }
-                devid1 = groupname[0];
-                devid2 = groupname[1];
-                devid3 = groupname[2];
+        mGetAllGroupFromUserRequest = new GetAllGroupFromUserRequest();
+        mGetAllGroupFromUserRequest.addUrlParam("id", Constant.id);
+        mGetAllGroupFromUserRequest.setRequestListener(new RequestListener<Group>() {
+            @Override
+            public void onComplete() {
 
-                Constant.groupid1 = groupid[0];
-                Constant.groupid2 = groupid[1];
-                Constant.groupid3 = groupid[2];
-                Constant.groupid = groupid1;
-                Log.i("dev1   ", "" + Constant.devid1);
-                Log.i("dev2   ", "" + Constant.devid2);
-                Log.i("dev3   ", "" + Constant.devid3);
-                Log.i("group1   ", "" + Constant.groupid1);
-                Log.i("group2   ", "" + Constant.groupid2);
-                Log.i("group3   ", "" + Constant.groupid3);
-                if ((groupid1 != null) && !("".equals(groupid1))) {
-                    SipInfo.paddevId = devid1;
-                    response = GetPostUtil.sendGet1111(Constant.URL_getallDevidfromid, "id=" + Constant.id);
-                    Log.i("jonsresponse...........", response);
-                    new Thread(getalldevid).start();
+            }
 
+            @Override
+            public void onSuccess(Group result) {
+                if (result != null) {
+                    if (result.groupList != null && !result.groupList.isEmpty()) {
+                        //重构疑问：这个循环的意义
+                        groupname = new String[]{null, null, null};
+                        groupid = new String[]{null, null, null};
+                        appdevid = new String[]{null, null, null};
+                        for (int i = 0; i < result.groupList.size(); i++) {
+                            groupname[i] = result.groupList.get(i).getGroup_name();
+                            groupid[i] = result.groupList.get(i).getGroupid();
+                        }
+                        devid1 = groupname[0];
+                        devid2 = groupname[1];
+                        devid3 = groupname[2];
+
+                        Constant.groupid1 = groupid[0];
+                        Constant.groupid2 = groupid[1];
+                        Constant.groupid3 = groupid[2];
+                        Constant.groupid = Constant.groupid1;
+                        if (!TextUtils.isEmpty(Constant.groupid1)) {
+                            SipInfo.paddevId = Constant.devid1;
+                            getDevIdInfo();
+                        } else {
+                            Constant.res = "";
+                            LocalUserInfo.getInstance(VerifyCodeLoginActivity.this).setUserInfo("avatar",
+                                    Constant.avatar);
+                            LocalUserInfo.getInstance(VerifyCodeLoginActivity.this).setUserInfo("nick",
+                                    Constant.nick);
+                            LocalUserInfo.getInstance(VerifyCodeLoginActivity.this).setUserInfo("id",
+                                    Constant.id);
+                            dismissLoadingDialog();
+                            startActivity(new Intent(VerifyCodeLoginActivity.this, HomeActivity.class));
+                        }
+                    }
                 } else {
-                    Constant.res = "";
-                    LocalUserInfo.getInstance(VerificodeLogin.this).setUserInfo("avatar",
-                            Constant.avatar);
-                    LocalUserInfo.getInstance(VerificodeLogin.this).setUserInfo("nick",
-                            Constant.nick);
-                    LocalUserInfo.getInstance(VerificodeLogin.this).setUserInfo("id",
-                            Constant.id);
-                    registering.dismiss();
-                    startActivity(new Intent(VerificodeLogin.this, HomeActivity.class));
+                    ToastUtils.showToastShort("获取用户数据失败请重试");
+                    dismissLoadingDialog();
                 }
-            } else {
-                Looper.prepare();
+            }
+
+            @Override
+            public void onError(Exception e) {
                 ToastUtils.showToastShort("获取用户数据失败请重试");
-                registering.dismiss();
-                Looper.loop();
+                dismissLoadingDialog();
             }
+        });
+        HttpManager.addRequest(mGetAllGroupFromUserRequest);
+    }
+    private GetDevIdFromIdRequest mGetDevIdFromIdRequest;
+
+    //获取用户设备信息
+    private void getDevIdInfo() {
+        if (mGetDevIdFromIdRequest != null && !mGetDevIdFromIdRequest.isFinish()) {
+            return;
         }
-    };
+        mGetDevIdFromIdRequest = new GetDevIdFromIdRequest();
+        mGetDevIdFromIdRequest.addUrlParam("id", Constant.id);
+        mGetDevIdFromIdRequest.setRequestListener(new RequestListener<Alldevid>() {
+            @Override
+            public void onComplete() {
 
-    //群组用户信息获取
-    private Runnable getuserfromgroup = new Runnable() {
-        @Override
-        public void run() {
-            response = GetPostUtil.sendGet1111(Constant.URL_InquireUser, "groupid=" + Constant.groupid);
-            Log.i("jonsresponse...........", response);
-            if ((response != null) && !("".equals(response))) {
-                UserFromGroup userFromGroup = JSON.parseObject(response, UserFromGroup.class);
+            }
 
-                userList = userFromGroup.getUserList();
-
-                for (i = 0; i < userList.size(); i++) {
-                    Friend friend = new Friend();
-                    friend.setNickName (userList.get(i).getNickname());
-                    friend.setPhoneNum(userList.get(i).getName());
-                    friend.setUserId(userList.get(i).getUserid());
-                    friend.setId(userList.get(i).getId());
-                    friend.setAvatar(userList.get(i).getAvatar());
-                    SipInfo.friends.add(friend);
+            @Override
+            public void onSuccess(Alldevid result) {
+                if (result != null) {
+                    List<String> devIdLists = result.devid;
+                    if (devIdLists.isEmpty()) {
+                        ToastUtils.showToast("获取设备id失败");
+                        startActivity(new Intent(VerifyCodeLoginActivity.this, HomeActivity.class));
+                    } else {
+                        appdevid[0] = devIdLists.get(0);
+                        Constant.appdevid1 = appdevid[0];
+                        if (!TextUtils.isEmpty(appdevid[0])) {
+                            SipInfo.devId = appdevid[0];
+                            SipURL local_dev = new SipURL(SipInfo.devId, SipInfo.serverIp, SipInfo.SERVER_PORT_DEV);
+                            SipInfo.dev_from = new NameAddress(SipInfo.devId, local_dev);
+                            new Thread(devConnecting).start();
+                        }
+                        //获取组内用户
+                        getAllUserFormGroup();
+                    }
+                } else {
+                    ToastUtils.showToast("获取用户devid失败请重试");
+                    dismissLoadingDialog();
                 }
-                new Thread(getpostinfo).start();
-            } else {
-                Looper.prepare();
-                ToastUtils.showToastShort("获取用户数据失败请重试");
-                registering.dismiss();
-                Looper.loop();
             }
-        }
-    };
 
-    //帖子获取线程
-    private Runnable getpostinfo = new Runnable() {
-        @Override
-        public void run() {
-            Constant.res = GetPostUtil.sendGet1111(Constant.URL_getPostList, "id=" + Constant.id + "&currentPage=1" + "&groupid=" + Constant.groupid);
-            Log.i("jonsresponse...........", Thread.currentThread().getName() + Constant.res + "");
-            if ((Constant.res != null) && !("".equals(res))) {
-                GroupInfo.groupNum = "7000";
-                //String peer = peerElement.getFirstChild().getNodeValue();
-                GroupInfo.ip = "101.69.255.134";
-//                GroupInfo.port = 7000;
-                GroupInfo.level = "1";
-                SipInfo.devName = Constant.nick;
-//
-                LocalUserInfo.getInstance(VerificodeLogin.this).setUserInfo("avatar",
-                        Constant.avatar);
-                LocalUserInfo.getInstance(VerificodeLogin.this).setUserInfo("nick",
-                        Constant.nick);
-                LocalUserInfo.getInstance(VerificodeLogin.this).setUserInfo("id",
-                        Constant.id);
-                registering.dismiss();
-                startActivity(new Intent(VerificodeLogin.this, HomeActivity.class));
-            } else {
-                Looper.prepare();
-                ToastUtils.showToastShort("获取用户帖子失败请重试");
-                registering.dismiss();
-                Looper.loop();
-            }
-        }
-    };
-    //获取所有devid
-    private Runnable getalldevid = new Runnable() {
-        @Override
-        public void run() {
-            response = GetPostUtil.sendGet1111(Constant.URL_getallDevidfromid, "id=" + Constant.id);
-            Log.i("jonsresponse...........", response);
-            if ((response != null) && !("".equals(response))) {
-                JSONObject jsonObject = JSONObject.parseObject(response);
-                Alldevid alldevid = JSON.parseObject(response, Alldevid.class);
-                list = alldevid.getDevid();
-
-                appdevid[0] = list.get(0);
-
-                Constant.appdevid1 = appdevid[0];
-
-
-                if (appdevid[0] != null && !("".equals(appdevid[0]))) {
-
-                    SipInfo.devId = appdevid[0];
-                    Log.i("qwe",SipInfo.devId);
-                    SipURL local_dev = new SipURL(SipInfo.devId, SipInfo.serverIp, SipInfo.SERVER_PORT_DEV);
-                    SipInfo.dev_from = new NameAddress(SipInfo.devId, local_dev);
-                    new Thread(devConnecting).start();
-                }
-
-                new Thread(getuserfromgroup).start();
-
-            } else {
-                Looper.prepare();
+            @Override
+            public void onError(Exception e) {
                 ToastUtils.showToastShort("获取用户devid失败请重试");
-                registering.dismiss();
-                Looper.loop();
+                dismissLoadingDialog();
             }
+        });
+        HttpManager.addRequest(mGetDevIdFromIdRequest);
+    }
+
+    private GetAllUserFromGroupRequest mGetAllUserFromGroupRequest;
+
+    //获取组内用户
+    private void getAllUserFormGroup() {
+        if (mGetAllUserFromGroupRequest != null && !mGetAllUserFromGroupRequest.isFinish()) {
+            return;
         }
-    };
+        mGetAllUserFromGroupRequest = new GetAllUserFromGroupRequest();
+        mGetAllUserFromGroupRequest.addUrlParam("groupid", Constant.groupid);
+        mGetAllUserFromGroupRequest.setRequestListener(new RequestListener<UserFromGroup>() {
+            @Override
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSuccess(UserFromGroup result) {
+                if (result != null) {
+                    if (result.userList != null && !result.userList.isEmpty()) {
+                        for (int i = 0; i < result.userList.size(); i++) {
+                            UserList userList = result.userList.get(i);
+                            Friend friend = new Friend();
+                            friend.setNickName(userList.getNickname());
+                            friend.setPhoneNum(userList.getName());
+                            friend.setUserId(userList.getUserid());
+                            friend.setId(userList.getId());
+                            friend.setAvatar(userList.getAvatar());
+                            SipInfo.friends.add(friend);
+                        }
+
+                        GroupInfo.groupNum = "7000";
+//                        String peer = peerElement.getFirstChild().getNodeValue();
+                        GroupInfo.ip = "101.69.255.134";
+//                        GroupInfo.port = 7000;
+                        GroupInfo.level = "1";
+                        SipInfo.devName = Constant.nick;
+
+                        LocalUserInfo.getInstance(VerifyCodeLoginActivity.this).setUserInfo("avatar",
+                                Constant.avatar);
+                        LocalUserInfo.getInstance(VerifyCodeLoginActivity.this).setUserInfo("nick",
+                                Constant.nick);
+                        LocalUserInfo.getInstance(VerifyCodeLoginActivity.this).setUserInfo("id",
+                                Constant.id);
+                        dismissLoadingDialog();
+                        startActivity(new Intent(VerifyCodeLoginActivity.this, HomeActivity.class));
+                    } else {
+                        ToastUtils.showToastShort("获取用户数据失败请重试");
+                        dismissLoadingDialog();
+                    }
+                } else {
+                    ToastUtils.showToastShort("获取用户数据失败请重试");
+                    dismissLoadingDialog();
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+        HttpManager.addRequest(mGetAllUserFromGroupRequest);
+    }
 
     //设备注册线程
     private Runnable devConnecting = new Runnable() {
@@ -595,7 +613,7 @@ public class VerificodeLogin extends BaseActivity {
         public void run() {
             try {
                 int hostPort = new Random().nextInt(5000) + 2000;
-                SipInfo.sipDev = new SipDev(VerificodeLogin.this, null, hostPort);//无网络时在主线程操作会报异常
+                SipInfo.sipDev = new SipDev(VerifyCodeLoginActivity.this, null, hostPort);//无网络时在主线程操作会报异常
                 org.zoolu.sip.message.Message register = SipMessageFactory.createRegisterRequest(
                         SipInfo.sipDev, SipInfo.dev_to, SipInfo.dev_from);
 
@@ -624,7 +642,7 @@ public class VerificodeLogin extends BaseActivity {
                     Log.e(TAG, "设备注册失败!");
                     Looper.prepare();
                     ToastUtils.showToastShort("设备注册失败请重新登录");
-                    registering.dismiss();
+                    dismissLoadingDialog();
                     Looper.loop();
                 }
             }
@@ -634,13 +652,11 @@ public class VerificodeLogin extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (registering != null) {
-            registering.dismiss();
-        }
+        dismissLoadingDialog();
         SMSSDK.unregisterEventHandler(eventHandler);
     }
 
-    private boolean checkInput(String phone,  String code) {
+    private boolean checkInput(String phone, String code) {
         if (TextUtils.isEmpty(phone)) { // 电话号码为空
             ToastUtils.showToast(R.string.tip_phone_can_not_be_empty);
         } else {
@@ -654,10 +670,9 @@ public class VerificodeLogin extends BaseActivity {
         }
         return false;
     }
-
-    Handler handler1 = new Handler() {
-
-        public void handleMessage(android.os.Message msg) {
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
             int event = msg.arg1;
             int result = msg.arg2;
             Object data = msg.obj;
@@ -666,9 +681,9 @@ public class VerificodeLogin extends BaseActivity {
             // 短信注册成功后，返回LoginActivity,然后提示
             if (result == SMSSDK.RESULT_COMPLETE) {
                 if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {// 提交验证码成功
-//                    Toast.makeText(SignUpActivity.this, "验证成功",
+//                    Toast.makeText(RegisterAccountActivity.this, "验证成功",
 //                            Toast.LENGTH_SHORT).show();
-                        login();
+                    login();
                 } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
                     Toast.makeText(getApplicationContext(), "验证码已经发送",
                             Toast.LENGTH_SHORT).show();
@@ -680,11 +695,11 @@ public class VerificodeLogin extends BaseActivity {
                 String des = obj.get("detail").getAsString();//错误描述
                 int status = obj.get("status").getAsInt();//错误代码
                 if (status > 0 && !TextUtils.isEmpty(des)) {
-                    Toast.makeText(VerificodeLogin.this, des, Toast.LENGTH_SHORT).show();
-                    return;
+                    Toast.makeText(VerifyCodeLoginActivity.this, des, Toast.LENGTH_SHORT).show();
                 }
             }
+            return true;
         }
-    };
+    });
 
 }

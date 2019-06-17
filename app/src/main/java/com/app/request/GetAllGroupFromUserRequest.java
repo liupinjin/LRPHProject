@@ -11,6 +11,6 @@ public class GetAllGroupFromUserRequest extends BaseRequest<Group> {
 
     public GetAllGroupFromUserRequest() {
         setRequestType(RequestType.GET);
-        setRequestPath("/xiaoyupeihu/public/index.php/users/getAllGroupFromUser");
+        setRequestPath("/users/getAllGroupFromUser");
     }
 }

@@ -10,26 +10,25 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.R;
-import com.punuo.sys.app.util.RegexUtils;
 import com.app.http.VerifyCodeManager;
 import com.app.http.VerifyCodeManager1;
 import com.app.model.PNBaseModel;
 import com.app.request.ChangePwdRequest;
 import com.app.sip.SipInfo;
-import com.punuo.sys.app.util.ToastUtils;
 import com.app.views.CleanEditText;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mob.MobSDK;
-import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.activity.BaseSwipeBackActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;
+import com.punuo.sys.app.util.RegexUtils;
+import com.punuo.sys.app.util.ToastUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,12 +36,15 @@ import butterknife.OnClick;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
-public class ChangePassword1 extends BaseActivity {
+/**
+ * 密码重置页
+ */
+
+public class ForgetPasswordActivity extends BaseSwipeBackActivity {
     private static final String TAG = "Changepassword1Activity";
     private EventHandler eventHandler;
     private VerifyCodeManager1 codeManager1;
 
-    String response;
     @Bind(R.id.num_input3)
     CleanEditText numInput3;
     @Bind(R.id.verificode_input1)
@@ -50,9 +52,9 @@ public class ChangePassword1 extends BaseActivity {
     @Bind(R.id.verificode_get)
     TextView verificodeGet;
     @Bind(R.id.btn_nextstep)
-    Button btnNextstep;
-    @Bind(R.id.iv_back3)
-    ImageView ivBack3;
+    TextView btnNextstep;
+    @Bind(R.id.iv_back)
+    ImageView ivBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +75,7 @@ public class ChangePassword1 extends BaseActivity {
         verificodeInput1.setImeOptions(EditorInfo.IME_ACTION_NEXT);
 
         MobSDK.init(this, "213c5d90b2394", "793f08e685abc8a57563a8652face144");
-         eventHandler = new EventHandler() {
+        eventHandler = new EventHandler() {
             @Override
             public void afterEvent(int event, int result, Object data) {
                 Message msg = new Message();
@@ -86,25 +88,27 @@ public class ChangePassword1 extends BaseActivity {
 //        注册回调监听接口
         SMSSDK.registerEventHandler(eventHandler);
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         SMSSDK.unregisterEventHandler(eventHandler);
     }
 
-    @OnClick({R.id.verificode_get,R.id.btn_nextstep,R.id.iv_back3})
-    public void onClick(View v){
-        switch (v.getId()){
+    @OnClick({R.id.verificode_get, R.id.btn_nextstep, R.id.iv_back})
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.verificode_get:
                 codeManager1.getVerifyCode(VerifyCodeManager.REGISTER);
                 break;
             case R.id.btn_nextstep:
-                SipInfo.code=verificodeInput1.getText().toString().trim();
-                SipInfo.userAccount2=numInput3.getText().toString().trim();
-                startActivity(new Intent(this,SetNewPassword.class));
-                break;
-            case R.id.iv_back3:
+                SipInfo.code = verificodeInput1.getText().toString().trim();
+                SipInfo.userAccount2 = numInput3.getText().toString().trim();
+                startActivity(new Intent(this, SetNewPasswordActivity.class));
                 finish();
+                break;
+            case R.id.iv_back:
+                scrollToFinishActivity();
                 break;
         }
     }
@@ -145,7 +149,7 @@ public class ChangePassword1 extends BaseActivity {
                 String des = obj.get("detail").getAsString();//错误描述
                 int status = obj.get("status").getAsInt();//错误代码
                 if (status > 0 && !TextUtils.isEmpty(des)) {
-                    Toast.makeText(ChangePassword1.this, des, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ForgetPasswordActivity.this, des, Toast.LENGTH_SHORT).show();
                 }
             }
             return true;
@@ -157,6 +161,7 @@ public class ChangePassword1 extends BaseActivity {
     }
 
     private ChangePwdRequest mChangePwdRequest;
+
     private void changePwd(String telNum, String newPwd) {
         if (mChangePwdRequest != null && !mChangePwdRequest.isFinish()) {
             return;
@@ -174,7 +179,7 @@ public class ChangePassword1 extends BaseActivity {
             public void onSuccess(PNBaseModel result) {
                 if (result.isSuccess()) {
                     ToastUtils.showToast("密码修改成功");
-                    startActivity(new Intent(ChangePassword1.this, LoginActivity.class));
+                    startActivity(new Intent(ForgetPasswordActivity.this, LoginActivity.class));
                 } else {
                     if (!TextUtils.isEmpty(result.msg)) {
                         ToastUtils.showToast(result.msg);

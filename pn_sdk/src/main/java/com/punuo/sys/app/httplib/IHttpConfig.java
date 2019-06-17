@@ -13,4 +13,6 @@ public interface IHttpConfig {
     boolean isUseHttps();
 
     String getUserAgent();
+
+    String getPrefixPath();
 }

@@ -31,10 +31,10 @@ import butterknife.OnClick;
 /**
  * Author chzjy
  * Date 2016/12/19.
+ * 修改密码页
  */
 
-public class ChangePassword extends BaseActivity implements View.OnClickListener {
-    private static final String TAG = "ChangepasswordActivity";
+public class ChangePasswordActivity extends BaseActivity implements View.OnClickListener {
     @Bind(R.id.iv_back1)
     ImageView ivBack1;
     @Bind(R.id.titleset)
@@ -42,7 +42,6 @@ public class ChangePassword extends BaseActivity implements View.OnClickListener
     @Bind(R.id.btn_revise)
     Button btnrevise;
 
-    String response;
     @Bind(R.id.oldpassword_input)
     CleanEditText oldpasswordInput;
     @Bind(R.id.newpassword_input)
@@ -118,7 +117,7 @@ public class ChangePassword extends BaseActivity implements View.OnClickListener
             public void onSuccess(PNBaseModel result) {
                 if (result.isSuccess()) {
                     ToastUtils.showToast("密码修改成功");
-                    startActivity(new Intent(ChangePassword.this, LoginActivity.class));
+                    startActivity(new Intent(ChangePasswordActivity.this, LoginActivity.class));
                 } else {
                     if (!TextUtils.isEmpty(result.msg)) {
                         ToastUtils.showToast(result.msg);

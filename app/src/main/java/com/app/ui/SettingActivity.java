@@ -17,7 +17,7 @@ import com.app.R;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.app.ui.address.AddressSupervise;
+import com.app.ui.address.AddressManagerActivity;
 import com.punuo.sys.app.util.DataClearUtil;
 import com.punuo.sys.app.activity.ActivityCollector;
 import com.punuo.sys.app.activity.BaseActivity;
@@ -30,7 +30,7 @@ import static com.app.model.Constant.groupid1;
 import static com.app.sip.SipInfo.sipUser;
 
 
-public class Setting extends BaseActivity {
+public class SettingActivity extends BaseActivity {
 
 
     @Bind(R.id.re_psds)
@@ -115,13 +115,13 @@ public class Setting extends BaseActivity {
                 dialog.show();
                 break;
             case R.id.re_psds:
-                startActivity(new Intent(this, ChangePassword.class));
+                startActivity(new Intent(this, ChangePasswordActivity.class));
                 break;
             case R.id.re_address:
-                startActivity(new Intent(this, AddressSupervise.class));
+                startActivity(new Intent(this, AddressManagerActivity.class));
                 break;
             case R.id.re_introduction:
-                startActivity(new Intent(this, SoftwareIntruct.class));
+                startActivity(new Intent(this, SoftwareInstructActivity.class));
                 break;
             case R.id.re_buffer:
                 //清除缓存

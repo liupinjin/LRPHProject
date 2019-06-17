@@ -38,7 +38,7 @@ public final class Intents {
      * may be useful to limit scanning to certain formats. Use
      * {@link android.content.Intent#putExtra(String, String)} with one of the values below.
      *
-     * Setting this is effectively shorthand for setting explicit formats with {@link #FORMATS}.
+     * SettingActivity this is effectively shorthand for setting explicit formats with {@link #FORMATS}.
      * It is overridden by that setting.
      */
     public static final String MODE = "SCAN_MODE";
@@ -166,7 +166,7 @@ public final class Intents {
     public static final String RESULT_BYTE_SEGMENTS_PREFIX = "SCAN_RESULT_BYTE_SEGMENTS_";
 
     /**
-     * Setting this to false will not save scanned codes in the history. Specified as a {@code boolean}.
+     * SettingActivity this to false will not save scanned codes in the history. Specified as a {@code boolean}.
      */
     public static final String SAVE_HISTORY = "SAVE_HISTORY";
 
@@ -211,7 +211,7 @@ public final class Intents {
     public static final String FORMAT = "ENCODE_FORMAT";
 
     /**
-     * Normally the contents of the barcode are displayed to the user in a TextView. Setting this
+     * Normally the contents of the barcode are displayed to the user in a TextView. SettingActivity this
      * boolean to false will hide that TextView, showing only the encode barcode.
      */
     public static final String SHOW_CONTENTS = "ENCODE_SHOW_CONTENTS";

@@ -29,10 +29,6 @@ public class IntentUtil {
         context.startActivity(intent);
     }
 
-    public static void startActivity(Context context, Intent intent) {
-
-    }
-
     public static Intent getIntent(Context context, Class classz, Bundle bundle) {
         Intent intent = getIntent(context, classz);
         if (bundle != null) {

@@ -100,7 +100,7 @@ public final class CameraConfigurationUtils {
 			if (flashMode.equals(parameters.getFlashMode())) {
 				Log.i(TAG, "Flash mode already set to " + flashMode);
 			} else {
-				Log.i(TAG, "Setting flash mode to " + flashMode);
+				Log.i(TAG, "SettingActivity flash mode to " + flashMode);
 				parameters.setFlashMode(flashMode);
 			}
 		}
@@ -124,7 +124,7 @@ public final class CameraConfigurationUtils {
 				Log.i(TAG, "Exposure compensation already set to "
 						+ compensationSteps + " / " + actualCompensation);
 			} else {
-				Log.i(TAG, "Setting exposure compensation to "
+				Log.i(TAG, "SettingActivity exposure compensation to "
 						+ compensationSteps + " / " + actualCompensation);
 				parameters.setExposureCompensation(compensationSteps);
 			}
@@ -166,7 +166,7 @@ public final class CameraConfigurationUtils {
 									+ Arrays.toString(suitableFPSRange));
 				} else {
 					Log.i(TAG,
-							"Setting FPS range to "
+							"SettingActivity FPS range to "
 									+ Arrays.toString(suitableFPSRange));
 					parameters
 							.setPreviewFpsRange(
@@ -182,7 +182,7 @@ public final class CameraConfigurationUtils {
 //			Log.i(TAG,
 //					"Old focus areas: " + toString(parameters.getFocusAreas()));
 //			List<Camera.Area> middleArea = buildMiddleArea(AREA_PER_1000);
-//			Log.i(TAG, "Setting focus area to : " + toString(middleArea));
+//			Log.i(TAG, "SettingActivity focus area to : " + toString(middleArea));
 //			parameters.setFocusAreas(middleArea);
 //		} else {
 //			Log.i(TAG, "Device does not support focus areas");
@@ -193,7 +193,7 @@ public final class CameraConfigurationUtils {
 //		if (parameters.getMaxNumMeteringAreas() > 0) {
 //			Log.i(TAG, "Old metering areas: " + parameters.getMeteringAreas());
 //			List<Camera.Area> middleArea = buildMiddleArea(AREA_PER_1000);
-//			Log.i(TAG, "Setting metering area to : " + toString(middleArea));
+//			Log.i(TAG, "SettingActivity metering area to : " + toString(middleArea));
 //			parameters.setMeteringAreas(middleArea);
 //		} else {
 //			Log.i(TAG, "Device does not support metering areas");
@@ -242,7 +242,7 @@ public final class CameraConfigurationUtils {
 			if (parameters.getZoom() == zoom) {
 				Log.i(TAG, "Zoom is already set to " + zoom);
 			} else {
-				Log.i(TAG, "Setting zoom to " + zoom);
+				Log.i(TAG, "SettingActivity zoom to " + zoom);
 				parameters.setZoom(zoom);
 			}
 		} else {

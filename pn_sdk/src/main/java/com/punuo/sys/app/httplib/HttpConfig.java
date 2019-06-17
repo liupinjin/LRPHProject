@@ -10,6 +10,7 @@ public class HttpConfig {
     private static String host = "sip.qinqingonline.com";
     private static int port = 8000;
     private static String userAgent = "punuo";
+    private static String requestPath = "/xiaoyupeihu/public/index.php";
     private static IHttpConfig sIHttpConfig;
 
     public static void init(IHttpConfig IHttpConfig) {
@@ -43,5 +44,12 @@ public class HttpConfig {
             return sIHttpConfig.getUserAgent();
         }
         return userAgent;
+    }
+
+    public static String getPrefixPath() {
+        if (sIHttpConfig != null) {
+            return sIHttpConfig.getPrefixPath();
+        }
+        return requestPath;
     }
 }

@@ -8,15 +8,14 @@ import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.app.R;
-import com.punuo.sys.app.util.RegexUtils;
 import com.app.sip.SipInfo;
 import com.app.views.CleanEditText;
-import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.activity.BaseSwipeBackActivity;
+import com.punuo.sys.app.util.RegexUtils;
 import com.punuo.sys.app.util.ToastUtils;
 
 import butterknife.Bind;
@@ -24,7 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.smssdk.SMSSDK;
 
-public class SetNewPassword extends BaseActivity {
+public class SetNewPasswordActivity extends BaseSwipeBackActivity {
 
     String response;
 
@@ -34,16 +33,12 @@ public class SetNewPassword extends BaseActivity {
     CleanEditText newpasswordConfirm;
     @Bind(R.id.hidepassword1)
     ImageView hidepassword1;
-    @Bind(R.id.showpassword1)
-    ImageView showpassword1;
     @Bind(R.id.btn_down)
-    Button btnDown;
-    @Bind(R.id.iv_back4)
+    TextView btnDown;
+    @Bind(R.id.iv_back)
     ImageView ivBack4;
     @Bind(R.id.hidepassword2)
     ImageView hidepassword2;
-    @Bind(R.id.showpassword2)
-    ImageView showpassword2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,45 +51,30 @@ public class SetNewPassword extends BaseActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(getResources().getColor(R.color.image_bar));
         }
+        newpasswordSet.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        newpasswordConfirm.setTransformationMethod(PasswordTransformationMethod.getInstance());
     }
 
-//    Handler myhandle = new Handler() {
-//        @Override
-//        public void handleMessage(Message msg) {
-//            super.handleMessage(msg);
-//            if (msg.what == 1) {
-//                startActivity(new Intent(SetNewPassword.this, LoginActivity.class));
-//            }
-//        }
-//    };
-
-    @OnClick({R.id.hidepassword1, R.id.showpassword1,R.id.hidepassword2,
-            R.id.showpassword2, R.id.btn_down, R.id.iv_back4})
+    @OnClick({R.id.hidepassword1, R.id.hidepassword2, R.id.btn_down, R.id.iv_back})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.hidepassword1:
-                newpasswordSet.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                Toast.makeText(this, "隐藏密码", Toast.LENGTH_SHORT).show();
-                hidepassword1.setVisibility(View.INVISIBLE);
-                showpassword1.setVisibility(View.VISIBLE);
-                break;
-            case R.id.showpassword1:
-                newpasswordSet.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                Toast.makeText(this,"显示密码",Toast.LENGTH_SHORT).show();
-                showpassword1.setVisibility(View.INVISIBLE);
-                hidepassword1.setVisibility(View.VISIBLE);
+                if (newpasswordSet.getTransformationMethod() == PasswordTransformationMethod.getInstance()) {
+                    hidepassword1.setImageResource(R.drawable.ic_eye);
+                    newpasswordSet.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                } else if (newpasswordSet.getTransformationMethod() == HideReturnsTransformationMethod.getInstance()) {
+                    hidepassword1.setImageResource(R.drawable.ic_hide);
+                    newpasswordSet.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                }
                 break;
             case R.id.hidepassword2:
-                newpasswordConfirm.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                Toast.makeText(this, "隐藏密码", Toast.LENGTH_SHORT).show();
-                hidepassword2.setVisibility(View.INVISIBLE);
-                showpassword2.setVisibility(View.VISIBLE);
-                break;
-            case R.id.showpassword2:
-                newpasswordConfirm.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                Toast.makeText(this,"显示密码",Toast.LENGTH_SHORT).show();
-                showpassword2.setVisibility(View.INVISIBLE);
-                hidepassword2.setVisibility(View.VISIBLE);
+                if (newpasswordConfirm.getTransformationMethod() == PasswordTransformationMethod.getInstance()) {
+                    hidepassword2.setImageResource(R.drawable.ic_eye);
+                    newpasswordConfirm.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                } else if (newpasswordConfirm.getTransformationMethod() == HideReturnsTransformationMethod.getInstance()) {
+                    hidepassword2.setImageResource(R.drawable.ic_hide);
+                    newpasswordConfirm.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                }
                 break;
             case R.id.btn_down:
                 SipInfo.passWord2 = newpasswordSet.getText().toString().trim();
@@ -103,12 +83,11 @@ public class SetNewPassword extends BaseActivity {
                     SMSSDK.submitVerificationCode("86", SipInfo.userAccount2, SipInfo.code);
                 }
                 break;
-            case R.id.iv_back4:
-                finish();
+            case R.id.iv_back:
+                scrollToFinishActivity();
                 break;
         }
     }
-
 
 
     private boolean checkInput(String phone, String password, String code, String again) {

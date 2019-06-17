@@ -3,6 +3,7 @@ package com.app.views;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -10,7 +11,6 @@ import android.view.MotionEvent;
 import android.view.animation.Animation;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.TranslateAnimation;
-import android.widget.EditText;
 
 /**
  * @ClassName: CleanEditText 
@@ -18,12 +18,11 @@ import android.widget.EditText;
  * @author wwj_748
  * @date 2015年6月11日 上午11:57:36
  */
-public class CleanEditText extends EditText {
+public class CleanEditText extends AppCompatEditText {
 	
 	private final String TAG = "editText";
 	
 	private Drawable dRight;
-	private Rect rBound;
 
 	public CleanEditText(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -76,19 +75,13 @@ public class CleanEditText extends EditText {
 	protected void onDetachedFromWindow() {
 		super.onDetachedFromWindow();
 		this.dRight = null;
-		this.rBound = null;
 	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		if ((this.dRight != null) && (event.getAction() == 1)) {
-			this.rBound = this.dRight.getBounds();
-			int i = (int) event.getRawX();
-			if (i > getRight() - 3 * this.rBound.width()) {
-				// 点击的位置聚焦
-				requestFocus();
+		if ((this.dRight != null) && (event.getAction() == MotionEvent.ACTION_DOWN)) {
+			if (event.getX()> getWidth() - getPaddingRight() - dRight.getIntrinsicWidth()) {
 				setText("");
-				event.setAction(MotionEvent.ACTION_CANCEL);
 			}
 		}
 		return super.onTouchEvent(event);
