@@ -58,7 +58,6 @@ import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.sip.SipUser;
 import com.app.tools.PermissionUtils;
-import com.app.view.CustomProgressDialog;
 import com.app.views.CleanEditText;
 import com.punuo.sys.app.activity.BaseActivity;
 import com.punuo.sys.app.httplib.HttpManager;
@@ -416,6 +415,9 @@ public class LoginActivity extends BaseActivity {
                             dismissLoadingDialog();
                             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                         }
+                    }else {
+                        dismissLoadingDialog();
+                        startActivity(new Intent(LoginActivity.this,HomeActivity.class));
                     }
                 } else {
                     ToastUtils.showToastShort("获取用户数据失败请重试");

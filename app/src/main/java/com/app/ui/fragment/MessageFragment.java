@@ -25,7 +25,6 @@ import com.app.model.MessageEvent;
 import com.app.sip.SipInfo;
 import com.app.ui.AddlikeView;
 import com.app.ui.CommentView;
-import com.app.ui.FamilyCircle;
 import com.app.ui.FamilyCircleActivity;
 import com.app.ui.message.SystemNotify;
 import com.app.view.CircleImageView;
