@@ -109,7 +109,7 @@ public class DevBindSuccessActivity extends BaseSwipeBackActivity {
         showLoadingDialog();
         mUnBindDevRequest = new UnBindDevRequest();
         mUnBindDevRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
-        mUnBindDevRequest.addUrlParam("groupid", UserInfoManager.getUserInfo().id);
+        mUnBindDevRequest.addUrlParam("groupid", Constant.groupid1);
         mUnBindDevRequest.addUrlParam("devid", Constant.devid1);
         mUnBindDevRequest.setRequestListener(new RequestListener<PNBaseModel>() {
             @Override
