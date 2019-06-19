@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -90,6 +91,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         mMyFragmentManager = new MyFragmentManager(this);
         switchFragment(Constant.HOME);
         StatusBarUtil.translucentStatusBar(this, Color.TRANSPARENT, false);
+        View statusBar = findViewById(R.id.status_bar);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            statusBar.setVisibility(View.VISIBLE);
+            statusBar.getLayoutParams().height = StatusBarUtil.getStatusBarHeight(this);
+            statusBar.requestLayout();
+        }
     }
 
     @Override
