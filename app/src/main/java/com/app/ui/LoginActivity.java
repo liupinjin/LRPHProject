@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -24,8 +25,6 @@ import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -58,6 +57,7 @@ import com.app.views.CleanEditText;
 import com.punuo.sys.app.activity.BaseActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;
+import com.punuo.sys.app.util.StatusBarUtil;
 import com.punuo.sys.app.util.ToastUtils;
 
 import org.zoolu.sip.address.NameAddress;
@@ -129,11 +129,7 @@ public class LoginActivity extends BaseActivity {
         pref = PreferenceManager.getDefaultSharedPreferences(this);
         setUpSplash();
         initViews();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(getResources().getColor(R.color.newbackground));
-        }
+        StatusBarUtil.translucentStatusBar(this, Color.TRANSPARENT, false);
     }
 
     private void setUpSplash() {
