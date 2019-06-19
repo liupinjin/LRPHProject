@@ -22,8 +22,8 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter {
     protected View mHeaderView;
     protected View mFootView;
     private RecyclerView mRecyclerView;
-    private Context mContext;
-    private List<T> mData;
+    protected Context mContext;
+    protected List<T> mData;
     private final Object lock = new Object();
 
     public BaseRecyclerViewAdapter(Context context, List<T> data) {

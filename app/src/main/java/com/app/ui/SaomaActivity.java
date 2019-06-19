@@ -29,7 +29,7 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.app.LocalUserInfo;
+import com.app.UserInfoManager;
 import com.app.R;
 import com.app.groupvoice.GroupInfo;
 import com.app.http.GetPostUtil;
@@ -169,7 +169,7 @@ public class SaomaActivity extends BaseActivity implements View.OnClickListener 
                         JSONObject obj1 = JSON.parseObject(response);
                         String msg1 = obj1.getString("msg");
                         if (msg1.equals("未绑定")) {
-                            response = GetPostUtil.sendGet1111(Constant.URL_Bind, "id=" + Constant.id + "&devid=" + devid);
+                            response = GetPostUtil.sendGet1111(Constant.URL_Bind, "id=" + UserInfoManager.getUserInfo().id + "&devid=" + devid);
                             Log.i("jonsresponse...........", response);
                             if (response != "") {
                                 JSONObject obj = JSON.parseObject(response);
@@ -187,7 +187,7 @@ public class SaomaActivity extends BaseActivity implements View.OnClickListener 
 
                             } else if (msg1.equals("已绑定")) {
                                 //发消息给平台，转发给群组验证，通过后绑定
-                                response = GetPostUtil.sendGet1111(Constant.URL_joinGroup, "devid=" + devid + "&id=" + Constant.id);
+                                response = GetPostUtil.sendGet1111(Constant.URL_joinGroup, "devid=" + devid + "&id=" + UserInfoManager.getUserInfo().id);
                                 Log.i("jonsresponse...........", response);
                                 JSONObject obj2 = JSON.parseObject(response);
                                 String msg2 = obj2.getString("msg");
@@ -204,7 +204,7 @@ public class SaomaActivity extends BaseActivity implements View.OnClickListener 
                         }
                 }).start();
             }
-            LocalUserInfo.getInstance(this).setUserInfo("devid", devid1);
+//            UserInfoManager.getInstance(this).setUserInfo("devid", devid1);
             //qrCodeImage.setImageBitmap(bitmap);
         }
     }
@@ -324,7 +324,7 @@ public class SaomaActivity extends BaseActivity implements View.OnClickListener 
                                 JSONObject obj1 = JSON.parseObject(response);
                                 String msg1 = obj1.getString("msg");
                                 if (msg1.equals("未绑定")) {
-                                    response = GetPostUtil.sendGet1111(Constant.URL_Bind, "id=" + Constant.id + "&devid=" + devid);
+                                    response = GetPostUtil.sendGet1111(Constant.URL_Bind, "id=" + UserInfoManager.getUserInfo().id + "&devid=" + devid);
                                     Log.i("jonsresponse...........", response);
                                     JSONObject obj = JSON.parseObject(response);
                                     String msg = obj.getString("msg");
@@ -337,7 +337,7 @@ public class SaomaActivity extends BaseActivity implements View.OnClickListener 
                                     }
                                 } else if (msg1.equals("已绑定")) {
                                     //发消息给平台，转发给群主验证，通过后绑定
-                                    response = GetPostUtil.sendGet1111(Constant.URL_joinGroup, "devid=" + devid+"&id="+Constant.id);
+                                    response = GetPostUtil.sendGet1111(Constant.URL_joinGroup, "devid=" + devid+"&id="+UserInfoManager.getUserInfo().id);
                                     Log.i("jonsresponse...........", response);
                                     JSONObject obj2 = JSON.parseObject(response);
                                     String msg2 = obj2.getString("msg");

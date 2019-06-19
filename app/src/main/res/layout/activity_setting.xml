@@ -2,11 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#f8f8fa">
+    android:layout_height="match_parent">
 
-    <include android:id="@+id/main1"
-        layout="@layout/fragment_title2" />
+    <include layout="@layout/layout_title_bar" />
 
     <RelativeLayout
         android:id="@+id/re_personal"

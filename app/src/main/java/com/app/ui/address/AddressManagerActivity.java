@@ -5,7 +5,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextPaint;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -14,13 +13,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.R;
+import com.app.UserInfoManager;
 import com.app.adapter.AddressItemAdapter;
 import com.app.model.AddressResult;
-import com.app.model.Constant;
 import com.app.model.MessageEvent;
 import com.app.request.GetAddressListRequest;
 import com.app.sip.SipInfo;
-import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.activity.BaseSwipeBackActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;
 
@@ -34,11 +33,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AddressManagerActivity extends BaseActivity {
-    @Bind(R.id.iv_back1)
-    ImageView ivBack1;
-    @Bind(R.id.titleset)
-    TextView titleset;
+public class AddressManagerActivity extends BaseSwipeBackActivity {
+    @Bind(R.id.back)
+    ImageView back;
+    @Bind(R.id.title)
+    TextView title;
     @Bind(R.id.rv_addressDispaly)
     RecyclerView rvAddressDispaly;
     @Bind(R.id.iv_addressicon)
@@ -63,7 +62,7 @@ public class AddressManagerActivity extends BaseActivity {
         rvAddressDispaly.setLayoutManager(layoutManager);
         mAddressItemAdapter = new AddressItemAdapter(this, new ArrayList<>());
         rvAddressDispaly.setAdapter(mAddressItemAdapter);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(getResources().getColor(R.color.white));
@@ -72,9 +71,7 @@ public class AddressManagerActivity extends BaseActivity {
     }
 
     private void init() {
-        titleset.setText("地址管理");
-        TextPaint tp = titleset.getPaint();
-        tp.setFakeBoldText(true);
+        title.setText("地址管理");
         getAddressList();
     }
 
@@ -86,7 +83,7 @@ public class AddressManagerActivity extends BaseActivity {
             return;
         }
         mGetAddressListRequest = new GetAddressListRequest();
-        mGetAddressListRequest.addUrlParam("id", Constant.id);
+        mGetAddressListRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mGetAddressListRequest.setRequestListener(new RequestListener<AddressResult>() {
             @Override
             public void onComplete() {
@@ -121,15 +118,15 @@ public class AddressManagerActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.btn_newAddress, R.id.iv_back1})
+    @OnClick({R.id.btn_newAddress, R.id.back})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_newAddress:
                 SipInfo.isEditor = false;
                 startActivity(new Intent(this, AddressDetailActivity.class));
                 break;
-            case R.id.iv_back1:
-                finish();
+            case R.id.back:
+                scrollToFinishActivity();
                 break;
             default:
                 break;
@@ -149,7 +146,6 @@ public class AddressManagerActivity extends BaseActivity {
             startActivity(new Intent(this, AddressDetailActivity.class));
         } else if (event.getMessage().equals("刷新")) {
             getAddressList();
-//            mAddressItemAdapter.appendData(addressList);
         }
     }
 }

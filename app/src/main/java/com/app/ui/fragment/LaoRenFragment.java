@@ -17,7 +17,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.app.R;
-import com.app.friendCircleMain.custonListView.CustomListView;
 import com.app.friendCircleMain.domain.UserList;
 import com.app.model.MessageEvent;
 import com.app.sip.BodyFactory;
@@ -56,7 +55,6 @@ public class LaoRenFragment extends BaseFragment implements View.OnClickListener
     String SdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
     private static final String TAG = "MicroActivity";
     private List<UserList> userList = new ArrayList<UserList>();
-    public CustomListView listview;
     private CircleImageView alarm;
     private ImageView camera;
     private RelativeLayout re_background;

@@ -14,7 +14,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.FileProvider;
-import android.text.TextPaint;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -32,7 +31,9 @@ import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.tools.VersionXmlParse;
 import com.punuo.sys.app.activity.ActivityCollector;
-import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.activity.BaseSwipeBackActivity;
+import com.punuo.sys.app.httplib.HttpConfig;
+import com.punuo.sys.app.util.DeviceHelper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,7 +47,7 @@ import butterknife.OnClick;
 import static com.app.camera.FileOperateUtil.TAG;
 import static com.app.sip.SipInfo.sipUser;
 
-public class SoftwareInstructActivity extends BaseActivity {
+public class SoftwareInstructActivity extends BaseSwipeBackActivity {
 
 
     @Bind(R.id.tv_version)
@@ -55,10 +56,10 @@ public class SoftwareInstructActivity extends BaseActivity {
     TextView tvIntroduct;
     @Bind(R.id.tv_update)
     TextView tvUpdate;
-    @Bind(R.id.iv_back1)
-    ImageView ivBack1;
-    @Bind(R.id.titleset)
-    TextView titleset;
+    @Bind(R.id.back)
+    ImageView back;
+    @Bind(R.id.title)
+    TextView title;
 
     //手机内存卡路径
     private String SdCard;
@@ -78,24 +79,20 @@ public class SoftwareInstructActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        this.requestWindowFeature(Window.FEATURE_NO_TITLE);//去掉标题栏
         setContentView(R.layout.activity_software_intruct);
         ButterKnife.bind(this);
-//        EventBus.getDefault().register(this);
         SdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
         apkPath = SdCard + "/fanxin/download/apk/";
-        titleset.setText("关于");
-        TextPaint tp = titleset.getPaint();
-        tp.setFakeBoldText(true);
+        title.setText("关于");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(getResources().getColor(R.color.image_bar));
         }
-
+        tv_version.setText(DeviceHelper.getVersionName());
     }
 
-    @OnClick({R.id.tv_version, R.id.tv_introduct, R.id.tv_update, R.id.iv_back1})
+    @OnClick({R.id.tv_introduct, R.id.tv_update, R.id.back})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_introduct:
@@ -105,7 +102,7 @@ public class SoftwareInstructActivity extends BaseActivity {
                 result = "Finished";
                 showLoadingDialog();
                 //初始化FTP
-                mFtp = new Ftp("101.69.255.132", 21, "ftpall", "123456", Dversion);
+                mFtp = new Ftp(HttpConfig.getHost(), 21, "ftpall", "123456", Dversion);
                 //获取当前版本号
                 PackageManager packageManager = this.getPackageManager();
                 try {
@@ -116,8 +113,11 @@ public class SoftwareInstructActivity extends BaseActivity {
                 }
                 new Thread(checkVersion).start();
                 break;
-            case R.id.iv_back1:
-                finish();
+            case R.id.back:
+                scrollToFinishActivity();
+                break;
+            default:
+                break;
         }
     }
 
@@ -204,7 +204,6 @@ public class SoftwareInstructActivity extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        EventBus.getDefault().unregister(this);
     }
 
     private void showVersionDialog(String currentVersion, final String FtpVersion, final String result) {
@@ -238,7 +237,7 @@ public class SoftwareInstructActivity extends BaseActivity {
     }
 
     //下载完成
-    Handler handler = new Handler(new Handler.Callback() {
+    private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             Log.d(TAG, "handleMessage: " + msg.what);

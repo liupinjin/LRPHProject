@@ -14,13 +14,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.R;
+import com.app.UserInfoManager;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.ui.address.AddressManagerActivity;
-import com.punuo.sys.app.util.DataClearUtil;
 import com.punuo.sys.app.activity.ActivityCollector;
-import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.activity.BaseSwipeBackActivity;
+import com.punuo.sys.app.util.DataClearUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,7 +31,7 @@ import static com.app.model.Constant.groupid1;
 import static com.app.sip.SipInfo.sipUser;
 
 
-public class SettingActivity extends BaseActivity {
+public class SettingActivity extends BaseSwipeBackActivity {
 
 
     @Bind(R.id.re_psds)
@@ -51,10 +52,10 @@ public class SettingActivity extends BaseActivity {
     TextView logout;
     @Bind(R.id.re_personal)
     RelativeLayout rePersonal;
-    @Bind(R.id.titleset)
-    TextView titleset;
-    @Bind(R.id.iv_back1)
-    ImageView ivBack1;
+    @Bind(R.id.title)
+    TextView title;
+    @Bind(R.id.back)
+    ImageView back;
     @Bind(R.id.tv_buff)
     TextView tvBuff;
 
@@ -63,7 +64,7 @@ public class SettingActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         ButterKnife.bind(this);
-        titleset.setText("设置");
+        title.setText("设置");
         tvBuff.setText(DataClearUtil.getTotalCacheSize(this));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
             Window window = getWindow();
@@ -74,14 +75,14 @@ public class SettingActivity extends BaseActivity {
 
 
     @OnClick({R.id.re_psds, R.id.re_phonenumber, R.id.re_personal, R.id.re_address,
-            R.id.re_message, R.id.re_introduction, R.id.re_buffer, R.id.logout, R.id.iv_back1})
+            R.id.re_message, R.id.re_introduction, R.id.re_buffer, R.id.logout, R.id.back})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.re_phonenumber:
                 startActivity(new Intent(this, NumberBind.class));
                 break;
             case R.id.re_personal:
-                startActivity(new Intent(this, MyUserInfoActivity.class));
+                startActivity(new Intent(this, UserInfoActivity.class));
                 break;
             case R.id.logout:
                 AlertDialog dialog = new AlertDialog.Builder(this)
@@ -108,6 +109,7 @@ public class SettingActivity extends BaseActivity {
 //                                }
                                 dialog.dismiss();
                                 SipInfo.running = false;
+                                UserInfoManager.clearUserData();
                                 ActivityCollector.finishToFirstView();
                             }
                         }).create();
@@ -130,10 +132,11 @@ public class SettingActivity extends BaseActivity {
                 tvBuff.setText(DataClearUtil.getTotalCacheSize(this));
                 break;
             case R.id.re_message:
-                startActivity(new Intent(this, MessageNotify.class));
+                startActivity(new Intent(this, MessageNotifyActivity.class));
                 break;
-            case R.id.iv_back1:
-                finish();
+            case R.id.back:
+                scrollToFinishActivity();
+                break;
             default:
                 break;
         }

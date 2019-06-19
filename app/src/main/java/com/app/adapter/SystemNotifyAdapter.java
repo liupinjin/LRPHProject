@@ -56,7 +56,7 @@ public class SystemNotifyAdapter extends RecyclerView.Adapter<SystemNotifyAdapte
 //        this.glm=glm;
 //    }
 
-//    public SystemNotifyAdapter(Context context,List<MessageNotify> notifyList){
+//    public SystemNotifyAdapter(Context context,List<MessageNotifyActivity> notifyList){
 //        mLayoutInflater=LayoutInflater.from(context);
 //        mNotifyList=notifyList;
 //    }

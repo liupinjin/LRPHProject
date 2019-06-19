@@ -24,9 +24,6 @@ import butterknife.OnClick;
 import cn.smssdk.SMSSDK;
 
 public class SetNewPasswordActivity extends BaseSwipeBackActivity {
-
-    String response;
-
     @Bind(R.id.newpassword_set)
     CleanEditText newpasswordSet;
     @Bind(R.id.newpassword_confirm)

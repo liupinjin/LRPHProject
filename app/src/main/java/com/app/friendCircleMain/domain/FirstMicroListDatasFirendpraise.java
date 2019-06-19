@@ -6,7 +6,7 @@ public class FirstMicroListDatasFirendpraise extends MyBaseBean{
 	private String uid;
 	private String uname;
 	private String nickname;
-	private String praisetype;
+	private int praisetype;
 	
 	public String getId() {
 		return id;
@@ -36,11 +36,11 @@ public class FirstMicroListDatasFirendpraise extends MyBaseBean{
 	public void setNickname(String nickname){this.nickname=nickname;}
 
 	public  String getNickname(){return nickname;}
-	public String getPraisetype() {
+	public int getPraisetype() {
 		return praisetype;
 	}
 
-	public void setPraisetype(String praisetype) {
+	public void setPraisetype(int praisetype) {
 		this.praisetype = praisetype;
 	}
 
@@ -50,6 +50,7 @@ public class FirstMicroListDatasFirendpraise extends MyBaseBean{
 			return false;
 		}
 		FirstMicroListDatasFirendpraise o = (FirstMicroListDatasFirendpraise) obj;
+//		return this.id.equals(o.id);
 		return this.nickname.equals(o.nickname);
 	}
 }

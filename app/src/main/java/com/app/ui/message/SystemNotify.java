@@ -44,7 +44,7 @@ public class SystemNotify extends BaseActivity {
     @Bind(R.id.rv_systemNotify)
     RecyclerView rvSystemNotify;
     GridLayoutManager glm;
-//    private List<MessageNotify> notifyList=new ArrayList<>();
+//    private List<MessageNotifyActivity> notifyList=new ArrayList<>();
     private final String typepath = "http://" + serverIp + ":8000/xiaoyupeihu/public/index.php/posts/getNews";
 
     @Override

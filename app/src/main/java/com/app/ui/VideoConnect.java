@@ -23,7 +23,6 @@ import android.widget.TextView;
 
 import com.app.LoadPicture;
 import com.app.R;
-import com.app.model.Constant;
 import com.app.model.MessageEvent;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
@@ -45,7 +44,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import static com.app.camera.FileOperateUtil.TAG;
-import static com.app.model.Constant.id;
 import static com.app.sip.SipInfo.devName;
 
 /**
@@ -111,7 +109,7 @@ public class VideoConnect extends BaseActivity implements View.OnClickListener {
 
 
     public void init() {
-//        String vatar_temp = LocalUserInfo.getInstance(VideoConnect.this)
+//        String vatar_temp = UserInfoManager.getInstance(VideoConnect.this)
 //                .getUserInfo("avatar");
         pref= PreferenceManager.getDefaultSharedPreferences(this);
 //         pref=getSharedPreferences("data",MODE_PRIVATE);
@@ -173,28 +171,6 @@ public class VideoConnect extends BaseActivity implements View.OnClickListener {
                 Log.i("response", "error ");
         }
     }
-    private void showUserAvatar(ImageView iamgeView, String avatar) {
-
-        final String url_avatar = Constant.URL_Avatar + id + "/" + avatar;
-        iamgeView.setTag(url_avatar);
-        if (avatar != null && !avatar.equals("")) {
-            Bitmap bitmap = avatarLoader.loadImage(iamgeView, url_avatar,
-                    new LoadPicture.ImageDownloadedCallBack() {
-
-                        @Override
-                        public void onImageDownloaded(ImageView imageView,
-                                                      Bitmap bitmap) {
-                            if (imageView.getTag() == url_avatar) {
-                                imageView.setImageBitmap(bitmap);
-                            }
-                        }
-
-                    });
-            if (bitmap != null)
-                iamgeView.setImageBitmap(bitmap);
-
-        }
-    }
 
     private void showPhotoDialog() {
         final AlertDialog dlg = new AlertDialog.Builder(this).create();
@@ -211,7 +187,7 @@ public class VideoConnect extends BaseActivity implements View.OnClickListener {
             public void onClick(View v) {
                 imageName = getNowTime() + ".jpg";
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                //Intent intent = new Intent(MyUserInfoActivity.this, MyCamera.class);
+                //Intent intent = new Intent(UserInfoActivity.this, MyCamera.class);
                 //intent.putExtra("type", 1);
                 // 指定调用相机拍照后照片的储存路径
                 intent.putExtra(MediaStore.EXTRA_OUTPUT,
