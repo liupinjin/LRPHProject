@@ -8,13 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.R;
+import com.app.Util;
 import com.app.model.Comments;
-import com.app.model.Constant;
 import com.app.view.CircleImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
-
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -69,14 +66,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         {
             holder.replyAvatar.setImageResource(R.drawable.defaultavator);
         }else {
-            ImageLoader.getInstance().displayImage(Constant.URL_Avatar+
-                    comments.getId()+"/"+comments.getAvatar(), holder.replyAvatar);
+            ImageLoader.getInstance().displayImage(Util.getImageUrl(comments.getId(), comments.getAvatar()), holder.replyAvatar);
         }
         if(comments.getPic()==null){
             holder.commenttedPicture.setImageResource(R.drawable.defaultavator);
         }else {
-            ImageLoader.getInstance().displayImage(Constant.URL_Avatar+
-                    Constant.id+"/"+comments.getPic(), holder.commenttedPicture);
+            ImageLoader.getInstance().displayImage(Util.getImageUrl(comments.getPic()), holder.commenttedPicture);
         }
     }
 

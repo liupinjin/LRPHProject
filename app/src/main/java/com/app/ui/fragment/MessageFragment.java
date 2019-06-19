@@ -18,14 +18,12 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.app.R;
-import com.app.adapter.MessageAdapter;
+import com.app.UserInfoManager;
 import com.app.http.GetPostUtil;
 import com.app.model.Constant;
 import com.app.model.MessageEvent;
-import com.app.sip.SipInfo;
 import com.app.ui.AddlikeView;
 import com.app.ui.CommentView;
-import com.app.ui.FamilyCircleActivity;
 import com.app.ui.message.SystemNotify;
 import com.app.view.CircleImageView;
 import com.punuo.sys.app.util.StatusBarUtil;
@@ -143,7 +141,7 @@ public class MessageFragment extends Fragment {
                         @Override
                         public void run() {
                             String response = GetPostUtil.sendGet1111(Constant.URL_countNewComments,
-                                    "id=" + Constant.id + "&currentTime=" + df.format(new Date()) );
+                                    "id=" + UserInfoManager.getUserInfo().id + "&currentTime=" + df.format(new Date()) );
                             if((response!=null)&&!"".equals(response)){
                                 JSONObject obj= JSONObject.parseObject(response);
                                 String message=obj.getString("msg");
@@ -153,7 +151,7 @@ public class MessageFragment extends Fragment {
                                 }
                             }
                             String response1=GetPostUtil.sendGet1111(Constant.URL_countNewLikes,
-                                    "id=" + Constant.id + "&currentTime=" + df.format(new Date()));
+                                    "id=" + UserInfoManager.getUserInfo().id + "&currentTime=" + df.format(new Date()));
                             if((response1!=null)&&!"".equals(response1)){
                                 JSONObject obj1= JSON.parseObject(response1);
                                 String msg1=obj1.getString("msg");

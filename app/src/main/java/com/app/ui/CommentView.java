@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.app.R;
+import com.app.UserInfoManager;
 import com.app.friendCircleMain.adapter.CommentAdapter;
 import com.app.http.GetPostUtil;
 import com.app.model.Comments;
@@ -22,7 +23,6 @@ import com.app.model.Constant;
 import com.app.model.MessageEvent;
 import com.app.sip.SipInfo;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import org.greenrobot.eventbus.EventBus;
@@ -97,7 +97,7 @@ public class CommentView extends AppCompatActivity {
             @Override
             public void run() {
                 String response = GetPostUtil.sendGet1111(Constant.URL_getNewComments,
-                        "id=" + Constant.id + "&currentTime=" + df.format(new Date()));
+                        "id=" + UserInfoManager.getUserInfo().id + "&currentTime=" + df.format(new Date()));
                 if ((response != null) && !("".equals(response))) {
                     JSONObject obj= JSON.parseObject(response);
                     String msg=obj.getString("msg");

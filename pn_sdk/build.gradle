@@ -47,7 +47,6 @@ dependencies {
     api (name: 'jlibrtp-1.0.0', ext: 'aar')
     api (name: 'sip-1.0.0', ext: 'aar')
 
-    api 'com.android.support.constraint:constraint-layout:1.0.2'
     api files('libs/Amap_2DMap_V2.9.1_20160825.jar')
     api files('libs/MobCommons-2017.0607.1736.jar')
     api files('libs/MobTools-2017.0607.1736.jar')

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.app.R;
+import com.app.UserInfoManager;
 import com.app.friendCircleMain.adapter.CommentAdapter;
 import com.app.http.GetPostUtil;
 import com.app.model.Comments;
@@ -71,7 +72,7 @@ public class AddlikeView extends AppCompatActivity {
             @Override
             public void run() {
                 String response = GetPostUtil.sendGet1111(Constant.URL_getNewLikes,
-                        "id=" + Constant.id + "&currentTime=" + df.format(new Date()));
+                        "id=" + UserInfoManager.getUserInfo().id + "&currentTime=" + df.format(new Date()));
                 if ((response != null) && !("".equals(response))) {
                     JSONObject obj= JSON.parseObject(response);
                     String msg=obj.getString("msg");
