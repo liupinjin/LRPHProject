@@ -388,6 +388,9 @@ public class LoginActivity extends BaseActivity {
                             dismissLoadingDialog();
                             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                         }
+                    }else {
+                        dismissLoadingDialog();
+                        startActivity(new Intent(LoginActivity.this,HomeActivity.class));
                     }
                 } else {
                     ToastUtils.showToastShort("获取用户数据失败请重试");

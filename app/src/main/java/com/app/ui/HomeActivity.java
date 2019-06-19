@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.app.R;
 import com.app.model.Constant;
+import com.app.model.MessageEvent;
 import com.app.model.Msg;
 import com.app.model.MyFile;
 import com.app.service.BinderPoolService;
@@ -32,6 +33,10 @@ import com.app.ui.fragment.PersonFragment;
 import com.punuo.sys.app.activity.BaseActivity;
 import com.punuo.sys.app.util.IntentUtil;
 import com.punuo.sys.app.util.StatusBarUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -58,8 +63,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     FrameLayout contentFrame;
     @Bind(R.id.menu_layout)
     LinearLayout menuLayout;
-    @Bind(R.id.count)
-    TextView messageCount;
+    @Bind(R.id.newmessage_notify)
+    TextView newMessageNotify;
     @Bind(R.id.home_tab)
     View mHomeTab;
     @Bind(R.id.shop_tab)
@@ -74,13 +79,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public static final int TAB_COUNT = 5;
     private MyFragmentManager mMyFragmentManager;
     private View[] mTabBars = new View[TAB_COUNT];
-    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         init();
         mMyFragmentManager = new MyFragmentManager(this);
         switchFragment(Constant.HOME);
@@ -176,9 +181,34 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event ){
+        if(event.getMessage().equals("小红点出来吧")){
+            handler.sendEmptyMessage(0x11);
+        }else
+            if(event.getMessage().equals("取消新评论提示")){
+                handler.sendEmptyMessage(0x22);
+            }
+    }
+
+     Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message message){
+            super.handleMessage(message);
+            switch(message.what){
+                case 0x11:
+                    newMessageNotify.setVisibility(View.VISIBLE);
+                    break;
+                case 0x22:
+                    newMessageNotify.setVisibility(View.INVISIBLE);
+                    break;
+            }
+        }
+    };
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
 
         ButterKnife.unbind(this);
         if ((groupid1 != null) && !("".equals(groupid1))) {

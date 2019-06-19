@@ -260,7 +260,6 @@ public class UserInfoActivity extends BaseSwipeBackActivity implements View.OnCl
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     startActivityForResult(intent, PHOTO_REQUEST_TAKEPHOTO);
                     dlg.cancel();
-
                 }
                 dlg.cancel();
 
@@ -290,8 +289,6 @@ public class UserInfoActivity extends BaseSwipeBackActivity implements View.OnCl
         });
 
     }
-
-
     @SuppressLint("SdCardPath")
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -301,14 +298,12 @@ public class UserInfoActivity extends BaseSwipeBackActivity implements View.OnCl
                     startPhotoZoom(imageUri, 480);
                 }
                 break;
-
             case PHOTO_REQUEST_GALLERY:
                 if (resultCode == RESULT_OK) {
                     if (data != null)
                         startPhotoZoom(data.getData(), 480);
                 }
                 break;
-
             case PHOTO_REQUEST_CUT:
                 if (resultCode == RESULT_OK) {
                     Bitmap bitmap = BitmapFactory.decodeFile(avaPath + imageName);
@@ -316,7 +311,6 @@ public class UserInfoActivity extends BaseSwipeBackActivity implements View.OnCl
                     updateAvatarInServer(imageName);
                 }
                 break;
-
         }
         super.onActivityResult(requestCode, resultCode, data);
 

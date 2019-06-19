@@ -49,6 +49,8 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".ui.AddlikeView"></activity>
+        <activity android:name=".ui.CommentView" />
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
@@ -92,8 +94,9 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ui.message.SystemNotify"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.message.SystemNotify"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.VideoDial"
             android:screenOrientation="portrait"
@@ -261,7 +264,7 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />

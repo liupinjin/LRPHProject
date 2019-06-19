@@ -14,23 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.app.model.Device;
 import com.app.model.Friend;
-import com.app.videoAndPictureUpload.Image;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.app.R;
-
 import com.app.sip.SipInfo;
-import com.app.view.CircleImageView;
-import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
-
 import java.util.List;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
-
-import static com.app.sip.SipInfo.devList;
 import static com.app.sip.SipInfo.friendsList;
 //import static com.app.sip.SipInfo.devList1;
 

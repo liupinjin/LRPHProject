@@ -34,6 +34,10 @@ public class Constant {
     public static final String URL_Bind = FORMT + "devs/bindDev";//绑定设备
     public static final String URL_joinGroup = FORMT + "groups/joinGroup";//加入群组
     public static final String URL_InquireBind = FORMT + "devs/isDevBinded";//查询是否绑定设备
+    public static final String URL_getNewComments=FORMT+"posts/getNewComments";
+    public static final String URL_countNewComments=FORMT+"posts/countNewComments";
+    public static final String URL_getNewLikes=FORMT+"posts/getNewLikes";
+    public static final String URL_countNewLikes=FORMT+"posts/countNewLikes";
     public static String groupid;
     public static String groupid1;
     public static String groupid2;
