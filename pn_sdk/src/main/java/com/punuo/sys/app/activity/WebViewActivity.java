@@ -8,6 +8,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.handmark.pulltorefresh.library.PullToRefreshWebView;
 import com.punuo.sys.app.R;
 import com.punuo.sys.app.util.StatusBarUtil;
 
@@ -17,6 +18,7 @@ import com.punuo.sys.app.util.StatusBarUtil;
  **/
 public class WebViewActivity extends BaseSwipeBackActivity {
     private View mStatusBar;
+    private PullToRefreshWebView mPullToRefreshWebView;
     private WebView mWebView;
     protected String mUrl;
 
@@ -27,8 +29,8 @@ public class WebViewActivity extends BaseSwipeBackActivity {
         mUrl = data.getStringExtra("url");
         setContentView(R.layout.webview_activity);
         mStatusBar = findViewById(R.id.status_bar);
-        mWebView = (WebView) findViewById(R.id.web_view);
-
+        mPullToRefreshWebView = (PullToRefreshWebView) findViewById(R.id.pull_web_view);
+        mWebView = mPullToRefreshWebView.getRefreshableView();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mStatusBar.setVisibility(View.VISIBLE);
             mStatusBar.getLayoutParams().height = StatusBarUtil.getStatusBarHeight(this);

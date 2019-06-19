@@ -3,7 +3,6 @@ package com.app.ui;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -16,15 +15,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,20 +28,17 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.LoadPicture;
-import com.app.LocalUserInfo;
 import com.app.R;
 import com.app.adapter.MyRecyclerViewAdapter;
 import com.app.db.MyDatabaseHelper;
-import com.app.model.Constant;
 import com.app.model.MessageEvent;
-import com.punuo.sys.app.util.ToastUtils;
 import com.app.view.CircleImageView;
 import com.app.views.CleanEditText;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.activity.BaseSwipeBackActivity;
+import com.punuo.sys.app.util.PreferenceUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -63,13 +56,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.app.model.Constant.id;
 import static com.app.sip.SipInfo.dbHelper;
 
 
-public class AddressAddActivity extends BaseActivity implements View.OnClickListener {
-
-
+public class AddressAddActivity extends BaseSwipeBackActivity implements View.OnClickListener {
     @Bind(R.id.add)
     Button add;
     @Bind(R.id.selectavator)
@@ -80,15 +70,13 @@ public class AddressAddActivity extends BaseActivity implements View.OnClickList
     CleanEditText edit_name;
     @Bind(R.id.edit_number)
     CleanEditText edit_number;
-    @Bind(R.id.iv_back1)
-    ImageView ivBack1;
-    @Bind(R.id.titleset)
-    TextView titleset;
+    @Bind(R.id.back)
+    ImageView back;
+    @Bind(R.id.title)
+    TextView title;
 
     private String avatorurl = null;
     private HashMap<String, String> mIatResults = new LinkedHashMap<>();
-    private Toast mToast;
-    private SharedPreferences mSharedPreferences;
     private PopupWindow popupWindow;
     private int from = 0;
     private Context mContext;
@@ -98,10 +86,7 @@ public class AddressAddActivity extends BaseActivity implements View.OnClickList
     String extra_name;
     String extra_phonenumber;
     String extra_avatorurl;
-    private static String imageName;
-    private SharedPreferences.Editor editor;
-    private SharedPreferences pref;
-    private LoadPicture avatarLoader;
+    private static String imageName = "";
     String SdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
     String avaPath = SdCard + "/fanxin/Files/Camera/Images/";
     private static final int PHOTO_REQUEST_TAKEPHOTO = 1;// 拍照
@@ -114,22 +99,11 @@ public class AddressAddActivity extends BaseActivity implements View.OnClickList
         setContentView(R.layout.activity_addressadd);
         ButterKnife.bind(this);
         mContext = this;
-        initview();
-
+        initView();
     }
 
-    int ret = 0; // 函数调用返回值
-
-    public void initview() {
-        avatarLoader = new LoadPicture(this, avaPath);
-        pref= PreferenceManager.getDefaultSharedPreferences(this);
-        titleset.setText("修改信息");
-//        String vatar_temp=pref.getString("name","");
-        String vatar_temp = LocalUserInfo.getInstance(AddressAddActivity.this)
-                .getUserInfo("avatar");
-        mSharedPreferences = getSharedPreferences("com.jredu.setting", Activity.MODE_PRIVATE);
-//        mToast = Toast.makeText(this,"", Toast.LENGTH_SHORT);
-        mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
+    public void initView() {
+        title.setText("修改信息");
 
         dbHelper = new MyDatabaseHelper(this, "member.db", null, 2);
         add.setOnClickListener(this);
@@ -156,9 +130,9 @@ public class AddressAddActivity extends BaseActivity implements View.OnClickList
         }
     }
 
-    @OnClick({R.id.add,R.id.selectavator,R.id.edit_name,R.id.edit_number,R.id.iv_back1})
-    public void onClick(View v){
-        switch (v.getId()){
+    @OnClick({R.id.add, R.id.selectavator, R.id.edit_name, R.id.edit_number, R.id.back})
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.selectavator:
                 Log.d("address", "run: ");
 //            showPhotoDialog();
@@ -187,7 +161,7 @@ public class AddressAddActivity extends BaseActivity implements View.OnClickList
                         values.clear();
                         Toast.makeText(this, "添加成功", Toast.LENGTH_SHORT).show();
                         EventBus.getDefault().post(new MessageEvent("addcompelete"));
-                        finish();
+                        scrollToFinishActivity();
                     } else {
                         add.setText("修改");
                         Log.d("addressedit", "run:2 ");
@@ -206,169 +180,29 @@ public class AddressAddActivity extends BaseActivity implements View.OnClickList
                         values.clear();
                         Toast.makeText(this, "修改成功", Toast.LENGTH_SHORT).show();
                         EventBus.getDefault().post(new MessageEvent("addcompelete"));
-                        finish();
+                        scrollToFinishActivity();
                     }
                 }
                 break;
             case R.id.edit_name:
                 String text = "请输入姓名";
-                boolean isShowDialog = mSharedPreferences.getBoolean(
-                        "", true);
                 break;
             case R.id.edit_number:
                 String number = "请输入号码";
                 break;
-            case R.id.iv_back1:
-                finish();
+            case R.id.back:
+                scrollToFinishActivity();
+                break;
+            default:
                 break;
         }
     }
 
-//    @Override
-//    public void onClick(View v) {
-//        int id = v.getId();
-//        if (id == R.id.selectavator) {
-//            Log.d("address", "run: ");
-////            showPhotoDialog();
-//            from = Location.RIGHT.ordinal();
-//            initPopupWindow();
-//        } else if (id == R.id.add) {
-//            type1 = edit_name.getText().toString();
-//            call1 = edit_number.getText().toString();
-//
-//            Log.d("address", avatorurl + "");
-//            if (type1.equals("") || type1 == null) {
-//                Toast.makeText(this, "联系人为空", Toast.LENGTH_SHORT).show();
-//            } else if (call1.equals("") || call1 == null) {
-//                Toast.makeText(this, "电话号码为空", Toast.LENGTH_SHORT).show();
-//            } else {
-//                if (extra_name == null || extra_phonenumber == null) {
-//                    Log.d("addressedit", "run:1 ");
-//                    dbHelper.getWritableDatabase();
-//                    SQLiteDatabase db = dbHelper.getWritableDatabase();
-//                    ContentValues values = new ContentValues();
-//                    values.put("avatorurl", avatorurl);
-//                    values.put("name", type1);
-//                    values.put("phonenumber", call1);
-//                    db.insert("Person", null, values);
-//                    values.clear();
-//                    Toast.makeText(this, "添加成功", Toast.LENGTH_SHORT).show();
-//                    EventBus.getDefault().post(new MessageEvent("addcompelete"));
-//                    finish();
-//                } else {
-//                    add.setText("修改");
-//                    Log.d("addressedit", "run:2 ");
-//                    SQLiteDatabase db = dbHelper.getWritableDatabase();
-//                    db.execSQL("delete from Person where name = ?", new String[]{extra_name});
-//                    dbHelper.getWritableDatabase();
-//                    ContentValues values = new ContentValues();
-//                    if (avatorurl != null) {
-//                        values.put("avatorurl", avatorurl);
-//                    } else {
-//                        values.put("avatorurl", extra_avatorurl);
-//                    }
-//                    values.put("name", type1);
-//                    values.put("phonenumber", call1);
-//                    db.insert("Person", null, values);
-//                    values.clear();
-//                    Toast.makeText(this, "修改成功", Toast.LENGTH_SHORT).show();
-//                    EventBus.getDefault().post(new MessageEvent("addcompelete"));
-//                    finish();
-//                }
-//            }
-//        } else if (id == R.id.edit_name) {
-//            String text = "请输入姓名";
-//            boolean isShowDialog = mSharedPreferences.getBoolean(
-//                    "", true);
-//
-//        } else if (id == R.id.edit_number) {
-//            String number = "请输入号码";
-//        }
-//        else if(id==R.id.iv_back1){
-//            finish();
-//        }
-//    }
-
     @SuppressLint("SimpleDateFormat")
     private String getNowTime() {
-        //Date date = new Date(System.currentTimeMillis());
-        //SimpleDateFormat dateFormat = new SimpleDateFormat("MMddHHmmssSS");
         DateFormat format = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
         // 转换为字符串
-        String formatDate = format.format(new Date());
-        return formatDate;
-    }
-
-    private void showUserAvatar(ImageView iamgeView, String avatar) {
-
-        final String url_avatar = Constant.URL_Avatar + id + "/" + avatar;
-        iamgeView.setTag(url_avatar);
-        if (avatar != null && !avatar.equals("")) {
-            Bitmap bitmap = avatarLoader.loadImage(iamgeView, url_avatar,
-                    new LoadPicture.ImageDownloadedCallBack() {
-
-                        @Override
-                        public void onImageDownloaded(ImageView imageView,
-                                                      Bitmap bitmap) {
-                            if (imageView.getTag() == url_avatar) {
-                                imageView.setImageBitmap(bitmap);
-                            }
-                        }
-
-                    });
-            if (bitmap != null)
-                iamgeView.setImageBitmap(bitmap);
-
-        }
-    }
-
-    private void showPhotoDialog() {
-        final AlertDialog dlg = new AlertDialog.Builder(this).create();
-        dlg.show();
-        Window window = dlg.getWindow();
-        // *** 主要就是在这里实现这种效果的.
-        // 设置窗口的内容页面,shrew_exit_dialog.xml文件中定义view内容
-        window.setContentView(R.layout.alertdialog);
-        // 为确认按钮添加事件,执行退出应用操作
-        TextView tv_paizhao = (TextView) window.findViewById(R.id.tv_content1);
-        tv_paizhao.setText("拍照");
-        tv_paizhao.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("SdCardPath")
-            public void onClick(View v) {
-                imageName = getNowTime() + ".jpg";
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                //Intent intent = new Intent(MyUserInfoActivity.this, MyCamera.class);
-                //intent.putExtra("type", 1);
-                // 指定调用相机拍照后照片的储存路径
-                intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(new File(avaPath, imageName)));
-                startActivityForResult(intent, PHOTO_REQUEST_TAKEPHOTO);
-                dlg.cancel();
-            }
-        });
-        TextView tv_xiangce = (TextView) window.findViewById(R.id.tv_content2);
-        tv_xiangce.setText("相册");
-        tv_xiangce.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                getNowTime();
-                imageName = getNowTime() + ".jpg";
-
-                Intent intent = new Intent(Intent.ACTION_PICK, null);
-                intent.setDataAndType(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-                startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
-                dlg.cancel();
-            }
-        });
-        TextView tv_quxiao=(TextView)window.findViewById(R.id.tv_content3);
-        tv_quxiao.setText("取消");
-        tv_quxiao.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ToastUtils.showToast("取消");
-            }
-        });
+        return format.format(new Date());
     }
 
     @SuppressLint("SdCardPath")
@@ -377,15 +211,7 @@ public class AddressAddActivity extends BaseActivity implements View.OnClickList
         switch (requestCode) {
             case PHOTO_REQUEST_TAKEPHOTO:
                 if (resultCode == RESULT_OK) {
-//                Uri localUri = Uri.fromFile( new File("/sdcard/fanxin/", imageName));
-//                Intent localIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, localUri);
-//
-//                sendBroadcast(localIntent);
-                    //picPath = data.getStringExtra("picpath");
-                    //Uri uri = Uri.parse(picPath);
-                    //picPath = data.getStringExtra("picpath");
                     startPhotoZoom(Uri.fromFile(new File(avaPath, imageName)), 480);
-                    //startPhotoZoom(Uri.fromFile(new File(picPath)), 480);
                 }
                 break;
 
@@ -398,22 +224,8 @@ public class AddressAddActivity extends BaseActivity implements View.OnClickList
 
             case PHOTO_REQUEST_CUT:
                 if (resultCode == RESULT_OK) {
-                    // BitmapFactory.Options options = new BitmapFactory.Options();
-                    //
-                    // /**
-                    // * 最关键在此，把options.inJustDecodeBounds = true;
-                    // * 这里再decodeFile()，返回的bitmap为空
-                    // * ，但此时调用options.outHeight时，已经包含了图片的高了
-                    // */
-                    // options.inJustDecodeBounds = true;
-//                    Bitmap bitmap = BitmapFactory.decodeFile(avaPath
-//                            + imageName);
                     Bitmap bitmap = BitmapFactory.decodeFile(avaPath + imageName);
-                    editor=pref.edit();
-//                     editor=getSharedPreferences("data",MODE_PRIVATE);
-                    Log.i("aazz",avaPath+imageName);
-                    editor.putString("name",avaPath+imageName);
-                    editor.apply();
+                    PreferenceUtils.setString(mContext, "name", avaPath + imageName);
                     selectavator.setImageBitmap(bitmap);
 
                     // updateAvatarInServer(imageName);
@@ -449,7 +261,7 @@ public class AddressAddActivity extends BaseActivity implements View.OnClickList
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         finish();
     }
@@ -482,11 +294,6 @@ public class AddressAddActivity extends BaseActivity implements View.OnClickList
         //菜单背景色
         ColorDrawable dw = new ColorDrawable(0xffffffff);
         popupWindow.setBackgroundDrawable(dw);
-        //宽度
-        //popupWindow.setWidth(LayoutParams.WRAP_CONTENT);
-        //高度
-        //popupWindow.setHeight(LayoutParams.FILL_PARENT);
-        //显示位置
 
         if (Location.LEFT.ordinal() == from) {
             popupWindow.showAtLocation(getLayoutInflater().inflate(R.layout.activity_addressadd, null), Gravity.LEFT, 0, 500);
@@ -499,20 +306,6 @@ public class AddressAddActivity extends BaseActivity implements View.OnClickList
         backgroundAlpha(0.5f);
         //关闭事件
         popupWindow.setOnDismissListener(new popupDismissListener());
-
-        popupWindowView.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-    /*if( popupWindow!=null && popupWindow.isShowing()){
-     popupWindow.dismiss();
-     popupWindow=null;
-    }*/
-                // 这里如果返回true的话，touch事件将被拦截
-                // 拦截后 PopupWindow的onTouchEvent不被调用，这样点击外部区域无法dismiss
-                return false;
-            }
-        });
 
         RecyclerView recyclerView = (RecyclerView) popupWindowView.findViewById(R.id.rvavator);
         GridLayoutManager glm = new GridLayoutManager(mContext, 3);//定义3列的网格布局
@@ -534,7 +327,6 @@ public class AddressAddActivity extends BaseActivity implements View.OnClickList
             @Override
             public void onClick(View view, int position) {
                 avatorurl = images.get(position);
-                Log.d("address111", "" + avatorurl);
                 ImageLoader.getInstance().displayImage(avatorurl, selectavator);
                 popupWindow.dismiss();
             }

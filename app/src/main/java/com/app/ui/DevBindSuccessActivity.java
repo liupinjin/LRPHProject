@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextPaint;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -13,13 +12,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.R;
+import com.app.UserInfoManager;
 import com.app.model.Constant;
 import com.app.model.PNBaseModel;
 import com.app.request.UnBindDevRequest;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
-import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.activity.BaseSwipeBackActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;
 import com.punuo.sys.app.util.ToastUtils;
@@ -35,7 +35,7 @@ import static com.app.model.Constant.devid1;
 import static com.app.sip.SipInfo.devName;
 
 
-public class DevBindSuccessActivity extends BaseActivity {
+public class DevBindSuccessActivity extends BaseSwipeBackActivity {
 
     @Bind(R.id.iv_bindsuccess)
     ImageView ivBindsuccess;
@@ -45,10 +45,10 @@ public class DevBindSuccessActivity extends BaseActivity {
     TextView tvDevnumber;
     @Bind(R.id.bt_unbind1)
     Button btUnbind1;
-    @Bind(R.id.iv_back8)
-    ImageView ivBack8;
-    @Bind(R.id.textView4)
-    TextView textView4;
+    @Bind(R.id.back)
+    ImageView back;
+    @Bind(R.id.title)
+    TextView title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +56,11 @@ public class DevBindSuccessActivity extends BaseActivity {
         setContentView(R.layout.activity_dev_bind_success);
         ButterKnife.bind(this);
         changStatusIconColor(true);
-        TextPaint tp = textView4.getPaint();
-        tp.setFakeBoldText(true);
+        title.setText("绑定设备");
         if (devid1 != null) {
             tvDevnumber.setText(SipInfo.paddevId);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(getResources().getColor(R.color.white));
@@ -69,11 +68,12 @@ public class DevBindSuccessActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.bt_unbind1, R.id.iv_back8})
+    @OnClick({R.id.bt_unbind1, R.id.back})
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.iv_back8:
-                finish();
+            case R.id.back:
+                scrollToFinishActivity();
+                break;
             case R.id.bt_unbind1:
                 AlertDialog dialog = new AlertDialog.Builder(this)
                         .setCancelable(false)
@@ -95,6 +95,8 @@ public class DevBindSuccessActivity extends BaseActivity {
                 dialog.setCanceledOnTouchOutside(false);
                 dialog.show();
                 break;
+            default:
+                break;
         }
     }
 
@@ -106,8 +108,8 @@ public class DevBindSuccessActivity extends BaseActivity {
         }
         showLoadingDialog();
         mUnBindDevRequest = new UnBindDevRequest();
-        mUnBindDevRequest.addUrlParam("id", Constant.id);
-        mUnBindDevRequest.addUrlParam("groupid", Constant.id);
+        mUnBindDevRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
+        mUnBindDevRequest.addUrlParam("groupid", Constant.groupid1);
         mUnBindDevRequest.addUrlParam("devid", Constant.devid1);
         mUnBindDevRequest.setRequestListener(new RequestListener<PNBaseModel>() {
             @Override

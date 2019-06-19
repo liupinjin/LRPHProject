@@ -19,7 +19,7 @@ import com.app.model.PNBaseModel;
 import com.app.request.ChangePwdRequest;
 import com.app.sip.SipInfo;
 import com.app.views.CleanEditText;
-import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.activity.BaseSwipeBackActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;
 import com.punuo.sys.app.util.ToastUtils;
@@ -34,11 +34,11 @@ import butterknife.OnClick;
  * 修改密码页
  */
 
-public class ChangePasswordActivity extends BaseActivity implements View.OnClickListener {
-    @Bind(R.id.iv_back1)
-    ImageView ivBack1;
-    @Bind(R.id.titleset)
-    TextView titleset;
+public class ChangePasswordActivity extends BaseSwipeBackActivity implements View.OnClickListener {
+    @Bind(R.id.back)
+    ImageView back;
+    @Bind(R.id.title)
+    TextView title;
     @Bind(R.id.btn_revise)
     Button btnrevise;
 
@@ -65,7 +65,7 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
 
 
     private void initViews() {
-        titleset.setText("修改密码");
+        title.setText("修改密码");
         oldpasswordInput.setImeOptions(EditorInfo.IME_ACTION_NEXT);// 下一步
         newpasswordInput.setImeOptions(EditorInfo.IME_ACTION_NEXT);// 下一步
         newpasswordAgain.setImeOptions(EditorInfo.IME_ACTION_NEXT);// 下一步
@@ -165,12 +165,6 @@ public class ChangePasswordActivity extends BaseActivity implements View.OnClick
                 finish();
                 break;
             case R.id.btn_revise:
-//                final String old= oldpasswordInput.getText().toString().trim();
-//                final String newpassWord = newpasswordInput.getText().toString().trim();
-//                final String again = newpasswordAgain.getText().toString().trim();
-//                if (checkInput(old, newpassWord, again)) {
-//
-//                }
                 commit();
                 break;
             default:

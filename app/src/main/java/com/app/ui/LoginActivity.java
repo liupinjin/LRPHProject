@@ -27,19 +27,17 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.LocalUserInfo;
 import com.app.R;
+import com.app.UserInfoManager;
 import com.app.db.DatabaseInfo;
 import com.app.db.MyDatabaseHelper;
 import com.app.db.SQLiteManager;
 import com.app.friendCircleMain.domain.Alldevid;
-import com.app.friendCircleMain.domain.FriendsMicro;
 import com.app.friendCircleMain.domain.Group;
 import com.app.friendCircleMain.domain.UserFromGroup;
 import com.app.friendCircleMain.domain.UserList;
@@ -50,15 +48,12 @@ import com.app.model.PNUserInfo;
 import com.app.request.GetAllGroupFromUserRequest;
 import com.app.request.GetAllUserFromGroupRequest;
 import com.app.request.GetDevIdFromIdRequest;
-import com.app.request.GetPostListFromGroupRequest;
-import com.app.request.GetUserInfoRequest;
 import com.app.sip.KeepAlive;
 import com.app.sip.SipDev;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.sip.SipUser;
 import com.app.tools.PermissionUtils;
-import com.app.view.CustomProgressDialog;
 import com.app.views.CleanEditText;
 import com.punuo.sys.app.activity.BaseActivity;
 import com.punuo.sys.app.httplib.HttpManager;
@@ -159,6 +154,7 @@ public class LoginActivity extends BaseActivity {
         }
         return SipInfo.isNetworkConnected;
     }
+
 
     private void initViews() {
         numInput2.setImeOptions(EditorInfo.IME_ACTION_NEXT);
@@ -324,16 +320,10 @@ public class LoginActivity extends BaseActivity {
             }
         }
     };
-    private GetUserInfoRequest mGetUserInfoRequest;
 
     //获取用户信息
     private void getUserInfo() {
-        if (mGetUserInfoRequest != null && !mGetUserInfoRequest.isFinish()) {
-            return;
-        }
-        mGetUserInfoRequest = new GetUserInfoRequest();
-        mGetUserInfoRequest.addUrlParam("userid", SipInfo.userId);
-        mGetUserInfoRequest.setRequestListener(new RequestListener<PNUserInfo>() {
+        RequestListener listener = new RequestListener<PNUserInfo>() {
             @Override
             public void onComplete() {
 
@@ -342,7 +332,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onSuccess(PNUserInfo result) {
                 if (result != null && result.isSuccess()) {
-                    setUserInfo(result.userInfo);
+                    UserInfoManager.setUserInfo(result.userInfo);
                     SipInfo.friends.clear();
                     getGroupInfo();
                 } else {
@@ -356,19 +346,8 @@ public class LoginActivity extends BaseActivity {
                 ToastUtils.showToastShort("获取用户数据失败请重试");
                 dismissLoadingDialog();
             }
-        });
-        HttpManager.addRequest(mGetUserInfoRequest);
-
-    }
-
-    //临时，后面需要统一管理用户信息
-    private void setUserInfo(PNUserInfo.UserInfo userInfo) {
-        Constant.nick = userInfo.nickname;
-        Constant.avatar = userInfo.avatar;
-        Constant.id = userInfo.id;
-        Constant.phone = userInfo.name;
-        Constant.sex = userInfo.gender;
-        Constant.isNotify = userInfo.isNotify;
+        };
+        UserInfoManager.getInstance().refreshUserInfo(listener);
     }
 
     //群组获取线程
@@ -383,7 +362,7 @@ public class LoginActivity extends BaseActivity {
         groupid = null;
         appdevid = null;
         mGetAllGroupFromUserRequest = new GetAllGroupFromUserRequest();
-        mGetAllGroupFromUserRequest.addUrlParam("id", Constant.id);
+        mGetAllGroupFromUserRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mGetAllGroupFromUserRequest.setRequestListener(new RequestListener<Group>() {
             @Override
             public void onComplete() {
@@ -406,13 +385,6 @@ public class LoginActivity extends BaseActivity {
                             SipInfo.paddevId = Constant.devid1;
                             getDevIdInfo();
                         } else {
-                            Constant.res = "";
-                            LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("avatar",
-                                    Constant.avatar);
-                            LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("nick",
-                                    Constant.nick);
-                            LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
-                                    Constant.id);
                             dismissLoadingDialog();
                             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                         }
@@ -467,14 +439,7 @@ public class LoginActivity extends BaseActivity {
                         GroupInfo.ip = "101.69.255.134";
 //                        GroupInfo.port = 7000;
                         GroupInfo.level = "1";
-                        SipInfo.devName = Constant.nick;
-
-                        LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("avatar",
-                                Constant.avatar);
-                        LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("nick",
-                                Constant.nick);
-                        LocalUserInfo.getInstance(LoginActivity.this).setUserInfo("id",
-                                Constant.id);
+                        SipInfo.devName = UserInfoManager.getUserInfo().nickname;
                         dismissLoadingDialog();
                         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     } else {
@@ -503,7 +468,7 @@ public class LoginActivity extends BaseActivity {
             return;
         }
         mGetDevIdFromIdRequest = new GetDevIdFromIdRequest();
-        mGetDevIdFromIdRequest.addUrlParam("id", Constant.id);
+        mGetDevIdFromIdRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mGetDevIdFromIdRequest.setRequestListener(new RequestListener<Alldevid>() {
             @Override
             public void onComplete() {

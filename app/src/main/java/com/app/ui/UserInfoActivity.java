@@ -4,10 +4,8 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,9 +17,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.text.TextPaint;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -33,12 +29,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.LoadPicture;
-import com.app.LoadPicture.ImageDownloadedCallBack;
-import com.app.LocalUserInfo;
 import com.app.R;
-import com.app.model.Constant;
+import com.app.UserInfoManager;
+import com.app.Util;
 import com.app.model.PNBaseModel;
+import com.app.model.PNUserInfo;
 import com.app.model.UploadAvatarResult;
 import com.app.request.UpdateSexRequest;
 import com.app.request.UploadAvatarRequest;
@@ -46,12 +41,17 @@ import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.view.CircleImageView;
-import com.punuo.sys.app.activity.BaseActivity;
+import com.bumptech.glide.Glide;
+import com.punuo.sys.app.activity.BaseSwipeBackActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;
 import com.punuo.sys.app.util.ProviderUtil;
 import com.punuo.sys.app.util.ToastUtils;
+import com.punuo.sys.app.util.ViewUtil;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
 
@@ -61,12 +61,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.app.model.Constant.id;
-import static com.app.model.Constant.sex;
 import static com.app.sip.SipInfo.devName;
 
 @SuppressLint("SdCardPath")
-public class MyUserInfoActivity extends BaseActivity implements View.OnClickListener {
+public class UserInfoActivity extends BaseSwipeBackActivity implements View.OnClickListener {
 
     private static final int CAMERA_REQUEST_CODE = 1;
     private RelativeLayout re_avatar;
@@ -74,74 +72,56 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
     private RelativeLayout re_sex;
     private TextView tv_sex1;
     private ImageView back;
-    private TextView titleset;
+    private TextView title;
     private CircleImageView iv_avatar;
     private TextView tv_name;
-    private ProgressDialog dialog;
     private static String imageName;
-    private String response = "";
     private static final int PHOTO_REQUEST_TAKEPHOTO = 1;// 拍照
     private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
     private static final int PHOTO_REQUEST_CUT = 3;// 结果
     private static final int UPDATE_FXID = 4;// 结果
     private static final int UPDATE_NICK = 5;// 结果
-    private LoadPicture avatarLoader;
-    private SharedPreferences sp;
-    String hxid;
-    String nick;
     String SdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
     String avaPath = SdCard + "/fanxin/Files/Camera/Image/";
-    private String picPath;
     private View inflate;
     private Uri imageUri;
-    private int background;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_myinfo);
-        avatarLoader = new LoadPicture(this, avaPath);
         initView();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(getResources().getColor(R.color.image_bar));
         }
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     private void initView() {
-        hxid = LocalUserInfo.getInstance(MyUserInfoActivity.this).getUserInfo(
-                "hxid");
-        nick = LocalUserInfo.getInstance(MyUserInfoActivity.this).getUserInfo(
-                "nick");
-        String vatar_temp = LocalUserInfo.getInstance(MyUserInfoActivity.this)
-                .getUserInfo("avatar");
-        Log.w("uuuuuuuu.....", "头像为" + vatar_temp);
-        re_avatar = (RelativeLayout) this.findViewById(R.id.re_avatar);
-        re_name = (RelativeLayout) this.findViewById(R.id.re_name);
-        re_sex = (RelativeLayout) this.findViewById(R.id.re_sex);
+        re_avatar = (RelativeLayout) findViewById(R.id.re_avatar);
+        re_name = (RelativeLayout) findViewById(R.id.re_name);
+        re_sex = (RelativeLayout) findViewById(R.id.re_sex);
+        iv_avatar = (CircleImageView) findViewById(R.id.iv_avatar);
+        tv_name = (TextView) findViewById(R.id.ttv_name);
+        tv_sex1 = (TextView) findViewById(R.id.tv_sex1);
+        title = (TextView) findViewById(R.id.title);
+        back = (ImageView) findViewById(R.id.back);
+
+        back.setOnClickListener(this);
         re_avatar.setOnClickListener(this);
         re_name.setOnClickListener(this);
         re_sex.setOnClickListener(this);
-        // 头像
-        iv_avatar = (CircleImageView) this.findViewById(R.id.iv_avatar);
-        tv_name = (TextView) this.findViewById(R.id.ttv_name);
-        tv_sex1 = (TextView) this.findViewById(R.id.tv_sex1);
-        tv_sex1.setText(sex);
-        tv_name.setText(nick);
-        titleset = (TextView) this.findViewById(R.id.titleset);
-        TextPaint tp = titleset.getPaint();
-        tp.setFakeBoldText(true);
-        //获取sharedPreferences对象
-//        SharedPreferences sharedPreferences = getSharedPreferences("sex", MODE_PRIVATE);
-        sp= getSharedPreferences("sex", MODE_PRIVATE);
-        String sex = sp.getString("sex", "");
-        if (!(sex.equals(""))) {
-            tv_sex1.setText(sex);
-        }
-        showUserAvatar(iv_avatar, vatar_temp);
-        back = (ImageView) this.findViewById(R.id.iv_back9);
-        back.setOnClickListener(this);
+        title.setText("个人资料");
+        tv_name.setText(UserInfoManager.getUserInfo().nickname);
+
+        Glide.with(this).load(Util.getImageUrl(UserInfoManager.getUserInfo().avatar))
+                .into(iv_avatar);
+        ViewUtil.setText(tv_name, "昵称：" + UserInfoManager.getUserInfo().nickname);
+        ViewUtil.setText(tv_sex1, UserInfoManager.getUserInfo().gender);
     }
 
 
@@ -152,14 +132,14 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
                 showPhotoDialog();
                 break;
             case R.id.re_name:
-                startActivityForResult(new Intent(MyUserInfoActivity.this,
+                startActivityForResult(new Intent(UserInfoActivity.this,
                         UpdateNickActivity.class), UPDATE_NICK);
                 break;
             case R.id.re_sex:
                 showChooseDialog();
                 break;
-            case R.id.iv_back9:
-                finish();
+            case R.id.back:
+                scrollToFinishActivity();
                 break;
             default:
                 break;
@@ -171,30 +151,33 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
 
     /*性别选择*/
     private void showChooseDialog() {
-        background=sp.getInt("background",0);
+        String gender = UserInfoManager.getUserInfo().gender;
+        int index = sexArray[0].equals(gender) ? 0 : 1;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setSingleChoiceItems(sexArray, background, new DialogInterface.OnClickListener() {
+        builder.setSingleChoiceItems(sexArray, index, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                updateSex(sexArray[which], which, dialog);
+                updateSex(sexArray[which]);
+                dialog.dismiss();
             }
         });
         builder.show();
     }
 
     private UpdateSexRequest mUpdateSexRequest;
-    private void updateSex(String gender, int which, DialogInterface dialog) {
+
+    private void updateSex(String gender) {
         if (mUpdateSexRequest != null && !mUpdateSexRequest.isFinish()) {
             return;
         }
         showLoadingDialog();
         mUpdateSexRequest = new UpdateSexRequest();
-        mUpdateSexRequest.addUrlParam("id", Constant.id);
+        mUpdateSexRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mUpdateSexRequest.addUrlParam("gender", gender);
         mUpdateSexRequest.setRequestListener(new RequestListener<PNBaseModel>() {
             @Override
             public void onComplete() {
-
+                dismissLoadingDialog();
             }
 
             @Override
@@ -202,41 +185,35 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
                 if (result == null) {
                     return;
                 }
-                dismissLoadingDialog();
                 if (result.isSuccess()) {
                     tv_sex1.setText(gender);
-                    SharedPreferences.Editor editor = sp.edit();
-                    editor.putString("sex", sexArray[which]);
-                    editor.putInt("background",which);
-                    editor.apply();
-
-                    if (dialog != null) {
-                        dialog.dismiss();
-                    }
+                    UserInfoManager.getInstance().refreshUserInfo();
                 } else {
-                   if (!TextUtils.isEmpty(result.msg)) {
-                       ToastUtils.showToast(result.msg);
-                   }
+                    if (!TextUtils.isEmpty(result.msg)) {
+                        ToastUtils.showToast(result.msg);
+                    }
                 }
             }
 
             @Override
             public void onError(Exception e) {
-                dismissLoadingDialog();
+
             }
         });
         HttpManager.addRequest(mUpdateSexRequest);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(PNUserInfo.UserInfo userInfo) {
+        ViewUtil.setText(tv_name, "昵称：" + UserInfoManager.getUserInfo().nickname);
+        ViewUtil.setText(tv_sex1, UserInfoManager.getUserInfo().gender);
+    }
+
     @Override
-    protected void onResume() {
-        super.onResume();
-        String nick_temp = LocalUserInfo.getInstance(this)
-                .getUserInfo("nick");
-        if (!nick_temp.equals(Constant.nick) && !nick_temp.equals("")) {
-            tv_name.setText("昵称：" + nick_temp);
-        } else {
-            tv_name.setText("昵称：" + Constant.nick);
+    protected void onDestroy() {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
         }
     }
 
@@ -265,42 +242,26 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
         tv_paizhao.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("SdCardPath")
             public void onClick(View v) {
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-////                        requestPermission();
-//                        requestCameraPermission();
-//                    }
-//                }).start();
-                if (ContextCompat.checkSelfPermission(MyUserInfoActivity.this,Manifest.permission.CAMERA)
-                        !=PackageManager.PERMISSION_GRANTED){
-                    ActivityCompat.requestPermissions(MyUserInfoActivity.this,new String[]
-                            {Manifest.permission.CAMERA},1001);
-                }else{
+                if (ContextCompat.checkSelfPermission(UserInfoActivity.this, Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(UserInfoActivity.this, new String[]
+                            {Manifest.permission.CAMERA}, 1001);
+                } else {
                     imageName = getNowTime() + ".jpg";
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                File file = new File(Environment.getExternalStorageDirectory()
-//                        + "/fanxin/Files/Camera/Image/", String.valueOf(System.currentTimeMillis())
-//                        + ".jpg");
                     File file = new File(avaPath, imageName);
 
                     if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
                         imageUri = Uri.fromFile(file);
                     } else {
-                        imageUri = FileProvider.getUriForFile(MyUserInfoActivity.this, ProviderUtil.getFileProviderName(MyUserInfoActivity.this), file);
+                        imageUri = FileProvider.getUriForFile(UserInfoActivity.this, ProviderUtil.getFileProviderName(UserInfoActivity.this), file);
                     }
-                    //Intent intent = new Intent(MyUserInfoActivity.this, MyCamera.class);
-                    //intent.putExtra("type", 1);
-                    // 指定调用相机拍照后照片的储存路径
-//                intent.putExtra(MediaStore.EXTRA_OUTPUT,
-//                        Uri.fromFile(new File(avaPath, imageName)));
-//                startActivityForResult(intent, PHOTO_REQUEST_TAKEPHOTO);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     startActivityForResult(intent, PHOTO_REQUEST_TAKEPHOTO);
                     dlg.cancel();
                 }
-               dlg.cancel();
+                dlg.cancel();
 
             }
         });
@@ -334,20 +295,7 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
         switch (requestCode) {
             case PHOTO_REQUEST_TAKEPHOTO:
                 if (resultCode == RESULT_OK) {
-//                Uri localUri = Uri.fromFile( new File("/sdcard/fanxin/", imageName));
-//                Intent localIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, localUri);
-//
-//                sendBroadcast(localIntent);
-                    //picPath = data.getStringExtra("picpath");
-                    //Uri uri = Uri.parse(picPath);
-                    //picPath = data.getStringExtra("picpath");
-//                    startPhotoZoom(Uri.fromFile(new File(avaPath, imageName)), 480);
                     startPhotoZoom(imageUri, 480);
-//                    if (resultCode == RESULT_OK) {
-//                        if (data != null)
-//                            startPhotoZoom(data.getData(), 480);
-//                    }
-//                    startPhotoZoom(Uri.fromFile(new File(picPath)), 480);
                 }
                 break;
             case PHOTO_REQUEST_GALLERY:
@@ -358,16 +306,6 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
                 break;
             case PHOTO_REQUEST_CUT:
                 if (resultCode == RESULT_OK) {
-                    // BitmapFactory.Options options = new BitmapFactory.Options();
-                    //
-                    // /**
-                    // * 最关键在此，把options.inJustDecodeBounds = true;
-                    // * 这里再decodeFile()，返回的bitmap为空
-                    // * ，但此时调用options.outHeight时，已经包含了图片的高了
-                    // */
-                    // options.inJustDecodeBounds = true;
-//                    Bitmap bitmap = BitmapFactory.decodeFile(avaPath
-//                            + imageName);
                     Bitmap bitmap = BitmapFactory.decodeFile(avaPath + imageName);
                     iv_avatar.setImageBitmap(bitmap);
                     updateAvatarInServer(imageName);
@@ -397,10 +335,7 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
         intent.putExtra("outputX", size);
         intent.putExtra("outputY", size);
         intent.putExtra("return-data", false);
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(new File(avaPath,imageName))
-//                );
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(avaPath + imageName)));
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true); // no face detection
         startActivityForResult(intent, PHOTO_REQUEST_CUT);
@@ -408,64 +343,31 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
 
     @SuppressLint("SimpleDateFormat")
     private String getNowTime() {
-        //Date date = new Date(System.currentTimeMillis());
-        //SimpleDateFormat dateFormat = new SimpleDateFormat("MMddHHmmssSS");
         DateFormat format = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
         // 转换为字符串
-        String formatDate = format.format(new Date());
-        return formatDate;
-    }
-
-    public void back(View view) {
-        finish();
-    }
-
-
-    private void showUserAvatar(ImageView iamgeView, String avatar) {
-        final String url_avatar = Constant.URL_Avatar + id + "/" + avatar;
-        iamgeView.setTag(url_avatar);
-        if (avatar != null && !avatar.equals("")) {
-            Bitmap bitmap = avatarLoader.loadImage(iamgeView, url_avatar,
-                    new ImageDownloadedCallBack() {
-
-                        @Override
-                        public void onImageDownloaded(ImageView imageView,
-                                                      Bitmap bitmap) {
-                            if (imageView.getTag() == url_avatar) {
-                                imageView.setImageBitmap(bitmap);
-
-                            }
-                        }
-
-                    });
-            if (bitmap != null)
-                iamgeView.setImageBitmap(bitmap);
-
-        }
+        return format.format(new Date());
     }
 
     @SuppressLint("SdCardPath")
     private void updateAvatarInServer(final String image) {
-        dialog = new ProgressDialog(MyUserInfoActivity.this);
-        dialog.setMessage("正在更新...");
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.show();
         uploadAvatar();
     }
+
     private UploadAvatarRequest mUploadAvatarRequest;
+
     private void uploadAvatar() {
         if (mUploadAvatarRequest != null && !mUploadAvatarRequest.isFinish()) {
             return;
         }
+        showLoadingDialog("正在更新...");
         mUploadAvatarRequest = new UploadAvatarRequest();
         mUploadAvatarRequest.addEntityParam("pic", new File(avaPath + imageName));
-        mUploadAvatarRequest.addEntityParam("avatar",
-                LocalUserInfo.getInstance(MyUserInfoActivity.this).getUserInfo("avatar"));
-        mUploadAvatarRequest.addEntityParam("id", Constant.id);
+        mUploadAvatarRequest.addEntityParam("avatar", UserInfoManager.getUserInfo().avatar);
+        mUploadAvatarRequest.addEntityParam("id", UserInfoManager.getUserInfo().id);
         mUploadAvatarRequest.setRequestListener(new RequestListener<UploadAvatarResult>() {
             @Override
             public void onComplete() {
-
+                dismissLoadingDialog();
             }
 
             @Override
@@ -474,8 +376,7 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
                     return;
                 }
                 if (result.isSuccess()) {
-                    LocalUserInfo.getInstance(MyUserInfoActivity.this)
-                            .setUserInfo("avatar", result.avatar);
+                    UserInfoManager.getInstance().refreshUserInfo();
 
                     //这块代码的意义值得考虑
                     File oldfile = new File(avaPath + imageName);
@@ -487,8 +388,7 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
                     intent.setData(uri);
                     sendBroadcast(intent);
 
-                    dialog.dismiss();
-                    ToastUtils.showToast( "头像上传成功");
+                    ToastUtils.showToast("头像上传成功");
                     String devId = SipInfo.paddevId;
                     SipURL sipURL = new SipURL(devId, SipInfo.serverIp, SipInfo.SERVER_PORT_USER);
                     SipInfo.toDev = new NameAddress(devName, sipURL);
@@ -497,7 +397,6 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
                     SipInfo.sipUser.sendMessage(query);
                     finish();
                 } else {
-                    dialog.dismiss();
                     ToastUtils.showToast("头像上传失败");
                 }
             }
@@ -510,13 +409,13 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
         HttpManager.addRequest(mUploadAvatarRequest);
     }
 
-    private void requestCameraPermission(){
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
-            if (ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA)
-                    !=PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this,new String[]
-                        {Manifest.permission.CAMERA},1001);
-            }else{
+    private void requestCameraPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]
+                        {Manifest.permission.CAMERA}, 1001);
+            } else {
 
             }
         }
@@ -533,7 +432,7 @@ public class MyUserInfoActivity extends BaseActivity implements View.OnClickList
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //申请相机权限
-                                ActivityCompat.requestPermissions(MyUserInfoActivity.this,
+                                ActivityCompat.requestPermissions(UserInfoActivity.this,
                                         new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
                             }
                         })

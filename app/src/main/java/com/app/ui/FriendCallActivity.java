@@ -196,13 +196,12 @@ public class FriendCallActivity extends BaseActivity {
     }
 
 
-    private void initView()
-    {
-        rv=(RecyclerView)findViewById(R.id.rv);
-        GridLayoutManager glm=new GridLayoutManager(mContext,3);//定义3列的网格布局
+    private void initView() {
+        rv = (RecyclerView) findViewById(R.id.rv);
+        GridLayoutManager glm = new GridLayoutManager(mContext, 3);//定义3列的网格布局
         rv.setLayoutManager(glm);
-        rv.addItemDecoration(new FriendCallActivity.RecyclerViewItemDecoration(30,3));//初始化子项距离和列数
-        options=new DisplayImageOptions.Builder()
+        rv.addItemDecoration(new FriendCallActivity.RecyclerViewItemDecoration(30, 3));//初始化子项距离和列数
+        options = new DisplayImageOptions.Builder()
                 .showImageForEmptyUri(R.drawable.pictureloading)
                 .showImageOnLoading(R.drawable.pictureloading)
                 .showImageOnFail(R.drawable.pictureloading)
@@ -210,10 +209,10 @@ public class FriendCallActivity extends BaseActivity {
                 .cacheOnDisk(true)
                 .displayer(new FadeInBitmapDisplayer(1))
                 .build();
-        adapter=new PhoneRecyclerViewAdapter(images,mContext,options,glm);
+        adapter = new PhoneRecyclerViewAdapter(images, mContext, options, glm);
         rv.setAdapter(adapter);
 
-        FloatingActionButton fab=(FloatingActionButton)findViewById(R.id.add);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

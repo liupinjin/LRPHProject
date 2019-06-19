@@ -1,10 +1,8 @@
 package com.app.friendCircleMain.domain;
 
-import com.app.model.Friend;
-
 import java.util.List;
 
-public class FirendMicroListDatas extends MyBaseBean{
+public class FriendMicroListDatas extends MyBaseBean{
 	private String postid;
 	private String id;
 	private String content;
@@ -190,7 +188,7 @@ public void setOwntype(List<FirstMicroListDatasFirendpraiseType> owntype) {
 	public List<FirstMicroListDatasFirendpraise> getAddlike_nickname() {
 		return addlike_nickname;
 	}
-	public List<FirstMicroListDatasFirendcomment> getFriendcomment() {
+	public List<FirstMicroListDatasFirendcomment> getFriendComment() {
 		return friendcomment;
 	}
 	public void setFriendcomment(

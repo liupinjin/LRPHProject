@@ -131,7 +131,7 @@
             android:name=".friendcircle.PhotoActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.MyUserInfoActivity"
+            android:name=".ui.UserInfoActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.UpdateNickActivity"
@@ -147,9 +147,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.PhoneCall"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.AppList"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.VideoPlay"
@@ -245,7 +242,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".ui.SettingActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.MessageNotify"
+        <activity android:name=".ui.MessageNotifyActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.NumberBind"
             android:screenOrientation="portrait"/>
@@ -274,10 +271,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.AddressManage"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.AddNewAddress"
-            android:screenOrientation="portrait"/>
         <activity android:name=".ui.CommunityActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.MyCouponActivity"

@@ -1,30 +1,37 @@
 package com.app.ui;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.app.R;
-import com.app.friendCircleMain.adapter.MyListAdapter;
-import com.app.friendCircleMain.custonListView.CustomListView;
-import com.app.friendCircleMain.domain.FirendMicroListDatas;
+import com.app.UserInfoManager;
+import com.app.friendCircleMain.adapter.FriendCircleAdapter;
 import com.app.friendCircleMain.domain.FriendMicroList;
+import com.app.friendCircleMain.domain.FriendMicroListDatas;
 import com.app.friendCircleMain.domain.FriendsMicro;
+import com.app.friendCircleMain.event.FriendRefreshEvent;
 import com.app.friendcircle.PublishedActivity;
 import com.app.model.Constant;
-import com.app.model.MessageEvent;
 import com.app.request.GetPostListFromGroupRequest;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshRecyclerView;
 import com.punuo.sys.app.activity.BaseSwipeBackActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;
+import com.punuo.sys.app.recyclerview.CompletedFooter;
+import com.punuo.sys.app.recyclerview.OnLoadMoreHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -39,29 +46,18 @@ import butterknife.OnClick;
 
 import static com.app.model.Constant.devid1;
 
-public class FamilyCircleActivity extends BaseSwipeBackActivity implements MyListAdapter.PositionListener {
-
-    @Bind(R.id.iv_back7)
-    ImageView ivBack7;
-    @Bind(R.id.titleset)
-    TextView titleset;
-    @Bind(R.id.iv_fatie)
-    ImageView ivFatie;
-//    @Bind(R.id.pull_to_refresh)
-//    PullToRefreshRecyclerView mPullToRefreshRecyclerView;
-
-    TextView title;
-
-    String SdCard = Environment.getExternalStorageDirectory().getAbsolutePath();
-
+public class FamilyCircleActivity extends BaseSwipeBackActivity {
     private static final String TAG = "MicroActivity";
-    int now = 0;
-    private int pageNum = 1; //
-    private List<FirendMicroListDatas> listdatas = new ArrayList<FirendMicroListDatas>();//json数据
-    public CustomListView listview;
-    public MyListAdapter mAdapter;//这是真正的
-    private int i;
-    private static int position;
+
+    @Bind(R.id.back)
+    ImageView ivBack7;
+    @Bind(R.id.add)
+    ImageView add;
+    @Bind(R.id.pull_to_refresh)
+    PullToRefreshRecyclerView mPullToRefreshRecyclerView;
+    private int pageNum = 1;
+    private FriendCircleAdapter mFriendCircleAdapter;
+    private boolean hasMore = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,15 +80,17 @@ public class FamilyCircleActivity extends BaseSwipeBackActivity implements MyLis
             return;
         }
         boolean isFirstPage = (page == 1);
-        showLoadingDialog("正在加载...");
         mGetPostListFromGroupRequest = new GetPostListFromGroupRequest();
-        mGetPostListFromGroupRequest.addUrlParam("id", Constant.id);
+        mGetPostListFromGroupRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mGetPostListFromGroupRequest.addUrlParam("currentPage", page);
         mGetPostListFromGroupRequest.addUrlParam("groupid", Constant.groupid);
         mGetPostListFromGroupRequest.setRequestListener(new RequestListener<FriendsMicro>() {
             @Override
             public void onComplete() {
-                dismissLoadingDialog();
+                if (isFirstPage) {
+                    mPullToRefreshRecyclerView.onRefreshComplete();
+                }
+                mFriendCircleAdapter.onLoadMoreCompleted();
             }
 
             @Override
@@ -104,35 +102,22 @@ public class FamilyCircleActivity extends BaseSwipeBackActivity implements MyLis
                 if (friendMicroList == null) {
                     return;
                 }
-                List<FirendMicroListDatas> datas = friendMicroList.getDatas();
+                List<FriendMicroListDatas> list = friendMicroList.data;
                 if (isFirstPage) {
-                    listdatas.clear();
-                }
-                if (datas == null || datas.isEmpty()) {
-                    if (isFirstPage) {
-                        listview.onRefreshComplete();
-                    } else {
-                        listview.onLoadMoreComplete(false);
-                    }
+                    mFriendCircleAdapter.resetData(list);
                 } else {
-                    if (isFirstPage) {
-                        listview.onRefreshComplete();
-                    } else {
-                        listview.onLoadMoreComplete();
-                    }
-                    listdatas.addAll(datas);
+                    mFriendCircleAdapter.addAll(list);
                 }
-                int k = listdatas.size();
-                now = k > 0 ? k - 1 : 0;
-                mAdapter.notifyDataSetChanged();
+                hasMore = (friendMicroList.total - friendMicroList.per_page * friendMicroList.current_page) > 0;
+                pageNum = friendMicroList.current_page + 1;
             }
 
             @Override
             public void onError(Exception e) {
                 if (isFirstPage) {
-                    listview.onRefreshComplete();
+                    mPullToRefreshRecyclerView.onRefreshComplete();
                 } else {
-                    listview.onLoadMoreComplete();
+                    mFriendCircleAdapter.onLoadMoreFailed();
                 }
             }
         });
@@ -146,19 +131,41 @@ public class FamilyCircleActivity extends BaseSwipeBackActivity implements MyLis
     }
 
     private void init() {
-//        mPullToRefreshRecyclerView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<RecyclerView>() {
-//            @Override
-//            public void onRefresh(PullToRefreshBase<RecyclerView> refreshView) {
-//                refresh();
-//            }
-//        });
-//        RecyclerView recyclerView = mPullToRefreshRecyclerView.getRefreshableView();
-        listview = (CustomListView) findViewById(R.id.list);
-        listview.setVerticalScrollBarEnabled(false);
-        listview.setDivider(null);
-        mAdapter = new MyListAdapter(this, listdatas);
-        listview.setAdapter(mAdapter);
-        mAdapter.setPositionListener(this);
+        mPullToRefreshRecyclerView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<RecyclerView>() {
+            @Override
+            public void onRefresh(PullToRefreshBase<RecyclerView> refreshView) {
+                refresh();
+            }
+        });
+        RecyclerView recyclerView = mPullToRefreshRecyclerView.getRefreshableView();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        mFriendCircleAdapter = new FriendCircleAdapter(this, new ArrayList<>());
+        mFriendCircleAdapter.setOnLoadMoreHelper(new OnLoadMoreHelper() {
+            @Override
+            public boolean canLoadMore() {
+                return hasMore;
+            }
+
+            @Override
+            public void onLoadMore() {
+                getPostList(pageNum);
+            }
+        });
+        mFriendCircleAdapter.setCompletedFooterListener(new CompletedFooter.CompletedFooterListener() {
+            @Override
+            public boolean enableFooter() {
+                return !hasMore;
+            }
+
+            @Override
+            public View generateCompletedFooterView(Context context, ViewGroup parent) {
+                return LayoutInflater.from(context).inflate(
+                        R.layout.recycle_item_completed_foot, parent, false);
+            }
+        });
+        recyclerView.setAdapter(mFriendCircleAdapter);
         if ((devid1 == null) || ("".equals(devid1))) {
             AlertDialog.Builder dialog = new AlertDialog.Builder(this)
                     .setTitle("请先绑定设备")
@@ -172,36 +179,12 @@ public class FamilyCircleActivity extends BaseSwipeBackActivity implements MyLis
             dialog.show();
 
         } else {
-            listdatas.clear();
             refresh();
         }
-        //下拉刷新
-        listview.setOnRefreshListener(new CustomListView.OnRefreshListener() {
-
-            @Override
-            public void onRefresh() {
-                refresh();
-            }
-
-        });
-        //上拉加载更多
-        listview.setOnLoadListener(new CustomListView.OnLoadMoreListener() {
-
-            public void onLoadMore() {
-                pageNum = pageNum + 1;
-                getPostList(pageNum);
-            }
-        });
     }
-
-
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageEvent event) {
-        if (event.getMessage().equals("刷新")) {
-            refresh();
-        } else if (event.getMessage().equals("刷新点赞")) {
-            mAdapter.notifyDataSetChanged();
-        }
+    public void onMessageEvent(FriendRefreshEvent event) {
+        mFriendCircleAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -210,18 +193,13 @@ public class FamilyCircleActivity extends BaseSwipeBackActivity implements MyLis
         EventBus.getDefault().unregister(this);
     }
 
-    @Override
-    public void setPosition(int position) {
-        i = position;
-    }
-
-    @OnClick({R.id.iv_back7, R.id.iv_fatie})
+    @OnClick({R.id.back, R.id.add})
     public void onClock(View v) {
         switch (v.getId()) {
-            case R.id.iv_back7:
+            case R.id.back:
                 finish();
                 break;
-            case R.id.iv_fatie:
+            case R.id.add:
                 startActivity(new Intent(this, PublishedActivity.class));
                 break;
         }

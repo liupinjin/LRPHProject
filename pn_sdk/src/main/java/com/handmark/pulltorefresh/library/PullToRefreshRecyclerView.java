@@ -37,30 +37,30 @@ public class PullToRefreshRecyclerView extends PullToRefreshBase<RecyclerView> {
         return recyclerView;
     }
 
-    @Override
-    protected boolean isReadyForPullEnd() {
-        final RecyclerView.Adapter adapter = mRefreshableView.getAdapter();
-        if (null == adapter || adapter.getItemCount() == 0) {
-            return true;
-        } else {
-            final View firstVisibleChild = mRefreshableView.getChildAt(0);
-            if (mRefreshableView.getChildLayoutPosition(firstVisibleChild) == 0) {
-                return firstVisibleChild.getTop() >= mRefreshableView.getTop();
-            }
-        }
-        return false;
-    }
-
     /**
      * 这段代码可能有问题，没用到先不改
      *
      * @return
      */
     @Override
-    protected boolean isReadyForPullStart() {
-        int lastVisiblePosition = mRefreshableView.getChildLayoutPosition(mRefreshableView.getChildAt(mRefreshableView.getChildCount() - 1));
+    protected boolean isReadyForPullEnd() {
+        int lastVisiblePosition = mRefreshableView.getChildPosition(mRefreshableView.getChildAt(mRefreshableView.getChildCount() - 1));
         if (lastVisiblePosition >= mRefreshableView.getAdapter().getItemCount() - 1) {
             return mRefreshableView.getChildAt(mRefreshableView.getChildCount() - 1).getBottom() <= mRefreshableView.getBottom();
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean isReadyForPullStart() {
+        final RecyclerView.Adapter adapter = mRefreshableView.getAdapter();
+        if (null == adapter || adapter.getItemCount() == 0) {
+            return true;
+        } else {
+            final View firstVisibleChild = mRefreshableView.getChildAt(0);
+            if (mRefreshableView.getChildPosition(firstVisibleChild) == 0) {
+                return firstVisibleChild.getTop() >= mRefreshableView.getTop();
+            }
         }
         return false;
     }
