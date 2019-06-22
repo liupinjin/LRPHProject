@@ -15,7 +15,7 @@ import com.app.R;
 import com.app.friendcircle.AlbumHelper;
 import com.app.friendcircle.ImageBucket;
 import com.app.friendcircle.ImageBucketAdapter;
-import com.app.friendcircle.TestPicActivity;
+import com.app.friendcircle.ChoosePictureActivity;
 import com.punuo.sys.app.activity.BaseActivity;
 
 import java.io.Serializable;
@@ -97,8 +97,8 @@ public class UploadPictureActivity extends BaseActivity {
                  */
                 // adapter.notifyDataSetChanged();
                 Intent intent = new Intent(UploadPictureActivity.this,
-                        ImageGridUploadpictureActivity.class);
-                intent.putExtra(TestPicActivity.EXTRA_IMAGE_LIST,
+                        ImageGridUploadPictureActivity.class);
+                intent.putExtra(ChoosePictureActivity.EXTRA_IMAGE_LIST,
                         (Serializable) dataList.get(position).imageList);
                 startActivity(intent);
                 finish();
