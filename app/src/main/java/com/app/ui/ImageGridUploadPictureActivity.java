@@ -41,11 +41,11 @@ public class ImageGridUploadPictureActivity extends BaseActivity {
     private Ftp mFtp;
     private ProgressDialog dialog;
     private int num;
-    List<ImageItem> dataList;
-    GridView gridView;
-    ImageGridAdapter adapter;// 自定义的适配�?
-    AlbumHelper helper;
-    Button bt;
+    private List<ImageItem> dataList;
+    private GridView gridView;
+    private ImageGridAdapter adapter;// 自定义的适配�?
+    private AlbumHelper helper;
+    private Button bt;
     TextView t1;
     private ArrayList<String> list;
     public static String serverIp = "101.69.255.132";

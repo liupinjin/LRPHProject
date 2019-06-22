@@ -24,7 +24,6 @@ import java.util.ArrayList;
  * 选择图片
  */
 public class ImageGridActivity extends BaseSwipeBackActivity {
-    public static final String EXTRA_IMAGE_LIST = "image_list";
     // ArrayList<Entity> dataList;//用来装载数据源的列表
     private ArrayList<ImageItem> dataList;
     private ImageGridAdapter mImageGridAdapter;
@@ -45,7 +44,7 @@ public class ImageGridActivity extends BaseSwipeBackActivity {
         AlbumHelper helper = AlbumHelper.getHelper();
         helper.init(getApplicationContext());
 
-        dataList = getIntent().getParcelableArrayListExtra(EXTRA_IMAGE_LIST);
+        dataList = getIntent().getParcelableArrayListExtra(ChoosePictureActivity.EXTRA_IMAGE_LIST);
 
         initView();
         TextView cancel = (TextView) findViewById(R.id.tv_cancel);
