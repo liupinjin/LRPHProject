@@ -13,12 +13,11 @@ import android.widget.GridView;
 
 import com.app.R;
 import com.app.friendcircle.AlbumHelper;
+import com.app.friendcircle.ChoosePictureActivity;
 import com.app.friendcircle.ImageBucket;
 import com.app.friendcircle.ImageBucketAdapter;
-import com.app.friendcircle.TestPicActivity;
 import com.punuo.sys.app.activity.BaseActivity;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -83,23 +82,10 @@ public class UploadPictureActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                /**
-                 * 根据position参数，可以获得跟GridView的子View相绑定的实体类，然后根据它的isSelected状态，
-                 * 来判断是否显示选中效果。 至于选中效果的规则，下面适配器的代码中会有说明
-                 */
-                // if(dataList.get(position).isSelected()){
-                // dataList.get(position).setSelected(false);
-                // }else{
-                // dataList.get(position).setSelected(true);
-                // }
-                /**
-                 * 通知适配器，绑定的数据发生了改变，应当刷新视图
-                 */
-                // adapter.notifyDataSetChanged();
                 Intent intent = new Intent(UploadPictureActivity.this,
-                        ImageGridUploadpictureActivity.class);
-                intent.putExtra(TestPicActivity.EXTRA_IMAGE_LIST,
-                        (Serializable) dataList.get(position).imageList);
+                        ImageGridUploadPictureActivity.class);
+                intent.putParcelableArrayListExtra(ChoosePictureActivity.EXTRA_IMAGE_LIST,
+                        dataList.get(position).imageList);
                 startActivity(intent);
                 finish();
             }

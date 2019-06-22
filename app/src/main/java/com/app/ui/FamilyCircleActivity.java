@@ -21,8 +21,9 @@ import com.app.friendCircleMain.adapter.FriendCircleAdapter;
 import com.app.friendCircleMain.domain.FriendMicroList;
 import com.app.friendCircleMain.domain.FriendMicroListDatas;
 import com.app.friendCircleMain.domain.FriendsMicro;
+import com.app.friendCircleMain.event.FriendReLoadEvent;
 import com.app.friendCircleMain.event.FriendRefreshEvent;
-import com.app.friendcircle.PublishedActivity;
+import com.app.publish.PublishedActivity;
 import com.app.model.Constant;
 import com.app.request.GetPostListFromGroupRequest;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -185,6 +186,11 @@ public class FamilyCircleActivity extends BaseSwipeBackActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(FriendRefreshEvent event) {
         mFriendCircleAdapter.notifyDataSetChanged();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(FriendReLoadEvent event) {
+        refresh();
     }
 
     @Override

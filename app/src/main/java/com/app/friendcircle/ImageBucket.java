@@ -1,6 +1,6 @@
 package com.app.friendcircle;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * 一个目录的相册对象
@@ -11,6 +11,6 @@ import java.util.List;
 public class ImageBucket {
 	public int count = 0;
 	public String bucketName;
-	public List<ImageItem> imageList;
+	public ArrayList<ImageItem> imageList;
 
 }
