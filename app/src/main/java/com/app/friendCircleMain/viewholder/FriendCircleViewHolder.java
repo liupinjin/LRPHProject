@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.app.R;
-import com.app.UserInfoManager;
 import com.app.Util;
 import com.app.friendCircleMain.adapter.FriendCommentAdapter;
 import com.app.friendCircleMain.adapter.FriendPraiseAdapter;
@@ -89,7 +88,7 @@ public class FriendCircleViewHolder extends BaseViewHolder<FriendMicroListDatas>
     @Override
     protected void bindData(FriendMicroListDatas bean, int position) {
         //头像
-        String avatarPath = Util.getImageUrl(bean.getAvatar());
+        String avatarPath = Util.getImageUrl(bean.getId(), bean.getAvatar());
         Glide.with(mContext).load(avatarPath).error(R.drawable.empty_photo).into(mAvatar);
 
         /*
@@ -111,7 +110,7 @@ public class FriendCircleViewHolder extends BaseViewHolder<FriendMicroListDatas>
         List<String> urls = new ArrayList<>();
         if (postPic != null && !postPic.isEmpty()) {
             for (int i = 0; i < postPic.size(); i++) {
-                urls.add(Util.getImageUrl(UserInfoManager.getUserInfo().id, postPic.get(i).getPic_name()));
+                urls.add(Util.getImageUrl(bean.getId(), postPic.get(i).getPic_name()));
             }
         }
 

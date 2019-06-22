@@ -130,6 +130,12 @@ public class LoginActivity extends BaseActivity {
         setUpSplash();
         initViews();
         StatusBarUtil.translucentStatusBar(this, Color.TRANSPARENT, false);
+        View statusBar = findViewById(R.id.status_bar);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            statusBar.setVisibility(View.VISIBLE);
+            statusBar.getLayoutParams().height = StatusBarUtil.getStatusBarHeight(this);
+            statusBar.requestLayout();
+        }
     }
 
     private void setUpSplash() {

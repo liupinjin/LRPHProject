@@ -28,15 +28,13 @@ import com.punuo.sys.app.activity.BaseActivity;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by 林逸磊 on 2018/5/2.
  */
 
-public class ImageGridUploadpictureActivity extends BaseActivity {
+public class ImageGridUploadPictureActivity extends BaseActivity {
     public static final String EXTRA_IMAGE_LIST = "imagelist";
 
     // ArrayList<Entity> dataList;//用来装载数据源的列表
@@ -51,7 +49,7 @@ public class ImageGridUploadpictureActivity extends BaseActivity {
     TextView t1;
     private ArrayList<String> list;
     public static String serverIp = "101.69.255.132";
-    private FtpListener upLoad=new FtpListener() {
+    private FtpListener upLoad = new FtpListener() {
         @Override
         public void onStateChange(String currentStep) {
 
@@ -61,14 +59,14 @@ public class ImageGridUploadpictureActivity extends BaseActivity {
         public void onUploadProgress(String currentStep, long uploadSize, File targetFile) {
             if (currentStep.equals(Constant.FTP_UPLOAD_SUCCESS)) {
                 num++;
-                if (num <list .size()) {
+                if (num < list.size()) {
                     dialog.setProgress(num);
                 } else {
                     dialog.dismiss();
                     Looper.prepare();
-                    Toast.makeText(ImageGridUploadpictureActivity.this,"上传成功!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(ImageGridUploadPictureActivity.this, "上传成功!", Toast.LENGTH_LONG).show();
                     Looper.loop();
-                    adapter.map.clear();
+                    adapter.mList.clear();
                 }
 //                                    Log.d(TAG, "-----上传成功--");
 
@@ -91,7 +89,7 @@ public class ImageGridUploadpictureActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    Toast.makeText(ImageGridUploadpictureActivity.this, "最多选择九张图片", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ImageGridUploadPictureActivity.this, "最多选择九张图片", Toast.LENGTH_SHORT).show();
                     break;
 
                 default:
@@ -102,7 +100,7 @@ public class ImageGridUploadpictureActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i("sasa","sasaa");
+        Log.i("sasa", "sasaa");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imagegriduploadpicture);
 
@@ -113,7 +111,7 @@ public class ImageGridUploadpictureActivity extends BaseActivity {
                 EXTRA_IMAGE_LIST);
 
         initView();
-        t1=(TextView)findViewById(R.id.t1);
+        t1 = (TextView) findViewById(R.id.t1);
         t1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,16 +122,10 @@ public class ImageGridUploadpictureActivity extends BaseActivity {
         bt.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                Log.i("shangcaunb   ","aaa");
-                 list = new ArrayList<String>();
-                Collection<String> c = adapter.map.values();
-                Iterator<String> it = c.iterator();
-                for (; it.hasNext();) {
-                    list.add(it.next());
-                }
+
 
 //                if (Bimp.act_bool) {
-//                    Intent intent = new Intent(ImageGridUploadpictureActivity.this,
+//                    Intent intent = new Intent(ImageGridUploadPictureActivity.this,
 //                            PublishedActivity.class);
 //                    startActivity(intent);
 //                    Bimp.act_bool = false;
@@ -143,22 +135,22 @@ public class ImageGridUploadpictureActivity extends BaseActivity {
 //                        Bimp.drr.add(list.get(i));
 //                    }
 //                }
-                dialog = new ProgressDialog(ImageGridUploadpictureActivity.this);
+                dialog = new ProgressDialog(ImageGridUploadPictureActivity.this);
                 dialog.setTitle("上传进度");
                 dialog.setMessage("已经上传了");
                 dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 dialog.setCancelable(false);
                 dialog.setIndeterminate(false);
-                dialog.setMax(list.size());
+                dialog.setMax(adapter.mList.size());
                 dialog.show();
                 num = 0;
-                new Thread(){
+                new Thread() {
                     @Override
                     public void run() {
                         try {
 //                            mFtp=new Ftp(SipInfo.serverIp,21,"ftpaller","123456",upLoad);
-                            mFtp=new Ftp(serverIp,21,"ftpall","123456",upLoad);
-                            mFtp.uploadMultiFile(list,"/"+ SipInfo.paddevId+"pad/camera");
+                            mFtp = new Ftp(serverIp, 21, "ftpall", "123456", upLoad);
+                            mFtp.uploadMultiFile(adapter.mList, "/" + SipInfo.paddevId + "pad/camera");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -176,7 +168,7 @@ public class ImageGridUploadpictureActivity extends BaseActivity {
     private void initView() {
         gridView = (GridView) findViewById(R.id.gridview);
         gridView.setSelector(new ColorDrawable(Color.TRANSPARENT));
-        adapter = new ImageGridAdapter(ImageGridUploadpictureActivity.this, dataList,
+        adapter = new ImageGridAdapter(ImageGridUploadPictureActivity.this, dataList,
                 mHandler);
         gridView.setAdapter(adapter);
         adapter.setTextCallback(new ImageGridAdapter.TextCallback() {
