@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -31,6 +32,7 @@ import com.app.R;
 import com.app.UserInfoManager;
 import com.app.friendCircleMain.event.FriendReLoadEvent;
 import com.app.friendcircle.ChoosePictureActivity;
+import com.app.friendcircle.FileUtils;
 import com.app.friendcircle.PhotoActivity;
 import com.app.model.PNBaseModel;
 import com.app.publish.adapter.GridImageAdapter;
@@ -94,13 +96,23 @@ public class PublishedActivity extends BaseSwipeBackActivity {
         publish.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 String dongTai = mEditText.getText().toString();
-                uploadPost(dongTai, mGridImageAdapter.getData());
+                uploadPost(dongTai, compressBitmap(mGridImageAdapter.getData()));
             }
         });
 
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
+    }
+    private List<String> compressBitmap(List<String> selectBitmap) {
+        showLoadingDialog("正在片压缩图...");
+        List<String> tempList = new ArrayList<>();
+        for (int i = 0; i < selectBitmap.size(); i++) {
+            Bitmap bitmap = FileUtils.compressBitmap(selectBitmap.get(i));
+            String temp = FileUtils.saveBitmap(bitmap, String.valueOf(System.currentTimeMillis()));
+            tempList.add(temp);
+        }
+        return tempList;
     }
 
     private UploadPostRequest mUploadPostRequest;
@@ -134,6 +146,7 @@ public class PublishedActivity extends BaseSwipeBackActivity {
             @Override
             public void onComplete() {
                 dismissLoadingDialog();
+                FileUtils.deleteCircleDir();
             }
 
             @Override

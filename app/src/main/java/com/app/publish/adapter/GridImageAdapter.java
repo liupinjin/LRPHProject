@@ -19,21 +19,22 @@ public class GridImageAdapter extends BaseRecyclerViewAdapter<String> {
     public GridImageAdapter(Context context, List<String> data, ICallBack callBack) {
         super(context, data);
         mCallBack = callBack;
+        mData.add("add");
     }
 
     public void resetData(List<String> list) {
         mData.clear();
+        mData.addAll(list);
         if (list.size() < 9) {
-            mData.addAll(list);
             mData.add("add");
-        } else {
-            mData.addAll(list.subList(0, 9));
         }
         notifyDataSetChanged();
     }
 
     public void addData(String image) {
-        mData.add(image);
+        if (getBasicItemCount() < 8) {
+            mData.add(0, image);
+        }
         notifyDataSetChanged();
     }
 
