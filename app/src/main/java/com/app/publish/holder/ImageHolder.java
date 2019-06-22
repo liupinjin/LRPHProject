@@ -45,15 +45,15 @@ public class ImageHolder extends BaseViewHolder<String> {
             }
         } else {
             mImage.setImageResource(R.drawable.icon_addpic_unfocused);
-            mImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mCallBack != null) {
-                        mCallBack.itemClick(path, position);
-                    }
-                }
-            });
         }
+        mImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCallBack != null) {
+                    mCallBack.itemClick(path, position);
+                }
+            }
+        });
 
     }
 }

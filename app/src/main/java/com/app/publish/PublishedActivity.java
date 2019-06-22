@@ -37,6 +37,7 @@ import com.app.friendcircle.PhotoActivity;
 import com.app.model.PNBaseModel;
 import com.app.publish.adapter.GridImageAdapter;
 import com.app.publish.event.ChooseImageResultEvent;
+import com.app.publish.event.EditImageEvent;
 import com.app.request.UploadPostRequest;
 import com.punuo.sys.app.activity.BaseSwipeBackActivity;
 import com.punuo.sys.app.httplib.HttpManager;
@@ -85,7 +86,8 @@ public class PublishedActivity extends BaseSwipeBackActivity {
                     new PopupWindows(PublishedActivity.this, mGridView);
                 } else {
                     Intent intent = new Intent(PublishedActivity.this, PhotoActivity.class);
-                    intent.putExtra("ID", position);
+                    intent.putExtra(PhotoActivity.EXTRA_INDEX, position);
+                    intent.putStringArrayListExtra("photos", (ArrayList<String>) mGridImageAdapter.getData());
                     startActivity(intent);
                 }
             }
@@ -257,6 +259,11 @@ public class PublishedActivity extends BaseSwipeBackActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ChooseImageResultEvent event) {
+        List<String> images = event.mImages;
+        mGridImageAdapter.resetData(images);
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EditImageEvent event) {
         List<String> images = event.mImages;
         mGridImageAdapter.resetData(images);
     }
