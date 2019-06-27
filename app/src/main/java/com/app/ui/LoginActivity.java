@@ -485,7 +485,7 @@ public class LoginActivity extends BaseActivity {
                 if (result != null) {
                     List<String> devIdLists = result.devid;
                     if (devIdLists.isEmpty()) {
-                        ToastUtils.showToast("获取设备id失败");
+//                        ToastUtils.showToast("获取设备id失败");
                         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     } else {
                         appdevid = devIdLists.get(0);
@@ -500,14 +500,14 @@ public class LoginActivity extends BaseActivity {
                         getAllUserFormGroup();
                     }
                 } else {
-                    ToastUtils.showToast("获取用户devid失败请重试");
+//                    ToastUtils.showToast("获取用户devid失败请重试");
                     dismissLoadingDialog();
                 }
             }
 
             @Override
             public void onError(Exception e) {
-                ToastUtils.showToastShort("获取用户devid失败请重试");
+//                ToastUtils.showToastShort("获取用户devid失败请重试");
                 dismissLoadingDialog();
             }
         });

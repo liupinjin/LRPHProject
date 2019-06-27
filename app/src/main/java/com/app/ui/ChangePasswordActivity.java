@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
@@ -35,19 +36,22 @@ import butterknife.OnClick;
  */
 
 public class ChangePasswordActivity extends BaseSwipeBackActivity implements View.OnClickListener {
+
+
     @Bind(R.id.back)
     ImageView back;
     @Bind(R.id.title)
     TextView title;
-    @Bind(R.id.btn_revise)
-    Button btnrevise;
-
     @Bind(R.id.oldpassword_input)
     CleanEditText oldpasswordInput;
     @Bind(R.id.newpassword_input)
     CleanEditText newpasswordInput;
     @Bind(R.id.newpassword_again)
     CleanEditText newpasswordAgain;
+    @Bind(R.id.btn_revise)
+    Button btnRevise;
+    @Bind(R.id.layout_root)
+    LinearLayout layoutRoot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +104,7 @@ public class ChangePasswordActivity extends BaseSwipeBackActivity implements Vie
     }
 
     private ChangePwdRequest mChangePwdRequest;
+
     private void changePwd(String telNum, String newPwd) {
         if (mChangePwdRequest != null && !mChangePwdRequest.isFinish()) {
             return;
@@ -135,18 +140,17 @@ public class ChangePasswordActivity extends BaseSwipeBackActivity implements Vie
 
 
     private boolean checkInput(String old, String password, String again) {
-        if (SipInfo.isVericodeLogin){
-            if (password.length()<6||password.length()>32
-                    || TextUtils.isEmpty(password)){
+        if (SipInfo.isVericodeLogin) {
+            if (password.length() < 6 || password.length() > 32
+                    || TextUtils.isEmpty(password)) {
                 ToastUtils.showToast(R.string.tip_please_input_6_32_password);
-            }else if (!password.equals(again)) {
+            } else if (!password.equals(again)) {
                 ToastUtils.showToast("两次密码不一致");
             } else {
                 return true;
             }
-        }
-        else if (!(old.equals(SipInfo.passWord))) { // 旧密码输入错误
-            ToastUtils.showToast( R.string.tip_password_not_same);
+        } else if (!(old.equals(SipInfo.passWord))) { // 旧密码输入错误
+            ToastUtils.showToast(R.string.tip_password_not_same);
         } else if (password.length() < 6 || password.length() > 32
                 || TextUtils.isEmpty(password)) { // 密码格式
             ToastUtils.showToast(R.string.tip_please_input_6_32_password);
@@ -158,10 +162,10 @@ public class ChangePasswordActivity extends BaseSwipeBackActivity implements Vie
         return false;
     }
 
-    @OnClick({R.id.iv_back1, R.id.btn_revise})
+    @OnClick({R.id.back, R.id.btn_revise})
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.iv_back1:
+            case R.id.back:
                 finish();
                 break;
             case R.id.btn_revise:
