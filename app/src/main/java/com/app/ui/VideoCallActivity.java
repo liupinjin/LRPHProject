@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.app.R;
+import com.app.audio.AudioRecordManager;
 import com.app.model.MessageEvent;
 import com.app.service.SipService;
 import com.app.sip.SipInfo;
@@ -195,7 +196,7 @@ public class VideoCallActivity extends BaseActivity implements SipUser.StopMonit
         }).start();
 
         VideoInfo.rtpVideo.endSession();
-        VideoInfo.track.stop();
+        AudioRecordManager.getInstance().stop();
         ButterKnife.unbind(this);
         System.gc();//系统垃圾回收
     }

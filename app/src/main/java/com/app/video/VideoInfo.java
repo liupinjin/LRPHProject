@@ -78,4 +78,6 @@ public class VideoInfo {
     public static boolean isMonitor=false;
 
     public static Camera mCamera;
+
+    public static int mAudioSessionId = -1;
 }
