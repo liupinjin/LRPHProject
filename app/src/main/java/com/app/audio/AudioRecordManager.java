@@ -40,7 +40,7 @@ public class AudioRecordManager {
 
     private void initAudioRecord() {
         mAudioRecord = new AudioRecord(
-                MediaRecorder.AudioSource.VOICE_COMMUNICATION,//the recording source
+                MediaRecorder.AudioSource.MIC,//the recording source
                 8000, //采样频率，一般为8000hz/s
                 AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT,

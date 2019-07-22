@@ -50,14 +50,11 @@ public class H264decoder {
     }
 
     public boolean onFrame(byte[] buf, int offset, int length) {
-        Log.e("Media", "onFrame start");
-        Log.e("Media", "onFrame Thread:" + Thread.currentThread().getName());
         // Get input buffer index
         ByteBuffer[] inputBuffers = mCodec.getInputBuffers();
         int inputBufferIndex = mCodec.dequeueInputBuffer(-1);
 //        int inputBufferIndex = mCodec.dequeueInputBuffer(BUFFER_TIMEOUT);
 
-        Log.e("Media", "onFrame index:" + inputBufferIndex);
         if (inputBufferIndex >= 0) {
             ByteBuffer inputBuffer = inputBuffers[inputBufferIndex];
             inputBuffer.clear();

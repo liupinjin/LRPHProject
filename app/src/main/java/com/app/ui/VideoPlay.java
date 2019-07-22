@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.app.R;
+import com.app.audio.AudioRecordManager;
 import com.app.model.MessageEvent;
 import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
@@ -235,7 +236,7 @@ public class VideoPlay extends BaseActivity implements SurfaceHolder.Callback,Si
             }
         }).start();
         VideoInfo.rtpVideo.endSession();
-        VideoInfo.track.stop();
+        AudioRecordManager.getInstance().stop();
 //        buffer.clear();
         EventBus.getDefault().unregister(this);
         ButterKnife.unbind(this);
