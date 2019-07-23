@@ -2,9 +2,6 @@ package com.app.video;
 
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.media.AudioFormat;
-import android.media.AudioRecord;
-import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
@@ -15,17 +12,14 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.app.audio.AudioRecordManager;
 import com.app.groupvoice.G711;
 import com.app.sip.SipInfo;
 import com.app.tools.AECManager;
 import com.app.tools.AvcEncoder;
 import com.app.tools.AvcEncoder1;
-import com.punuo.sys.app.util.LogUtil;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -83,7 +77,6 @@ public class H264SendingManager implements SurfaceHolder.Callback, Camera.Previe
     private File  pcmFile1;
     private File wavFile;
     private boolean isRecording=false;
-    private AudioRecord record;
     private String basePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/record/";
     //wav文件目录
     private String outFileName = basePath + "/encode.wav";
@@ -119,17 +112,6 @@ public class H264SendingManager implements SurfaceHolder.Callback, Camera.Previe
         if (rtpsending != null) {
             rtpsending = null;
         }
-        createFile();
-        try {
-            os=new BufferedOutputStream(new FileOutputStream(pcmFile));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            os1=new BufferedOutputStream(new FileOutputStream(pcmFile1));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
 
 //        String model= Build.MODEL;
 //        Log.d("手机型号","model"+model);
@@ -163,33 +145,6 @@ public class H264SendingManager implements SurfaceHolder.Callback, Camera.Previe
 
     }
 
-    private void createFile() {
-        File baseFile = new File(basePath);
-        if (!baseFile.exists())
-            baseFile.mkdirs();
-        pcmFile = new File(basePath + "/encode2.pcm");
-        pcmFile1=new File(basePath+"/encode3.pcm");
-        wavFile = new File(basePath + "/encode2.wav");
-
-        if (pcmFile.exists())
-            pcmFile.delete();
-        if (wavFile.exists())
-            wavFile.delete();
-        if(pcmFile1.exists())
-            pcmFile1.delete();
-
-        try
-        {
-            pcmFile.createNewFile();
-            wavFile.createNewFile();
-            pcmFile1.createNewFile();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
 
     /**
      * g711采集编码线程
@@ -198,77 +153,32 @@ public class H264SendingManager implements SurfaceHolder.Callback, Camera.Previe
         new Thread(G711_encode).start();
     }
 
-    Runnable G711_encode = new Runnable() {
+    private Runnable G711_encode = new Runnable() {
         public void run() {
             Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO);
-            record = getAudioRecord();
             //int frame_size = 160;
             short[] audioData = new short[frameSizeG711];
             byte[] encodeData = new byte[frameSizeG711];
             int numRead = 0;
+            AudioRecordManager.getInstance().startRecording();
             while (G711Running) {
-                numRead = record.read(audioData, 0, frameSizeG711);
-
-                if (numRead <= 0) continue;
+                numRead = AudioRecordManager.getInstance().read(audioData, 0, frameSizeG711);
+                if (numRead <= 0) {
+                    continue;
+                }
                 calc2(audioData, 0, numRead);
                 //进行pcmu编码
                 G711.linear2ulaw(audioData, 0, encodeData, numRead);
-                //将编码后的pcm音频数据存储到本地
-                if(encodeData.length>0){
-                    try {
-                        os1.write(encodeData,0,encodeData.length);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                if (rtpsending == null) {
+                    break;
                 }
-
-                if(rtpsending == null)break;
                 rtpsending.rtpSession2.payloadType(0x45);
                 rtpsending.rtpSession2.sendData(encodeData);
             }
-            record.stop();
-            record.release();
-            Log.i("zlj", "G711_encode stopped!");
+            AudioRecordManager.getInstance().stopRecording();
+            AudioRecordManager.getInstance().release();
         }
     };
-
-    private void recordData() {
-        new Thread(new WriteThread()).start();
-    }
-
-    class WriteThread implements Runnable{
-        @Override
-        public void run(){
-            writedata();
-        }
-    }
-
-    private void writedata() {
-        noteArray=new byte[frameSizeG711];
-        try {
-            os=new BufferedOutputStream(new FileOutputStream(pcmFile));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-    }
-        while(isRecording){
-            int recordSize=record.read(noteArray,0,frameSizeG711);
-            if(recordSize>0)
-            {
-                try {
-                    os.write(noteArray);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        if (os!=null){
-            try {
-                os.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     void calc2(short[] lin, int off, int len) {
         int i, j;
@@ -277,37 +187,6 @@ public class H264SendingManager implements SurfaceHolder.Callback, Camera.Previe
             j = lin[i + off];
             lin[i + off] = (short) (j >> 1);
         }
-    }
-
-    /**
-     * 取得音频采集对象引用
-     */
-    private AudioRecord getAudioRecord() {
-        int samp_rate = 8000;
-        int min = AudioRecord.getMinBufferSize(samp_rate,
-                AudioFormat.CHANNEL_CONFIGURATION_MONO,
-                AudioFormat.ENCODING_PCM_16BIT);
-        Log.e(TAG, "min buffer size:" + min);
-        AudioRecord record = null;
-        try {
-            record = new AudioRecord(
-                    MediaRecorder.AudioSource.MIC,//the recording source
-                    samp_rate, //采样频率，一般为8000hz/s
-                    AudioFormat.CHANNEL_CONFIGURATION_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT,
-                    min);
-        } catch (IllegalArgumentException e) {
-            LogUtil.e("","initRecorder():exception");
-            e.printStackTrace();
-        }
-        if(AECManager.isDeviceSupport()){
-            AECManager.getInstance().initAEC(record.getAudioSessionId());
-        }
-        //将采集的音频数据保存到本地
-        isRecording=true;
-        record.startRecording();
-        recordData();
-        return record;
     }
 
     public void deInit() {
