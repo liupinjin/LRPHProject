@@ -1,14 +1,10 @@
 package com.app.video;
 
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioTrack;
-import android.nfc.Tag;
 import android.util.Log;
 
+import com.app.audio.AudioRecordManager;
 import com.app.groupvoice.G711;
 import com.app.sip.SipInfo;
-import com.app.videoAndPictureUpload.Video;
 
 import java.net.DatagramSocket;
 import java.net.SocketException;
@@ -37,10 +33,7 @@ public class RtpVideo implements RTPAppIntf {
     private boolean isPacketLost = true;
     private int frameSizeG711 = 160;
     private int samp_rate = 8000;
-    private int maxjitter = AudioTrack.getMinBufferSize(samp_rate,
-            AudioFormat.CHANNEL_CONFIGURATION_MONO,
-            AudioFormat.ENCODING_PCM_16BIT);
-    Participant p;
+    private Participant p;
     String index_RTP;
     String info_RTP;
     String info_NALU;
@@ -65,15 +58,7 @@ public class RtpVideo implements RTPAppIntf {
             VideoInfo.nalBuffers[i] = new NalBuffer();
         }
         putNum = 0;
-        VideoInfo.track = new AudioTrack(
-                AudioManager.STREAM_MUSIC,
-                samp_rate,
-                AudioFormat.CHANNEL_CONFIGURATION_MONO,
-                AudioFormat.ENCODING_PCM_16BIT,
-                maxjitter,
-                AudioTrack.MODE_STREAM
-        );
-        VideoInfo.track.play();
+        AudioRecordManager.getInstance().play();
     }
 
     @Override
@@ -118,7 +103,7 @@ public class RtpVideo implements RTPAppIntf {
             short[] audioData = new short[frameSizeG711];
             audioBuffer = frame.getConcatenatedData();
             G711.ulaw2linear(audioBuffer, audioData, frameSizeG711);
-            VideoInfo.track.write(audioData, 0, frameSizeG711);
+            AudioRecordManager.getInstance().write(audioData, 0, frameSizeG711);
         }
         else if(frame.payloadType()==70){
             byte data1[]=frame.getConcatenatedData();

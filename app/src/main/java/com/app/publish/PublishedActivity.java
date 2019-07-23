@@ -107,7 +107,7 @@ public class PublishedActivity extends BaseSwipeBackActivity {
         }
     }
     private List<String> compressBitmap(List<String> selectBitmap) {
-        showLoadingDialog("正在片压缩图...");
+        showLoadingDialog("正在压缩图片...");
         List<String> tempList = new ArrayList<>();
         for (int i = 0; i < selectBitmap.size(); i++) {
             Bitmap bitmap = FileUtils.compressBitmap(selectBitmap.get(i));
