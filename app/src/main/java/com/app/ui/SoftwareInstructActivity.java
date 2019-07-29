@@ -102,7 +102,7 @@ public class SoftwareInstructActivity extends BaseSwipeBackActivity {
                 result = "Finished";
                 showLoadingDialog();
                 //初始化FTP
-                mFtp = new Ftp(HttpConfig.getHost(), 21, "ftpall", "123456", Dversion);
+                mFtp = new Ftp("101.69.255.132", 21, "ftpall", "123456", Dversion);
                 //获取当前版本号
                 PackageManager packageManager = this.getPackageManager();
                 try {

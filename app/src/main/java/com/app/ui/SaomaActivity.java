@@ -45,6 +45,7 @@ import com.punuo.sys.app.util.ToastUtils;
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
 
+import static com.app.model.Constant.appdevid1;
 import static com.app.model.Constant.devid1;
 import static com.app.model.Constant.groupid1;
 import static com.app.sip.SipInfo.devName;
@@ -119,7 +120,7 @@ public class SaomaActivity extends BaseActivity implements View.OnClickListener 
         }
 
 
-        if ((devid1 != null) && !("".equals(devid1))){
+        if ((appdevid1 != null) && !("".equals(appdevid1))){
             finish();
          startActivity(new Intent(this, DevBindSuccessActivity.class));
         }
@@ -241,6 +242,7 @@ public class SaomaActivity extends BaseActivity implements View.OnClickListener 
 //                                    GroupInfo.groupKeepAlive.stopThread();
 //                                }
                                 dialog.dismiss();
+                                Constant.appdevid1=null;
                                 SipInfo.running=false;
                                 ActivityCollector.finishToFirstView();
                             }

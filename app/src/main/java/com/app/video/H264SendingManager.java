@@ -389,7 +389,7 @@ public class H264SendingManager implements SurfaceHolder.Callback, Camera.Previe
         rtpsending.rtpSession1.setSsrc(Ssrc);
         for (int i = 0; i < 2; i++) {
             rtpsending.rtpSession1.sendData(msg);
-        }
+}
     }
 
     /**
