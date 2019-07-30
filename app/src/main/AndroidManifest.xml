@@ -281,9 +281,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.CommunityActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.MyCouponActivity"
             android:screenOrientation="portrait" />
         <activity
