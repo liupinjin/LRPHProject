@@ -7,7 +7,7 @@ package com.punuo.sys.app.httplib;
 public class HttpConfig {
 
     private static boolean isUseHttps = false;
-    private static String host = "sip.qinqingonline.com";
+    private static String host = "101.69.255.132";
     private static int port = 8000;
     private static String userAgent = "punuo";
     private static String requestPath = "/xiaoyupeihu/public/index.php";

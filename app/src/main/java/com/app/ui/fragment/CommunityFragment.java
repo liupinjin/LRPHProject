@@ -12,7 +12,7 @@ public class CommunityFragment extends WebViewFragment {
 
     @Override
     public String getUrl() {
-        return "http://118.31.71.150:8888/mobilecommunity/";
+        return "http://pet.qinqingonline.com:8889";
     }
 }
 

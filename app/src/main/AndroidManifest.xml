@@ -2,33 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.app">
     <!-- 访问网络连接权限 -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- 使用SIP连接权限 -->
-    <uses-permission android:name="android.permission.USE_SIP" />
-    <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <!-- 允许程序在手机屏幕关闭之后后台程序仍然进行 -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <!-- 访问麦克风录制声音权限 -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <!-- 访问内存卡 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!-- 写内存卡 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- 在SDCard中创建与删除文件权限 -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 使用SIP连接权限 -->
+    <uses-permission android:name="android.permission.USE_SIP" /> <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 允许程序在手机屏幕关闭之后后台程序仍然进行 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- 访问麦克风录制声音权限 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- 访问内存卡 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 写内存卡 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 在SDCard中创建与删除文件权限 -->
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <!-- 振动 -->
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <!-- 用于进行网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- 用于访问GPS定位 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- 获取运营商信息，用于支持提供运营商信息相关的接口 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <!-- 相机 -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- 振动 -->
+    <uses-permission android:name="android.permission.VIBRATE" /> <!-- 用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 用于访问GPS定位 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 获取运营商信息，用于支持提供运营商信息相关的接口 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- 相机 -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
@@ -36,8 +23,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="android.permission.READ_SMS" />
-    <!-- 打电话权限 -->
+    <uses-permission android:name="android.permission.READ_SMS" /> <!-- 打电话权限 -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
@@ -49,14 +35,18 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <!--全面屏适配-->
+        <activity android:name=".adapter.CloudAlbumAdapter"></activity>
+        <activity android:name=".ui.CloudAlbum" /> <!-- 全面屏适配 -->
         <meta-data
             android:name="android.max_aspect"
             android:value="2.34" />
-        <activity android:name=".ui.AddlikeView"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.CommentView"
-            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.AddlikeView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.CommentView"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
@@ -112,12 +102,12 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.LoginActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.HomeActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".friendCircleMain.adapter.ImagePagerActivity"
             android:screenOrientation="portrait" />
@@ -128,7 +118,7 @@
             android:name=".publish.PublishedActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".friendcircle.ChoosePictureActivity"
             android:screenOrientation="portrait" />
@@ -248,27 +238,38 @@
         <activity
             android:name=".ui.SoftwareInstructActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.SettingActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.MessageNotifyActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.NumberBind"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.DevBindSuccessActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.SaomaActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.RegisterAccountActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.ForgetPasswordActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.VerifyCodeLoginActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.SetNewPasswordActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.FamilyCircleActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.SplashActivity"
+        <activity
+            android:name=".ui.SettingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.MessageNotifyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.NumberBind"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.DevBindSuccessActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.SaomaActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.RegisterAccountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ForgetPasswordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.VerifyCodeLoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.SetNewPasswordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.FamilyCircleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.SplashActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -279,14 +280,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.CommunityActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.MyCouponActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.address.AddressDetailActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.address.AddressManagerActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.CommunityActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.MyCouponActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.address.AddressDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.address.AddressManagerActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

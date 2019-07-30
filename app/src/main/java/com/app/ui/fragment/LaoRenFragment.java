@@ -269,7 +269,7 @@ public class LaoRenFragment extends BaseFragment implements View.OnClickListener
                 IntentUtil.jumpActivity(getActivity(), FriendCallActivity.class);
                 break;
             case R.id.application:
-                String url = "http://sip.qinqingonline.com:8888/mobileshop";
+                String url = "http://pet.qinqingonline.com:9000";
                 IntentUtil.openWebViewActivity(getActivity(), url);
                 break;
             case R.id.video:

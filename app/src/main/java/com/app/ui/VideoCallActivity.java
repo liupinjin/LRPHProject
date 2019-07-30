@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -37,6 +38,10 @@ import com.punuo.sys.app.activity.BaseActivity;
 import org.greenrobot.eventbus.EventBus;
 import org.zoolu.sip.message.Message;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -50,6 +55,7 @@ import butterknife.OnClick;
  */
 public class VideoCallActivity extends BaseActivity implements SipUser.StopMonitor {
     public static final String TAG = "VideoCallActivity";
+    private BufferedOutputStream outputStream;
     @Bind(R.id.mute)
     ImageView mute;
     @Bind(R.id.hangup)
@@ -75,6 +81,7 @@ public class VideoCallActivity extends BaseActivity implements SipUser.StopMonit
     BroadcastReceiver mReceiver;
     private boolean isSpeakerMode = false;
     private boolean ismute=false;
+    File f = new File(Environment.getExternalStorageDirectory(), "DCIM/video_encoded1.264");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,6 +229,17 @@ public class VideoCallActivity extends BaseActivity implements SipUser.StopMonit
                 while (SipInfo.decoding) {
                     if (SipInfo.isNetworkConnected) {
                         byte[] nal = VideoInfo.nalBuffers[getNum].getReadableNalBuf();
+                        try {
+                            outputStream = new BufferedOutputStream(new FileOutputStream(f));
+                            Log.i("AvcEncoder", "outputStream initialized");
+                        } catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        try {
+                            outputStream.write(nal,0,nal.length);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         if (nal != null) {
                             Log.i(TAG, "nalLen:" + nal.length);
 
