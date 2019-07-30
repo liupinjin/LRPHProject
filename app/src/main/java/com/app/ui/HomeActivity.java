@@ -25,12 +25,12 @@ import com.app.sip.BodyFactory;
 import com.app.sip.SipInfo;
 import com.app.sip.SipMessageFactory;
 import com.app.sip.SipUser;
-import com.app.ui.fragment.CommunityFragment;
 import com.app.ui.fragment.LaoRenFragment;
 import com.app.ui.fragment.MessageFragment;
 import com.app.ui.fragment.MyFragmentManager;
 import com.app.ui.fragment.PersonFragment;
 import com.punuo.sys.app.activity.BaseActivity;
+import com.punuo.sys.app.fragment.WebViewFragment;
 import com.punuo.sys.app.util.IntentUtil;
 import com.punuo.sys.app.util.StatusBarUtil;
 
@@ -264,7 +264,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 //                mMyFragmentManager.switchFragmentWithCache(ShopFragment.class.getName(), bundle);
                 break;
             case Constant.COMMUNITY:
-                mMyFragmentManager.switchFragmentWithCache(CommunityFragment.class.getName(), bundle);
+                bundle.putString("url", "http://pet.qinqingonline.com:8889");
+                mMyFragmentManager.switchFragmentWithCache(WebViewFragment.class.getName(), bundle);
                 break;
             case Constant.MESSAGE:
                 mMyFragmentManager.switchFragmentWithCache(MessageFragment.class.getName(), bundle);

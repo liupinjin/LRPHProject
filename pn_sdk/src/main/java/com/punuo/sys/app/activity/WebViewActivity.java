@@ -2,14 +2,12 @@ package com.punuo.sys.app.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.os.Message;
+import android.support.v4.app.FragmentTransaction;
 
-import com.handmark.pulltorefresh.library.PullToRefreshWebView;
 import com.punuo.sys.app.R;
+import com.punuo.sys.app.fragment.WebViewFragment;
 import com.punuo.sys.app.util.StatusBarUtil;
 
 /**
@@ -17,34 +15,23 @@ import com.punuo.sys.app.util.StatusBarUtil;
  * Date on 2019/4/4.
  **/
 public class WebViewActivity extends BaseSwipeBackActivity {
-    private View mStatusBar;
-    private PullToRefreshWebView mPullToRefreshWebView;
-    private WebView mWebView;
-    protected String mUrl;
-
+    private WebViewFragment mWebViewFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent data = getIntent();
-        mUrl = data.getStringExtra("url");
         setContentView(R.layout.webview_activity);
-        mStatusBar = findViewById(R.id.status_bar);
-        mPullToRefreshWebView = (PullToRefreshWebView) findViewById(R.id.pull_web_view);
-        mWebView = mPullToRefreshWebView.getRefreshableView();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mStatusBar.setVisibility(View.VISIBLE);
-            mStatusBar.getLayoutParams().height = StatusBarUtil.getStatusBarHeight(this);
-            mStatusBar.requestLayout();
-        }
-        StatusBarUtil.translucentStatusBar(this, Color.TRANSPARENT, false);
-
-        mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.setWebViewClient(new WebViewClient());
-        mWebView.loadUrl(mUrl);
+        StatusBarUtil.translucentStatusBar(this, Color.TRANSPARENT, true);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        mWebViewFragment = new WebViewFragment();
+        mWebViewFragment.setArguments(data.getExtras());
+        fragmentTransaction.replace(R.id.id_content, mWebViewFragment);
+        fragmentTransaction.commitAllowingStateLoss();
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void handleMessage(Message msg) {
+        super.handleMessage(msg);
+        mWebViewFragment.handleMessage(msg);
     }
 }
