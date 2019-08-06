@@ -290,6 +290,7 @@
         <activity
             android:name=".ui.address.AddressManagerActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".publish.PublishedActivity1"/>
     </application>
 
 </manifest>
