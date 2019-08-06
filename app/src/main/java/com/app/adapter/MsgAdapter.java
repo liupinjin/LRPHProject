@@ -42,6 +42,7 @@ import com.app.ui.ShowPhotoActivity;
 import com.app.ui.SmallVideoPlay;
 import com.app.view.CircleImageView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.punuo.sys.app.util.FileSizeUtil;
 import com.tb.emoji.EmojiUtil;
 
@@ -134,9 +135,9 @@ private String avatar;
         }
         avatar=Constant.currentfriendavatar;
         id=Constant.currentfriendid;
-
-        Glide.with(mContext).load(Util.getImageUrl(id, avatar)).error(R.drawable.empty_photo).into(viewHolder.chatfrom);
-        Glide.with(mContext).load(Util.getImageUrl(avatar)).error(R.drawable.empty_photo).into(viewHolder.chatto);
+        RequestOptions options = new RequestOptions().error(R.drawable.empty_photo);
+        Glide.with(mContext).load(Util.getImageUrl(id, avatar)).apply(options).into(viewHolder.chatfrom);
+        Glide.with(mContext).load(Util.getImageUrl(avatar)).apply(options).into(viewHolder.chatto);
         if (msg.getToUserId().equals(SipInfo.userId)) {
             // 如果是收到的消息，则显示左边的消息布局，将右边的消息布局隐藏
             viewHolder.leftLayout.setVisibility(View.VISIBLE);

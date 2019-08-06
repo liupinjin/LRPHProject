@@ -11,14 +11,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,13 +23,10 @@ import com.app.UserInfoManager;
 import com.app.Util;
 import com.app.model.PNUserInfo;
 import com.app.sip.SipInfo;
-import com.app.ui.CloudAlbum;
 import com.app.ui.FamilyCircleActivity;
 import com.app.ui.SaomaActivity;
 import com.app.ui.ServiceCallSet;
 import com.app.ui.SettingActivity;
-import com.app.ui.UploadPictureActivity;
-import com.app.videoAndPictureUpload.SelectVideoActivity;
 import com.app.view.CircleImageView;
 import com.bumptech.glide.Glide;
 import com.punuo.sys.app.fragment.BaseFragment;
@@ -139,7 +132,7 @@ public class PersonFragment extends BaseFragment implements View.OnClickListener
                  * grant permissions
                  * @param activity
                  */
-                startActivity(new Intent(getActivity(), CloudAlbum.class));
+//                startActivity(new Intent(getActivity(), CloudAlbum.class));
                 ToastUtils.showToastShort("该功能即将上线");
 //                showPhotoDialog();
                 break;
@@ -219,54 +212,6 @@ public class PersonFragment extends BaseFragment implements View.OnClickListener
                 break;
 
         }
-    }
-
-
-    private void showPhotoDialog() {
-        final AlertDialog dlg = new AlertDialog.Builder(getActivity()).create();
-
-        Window window = dlg.getWindow();
-        // *** 主要就是在这里实现这种效果的.
-        // 设置窗口的内容页面,shrew_exit_dialog.xml文件中定义view内容
-        window.setContentView(R.layout.alertdialog);
-//        WindowManager.LayoutParams attributes = window.getAttributes();
-//        attributes.width = WindowManager.LayoutParams.MATCH_PARENT;
-//        attributes.gravity = Gravity.BOTTOM ;
-//        // 一定要重新设置, 才能生效
-//        window.setAttributes(attributes);
-        WindowManager.LayoutParams lp = window.getAttributes();
-        window.setGravity(Gravity.BOTTOM);
-        // 为确认按钮添加事件,执行退出应用操作
-        TextView tv_paizhao = (TextView) window.findViewById(R.id.tv_content1);
-        tv_paizhao.setText("照片");
-        tv_paizhao.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("SdCardPath")
-            public void onClick(View v) {
-
-                startActivity(new Intent(getActivity(), UploadPictureActivity.class));
-                dlg.cancel();
-            }
-        });
-        TextView tv_xiangce = (TextView) window.findViewById(R.id.tv_content2);
-        tv_xiangce.setText("视频");
-        tv_xiangce.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                startActivity(new Intent(getActivity(), SelectVideoActivity.class));
-
-                dlg.cancel();
-            }
-        });
-        TextView tv_quxiao = (TextView) window.findViewById(R.id.tv_content3);
-        tv_quxiao.setText("取消");
-        tv_quxiao.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dlg.cancel();
-            }
-        });
-        dlg.show();
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

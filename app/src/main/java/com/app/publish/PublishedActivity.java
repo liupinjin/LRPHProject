@@ -1,44 +1,31 @@
 package com.app.publish;
 
-import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.app.R;
 import com.app.UserInfoManager;
 import com.app.friendCircleMain.event.FriendReLoadEvent;
-import com.app.friendcircle.ChoosePictureActivity;
 import com.app.friendcircle.FileUtils;
-import com.app.friendcircle.PhotoActivity;
 import com.app.model.PNBaseModel;
 import com.app.publish.adapter.GridImageAdapter;
 import com.app.publish.event.ChooseImageResultEvent;
 import com.app.publish.event.EditImageEvent;
 import com.app.request.UploadPostRequest;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.config.PictureConfig;
+import com.luck.picture.lib.config.PictureMimeType;
+import com.luck.picture.lib.entity.LocalMedia;
 import com.punuo.sys.app.activity.BaseSwipeBackActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;
@@ -82,14 +69,12 @@ public class PublishedActivity extends BaseSwipeBackActivity {
             @Override
             public void itemClick(String path, int position) {
                 CommonUtil.hideKeyboard(PublishedActivity.this);
-                if (path.equals("add")) {
-                    new PopupWindows(PublishedActivity.this, mGridView);
-                } else {
-                    Intent intent = new Intent(PublishedActivity.this, PhotoActivity.class);
-                    intent.putExtra(PhotoActivity.EXTRA_INDEX, position);
-                    intent.putStringArrayListExtra("photos", (ArrayList<String>) mGridImageAdapter.getData());
-                    startActivity(intent);
-                }
+                PictureSelector.create(PublishedActivity.this)
+                        .openGallery(PictureMimeType.ofImage())
+                        .imageSpanCount(4)
+                        .selectionMode(PictureConfig.SINGLE)
+                        .imageFormat(PictureMimeType.JPEG)
+                        .forResult(PictureConfig.CHOOSE_REQUEST);
             }
         });
         mGridView.setAdapter(mGridImageAdapter);
@@ -180,75 +165,13 @@ public class PublishedActivity extends BaseSwipeBackActivity {
         return path;
     }
 
-    public class PopupWindows extends PopupWindow {
-
-        public PopupWindows(Context mContext, View parent) {
-            View view = View.inflate(mContext, R.layout.item_popupwindows, null);
-            view.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_ins));
-            LinearLayout popLayout = view.findViewById(R.id.ll_popup);
-            popLayout.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.push_bottom_in_2));
-
-            setWidth(LayoutParams.MATCH_PARENT);
-            setHeight(LayoutParams.MATCH_PARENT);
-            setBackgroundDrawable(new BitmapDrawable());
-            setFocusable(true);
-            setOutsideTouchable(true);
-            setContentView(view);
-            showAtLocation(parent, Gravity.BOTTOM, 0, 0);
-            update();
-
-            Button bt1 = view.findViewById(R.id.item_popupwindows_camera);
-            Button bt2 = view.findViewById(R.id.item_popupwindows_Photo);
-            Button bt3 = view.findViewById(R.id.item_popupwindows_cancel);
-            //拍照
-            bt1.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    if (ContextCompat.checkSelfPermission(PublishedActivity.this, Manifest.permission.CAMERA)
-                            != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(PublishedActivity.this, new String[]
-                                {Manifest.permission.CAMERA}, 1001);
-                    } else {
-                        photo();
-                    }
-                    dismiss();
-                }
-            });
-            //从相册中选取
-            bt2.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    Intent intent = new Intent(PublishedActivity.this, ChoosePictureActivity.class);
-                    startActivity(intent);
-                    dismiss();
-                }
-            });
-            bt3.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    dismiss();
-                }
-            });
-        }
-    }
-
-    private static final int TAKE_PICTURE = 0x000000;
-    private String path = "";
-
-    public void photo() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.addCategory(Intent.CATEGORY_DEFAULT);
-        path = Environment.getExternalStorageDirectory() + "/fanxin/Files/Camera/Image/"+ System.currentTimeMillis()+ ".jpg";
-        File file = new File(path);
-        if (file.exists()) {
-            file.delete();
-        }
-        Uri uri = Uri.fromFile(file);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        startActivityForResult(intent, TAKE_PICTURE);
-    }
-
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case TAKE_PICTURE:
+            case PictureConfig.CHOOSE_REQUEST:
                 if (resultCode == RESULT_OK) {
+                    List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
+                    LocalMedia localMedia = selectList.get(0);
+                    String path = localMedia.getPath();
                     mGridImageAdapter.addData(path);
                 }
                 break;

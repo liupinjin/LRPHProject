@@ -2,12 +2,16 @@ package com.app.friendCircleMain.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
 import com.app.R;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
@@ -32,16 +36,15 @@ public class NineGridTestLayout extends NineGridLayout {
 
     @Override
     protected boolean displayOneImage(final RatioImageView imageView, String url, final int parentWidth) {
-        Glide.with(mContext).load(url).error(R.drawable.empty_photo).listener(new RequestListener<String, GlideDrawable>() {
+        RequestOptions options = new RequestOptions().error(R.drawable.empty_photo);
+        Glide.with(mContext).load(url).apply(options).listener(new RequestListener<Drawable>() {
             @Override
-            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                 return false;
             }
 
-
             @Override
-            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-
+            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                 int w = resource.getIntrinsicWidth();
                 int h = resource.getIntrinsicHeight();
 
@@ -67,7 +70,8 @@ public class NineGridTestLayout extends NineGridLayout {
 
     @Override
     protected void displayImage(RatioImageView imageView, String url) {
-        Glide.with(mContext).load(url).error(R.drawable.empty_photo).into(imageView);
+        RequestOptions options = new RequestOptions().error(R.drawable.empty_photo);
+        Glide.with(mContext).load(url).apply(options).into(imageView);
     }
 
 

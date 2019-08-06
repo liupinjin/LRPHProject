@@ -15,6 +15,7 @@ import com.app.model.LastestMsg;
 import com.app.sip.SipInfo;
 import com.app.view.CircleImageView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -74,11 +75,10 @@ public class MessageAdapter extends BaseAdapter {
             if (index != -1) {
                 f = SipInfo.friends.get(index);
                 //holder.icon.setImageResource(R.drawable.icon_online);
-
-                Glide.
-                        with(mContext).
+                RequestOptions options = new RequestOptions().error(R.drawable.empty_photo);
+                Glide.with(mContext).
                         load(Util.getImageUrl(f.getId(), f.getAvatar())).
-                        error(R.drawable.empty_photo).
+                        apply(options).
                         into(holder.icon);
                 holder.name.setText(f.getNickName());
                 holder.lastestMsg.setText(lastestMsg.getLastestmsg());

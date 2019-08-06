@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.app.R;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.io.File;
 import java.util.List;
@@ -72,11 +73,10 @@ public class BottomListDialogAdapter extends BaseAdapter {
         TextView text2 = AdapterUtils.getAdapterView(convertView, R.id.text2);
 
         String album = (String) AllList.keySet().toArray()[position];
-
         Glide
                 .with(context)
-                .load(Uri.fromFile(new File(AllList.get(album).get(0).getPath())))
                 .asBitmap()
+                .load(Uri.fromFile(new File(AllList.get(album).get(0).getPath())))
                 .into(icon);
 
 //        icon.setImageBitmap(AllList.get(album).get(0).getThumbnail());
