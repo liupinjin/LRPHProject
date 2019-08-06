@@ -22,6 +22,7 @@ import com.app.friendCircleMain.domain.FriendMicroListDatas;
 import com.app.friendCircleMain.util.PopupWindowUtil;
 import com.app.view.CircleImageView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.punuo.sys.app.recyclerview.BaseViewHolder;
 import com.punuo.sys.app.util.TimeUtils;
 import com.punuo.sys.app.util.ViewUtil;
@@ -89,7 +90,8 @@ public class FriendCircleViewHolder extends BaseViewHolder<FriendMicroListDatas>
     protected void bindData(FriendMicroListDatas bean, int position) {
         //头像
         String avatarPath = Util.getImageUrl(bean.getId(), bean.getAvatar());
-        Glide.with(mContext).load(avatarPath).error(R.drawable.empty_photo).into(mAvatar);
+        RequestOptions options = new RequestOptions().error(R.drawable.empty_photo);
+        Glide.with(mContext).load(avatarPath).apply(options).into(mAvatar);
 
         /*
          * 显示时间

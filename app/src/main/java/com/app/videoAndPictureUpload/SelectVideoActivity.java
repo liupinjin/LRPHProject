@@ -305,8 +305,8 @@ public class SelectVideoActivity extends BaseActivity implements SwipeRefreshLay
                 textView.setBackgroundColor(0x00000000);
             }
             Glide.with(SelectVideoActivity.this)
-                    .load(Uri.fromFile(new File(item.getPath())))
                     .asBitmap()
+                    .load(Uri.fromFile(new File(item.getPath())))
                     .into(simpleDraweeView);
             simpleDraweeView.setOnClickListener(new View.OnClickListener() {
 
