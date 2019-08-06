@@ -35,7 +35,8 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".adapter.CloudAlbumAdapter"></activity>
+        <activity android:name=".ui.message.UploadPhotos"></activity>
+        <activity android:name=".adapter.CloudAlbumAdapter" />
         <activity android:name=".ui.CloudAlbum" /> <!-- 全面屏适配 -->
         <meta-data
             android:name="android.max_aspect"
