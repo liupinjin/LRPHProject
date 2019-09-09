@@ -183,7 +183,7 @@ public class ChsChange extends BaseActivity implements SipUser.QinliaoUpdateList
         pictureRecyclerView.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL));
 //        showPicture();
-
+        //设置接口的监听
         SipInfo.sipUser.setQinliaoUpdateListener(this);
         //将每个成员得数据加载进来
 //        pictureAdapter.appendData(SipInfo.friends);

@@ -254,15 +254,16 @@ public class AvcEncoder {
 //        input=dstYuv;
 
         try {
-            ByteBuffer[] inputBuffers = mediaCodec.getInputBuffers();
-            ByteBuffer[] outputBuffers = mediaCodec.getOutputBuffers();
-            int inputBufferIndex = mediaCodec.dequeueInputBuffer(BUFFER_TIMEOUT);
+            ByteBuffer[] inputBuffers = mediaCodec.getInputBuffers();//获取需要编码数据的输入流队列，返回的是一个ByteBuffer数组
+            ByteBuffer[] outputBuffers = mediaCodec.getOutputBuffers();//获取编解码之后的数据输出流队列，返回的是一个ByteBuffer数组
+            int inputBufferIndex = mediaCodec.dequeueInputBuffer(BUFFER_TIMEOUT);//从输入流队列中取数据进行编码操作
 //            int inputBufferIndex = mediaCodec.dequeueInputBuffer(-1);//获取可使用缓冲区位置，得到索引
             //传入原始数据
             if (inputBufferIndex >= 0) {
                 ByteBuffer inputBuffer = inputBuffers[inputBufferIndex];
                 inputBuffer.clear();//清除原来的内容以接收新内容
                 inputBuffer.put(input);
+                //输入流入队列
                 mediaCodec.queueInputBuffer(inputBufferIndex, 0, input.length,  mCount * 1000000 / 15, 0);
 //                long timestamp = System.nanoTime();
 //                mediaCodec.queueInputBuffer(inputBufferIndex, 0, input.length,  timestamp, 0);
@@ -271,7 +272,7 @@ public class AvcEncoder {
 
             MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
 //            int outputBufferIndex = mediaCodec.dequeueOutputBuffer(bufferInfo,0);
-            int outputBufferIndex = mediaCodec.dequeueOutputBuffer(bufferInfo,BUFFER_TIMEOUT);
+            int outputBufferIndex = mediaCodec.dequeueOutputBuffer(bufferInfo,BUFFER_TIMEOUT);//从输出队列中取出编码操作之后的数据
             //获取可用输出缓冲区
             System.out.println("outputBufferIndex = " + outputBufferIndex);
             Log.i(TAG, "outputFirst");

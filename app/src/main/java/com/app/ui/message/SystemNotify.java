@@ -86,13 +86,13 @@ public class SystemNotify extends BaseActivity {
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageEvent messageEvent)
-    {
-        if(messageEvent.getMessage().equals("去版本更新")){
-            startActivity(new Intent(this, SoftwareInstructActivity.class));
-        }
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onMessageEvent(MessageEvent messageEvent)
+//    {
+//        if(messageEvent.getMessage().equals("去版本更新")){
+//            startActivity(new Intent(this, SoftwareInstructActivity.class));
+//        }
+//    }
 
     private Handler setNotifyHandler=new Handler(new Handler.Callback() {
         @Override

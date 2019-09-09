@@ -45,6 +45,8 @@ import com.punuo.sys.app.util.ToastUtils;
 import org.zoolu.sip.address.NameAddress;
 import org.zoolu.sip.address.SipURL;
 
+import java.lang.ref.WeakReference;
+
 import static com.app.model.Constant.appdevid1;
 import static com.app.model.Constant.devid1;
 import static com.app.model.Constant.groupid1;

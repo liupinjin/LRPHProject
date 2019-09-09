@@ -76,7 +76,7 @@
         </provider>
 
         <receiver
-            android:name=".receiver.VideoConnextReceiver"
+            android:name=".receiver.VideoConnectReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -282,7 +282,12 @@
         <activity
             android:name=".ui.address.AddressManagerActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.CloudAlbum"/>
         <activity android:name=".publish.PublishedActivity1"/>
+        <activity android:name=".ui.AlbumActivity"/>
+        <activity android:name=".ui.AlbumSecondActivity"/>
+        <activity android:name=".ui.HindebarActivity"/>
+
     </application>
 
 </manifest>

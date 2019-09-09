@@ -946,14 +946,18 @@ public class SipUser extends SipProvider {
     public interface ClusterNotifyListener{
         void onNotify();
     }
+
+    //定义一个接口
     public interface QinliaoUpdateListener{
         void stausOnUpdate();
         void stausOffUpdate();
     }
+
+    //创建接口类型变量
     public QinliaoUpdateListener qinliaoUpdateListener;
 
 
-
+    //暴露接口设置得方法
     public void setQinliaoUpdateListener(QinliaoUpdateListener qinliaoUpdateListener){
         this.qinliaoUpdateListener=qinliaoUpdateListener;
     }

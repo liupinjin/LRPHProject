@@ -80,4 +80,6 @@ public class VideoInfo {
     public static Camera mCamera;
 
     public static int mAudioSessionId = -1;
+
+
 }

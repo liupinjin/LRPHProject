@@ -664,11 +664,11 @@ public class H264SendingManager implements SurfaceHolder.Callback, Camera.Previe
         rtpsending.rtpSession1.payloadType(0x62);
         //发送打包数据
         rtpsending.rtpSession1.sendData(h264);   //发送打包数据   //发送打包数据
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(2);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
     public boolean isadapter(int width,int height){
         List<Camera.Size> supportedPreviewSizes = parame.getSupportedPreviewSizes();

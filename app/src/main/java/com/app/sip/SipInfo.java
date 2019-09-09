@@ -9,7 +9,7 @@ import com.app.model.AddressItem;
 import com.app.model.App;
 import com.app.model.Device;
 import com.app.model.Device1;
-import com.app.model.Farmilymember;
+import com.app.model.Familymember;
 import com.app.model.Friend;
 import com.app.model.LastestMsg;
 import com.app.model.MailInfo;
@@ -185,7 +185,7 @@ public class SipInfo {
     //邮件列表
     public static List<MailInfo> maillist = new ArrayList<>();
 
-    public static List<Farmilymember> farmilymemberList = new ArrayList<>();
+    public static List<Familymember> farmilymemberList = new ArrayList<>();
     public static MyDatabaseHelper dbHelper;
 
     public static NotificationManager notificationManager;
@@ -224,4 +224,5 @@ public class SipInfo {
     //新收到的评论数目
     public static int commentsItems=0;
     public static int addLikesItems=0;
+    public static String month;
 }

@@ -25,8 +25,6 @@ import static com.app.sip.SipInfo.serverIp;
  */
 
 public class SystemNotifyAdapter extends RecyclerView.Adapter<SystemNotifyAdapter.ViewHolder> {
-//    private LayoutInflater mLayoutInflater;
-//    private Context mContext;
     private String posttype;
     private List<MessageNotify>  mNotifyList;
     private GridLayoutManager glm;
@@ -45,21 +43,9 @@ public class SystemNotifyAdapter extends RecyclerView.Adapter<SystemNotifyAdapte
             messagePicture=(ImageView)v.findViewById(R.id.image111);
             messageInfo=(TextView)v.findViewById(R.id.info111);
             time=(TextView)v.findViewById(R.id.time111);
-//           messagePicture=(ImageView)v.findViewById(R.id.iv_message_picture);
-//           messageInfo=(TextView)v.findViewById(R.id.tv_message_info);
-//           rlMessage=(RelativeLayout)v.findViewById(R.id.rl_message_info);
         }
     }
 
-//    public SystemNotifyAdapter(Context context, GridLayoutManager glm){
-//        mLayoutInflater=LayoutInflater.from(context);
-//        this.glm=glm;
-//    }
-
-//    public SystemNotifyAdapter(Context context,List<MessageNotifyActivity> notifyList){
-//        mLayoutInflater=LayoutInflater.from(context);
-//        mNotifyList=notifyList;
-//    }
     public SystemNotifyAdapter(List<MessageNotify> notifyList){
         mNotifyList=notifyList;
     }
@@ -77,14 +63,6 @@ public class SystemNotifyAdapter extends RecyclerView.Adapter<SystemNotifyAdapte
         return  holder;
     }
 
-
-//    @Override
-//    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//        View view = LayoutInflater.from(mContext).inflate(R.layout.notify_message, parent, false);
-//        final ViewHolder holder = new ViewHolder(view);
-//
-//        return holder;
-//    }
 
     @Override
     public void onBindViewHolder(SystemNotifyAdapter.ViewHolder holder, int position) {

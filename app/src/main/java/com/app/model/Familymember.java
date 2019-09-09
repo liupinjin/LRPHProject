@@ -4,17 +4,17 @@ package com.app.model;
  * Created by 23578 on 2018/7/26.
  */
 
-public class Farmilymember {
+public class Familymember {
     private String name;
     private String phonenumber;
     private String avatorurl;
 
-    public Farmilymember(String name, String phonenumber) {
+    public Familymember(String name, String phonenumber) {
         this.name = name;
         this.phonenumber = phonenumber;
     }
 
-    public Farmilymember(String name, String phonenumber, String avatorurl) {
+    public Familymember(String name, String phonenumber, String avatorurl) {
         this.name = name;
         this.phonenumber = phonenumber;
         this.avatorurl=avatorurl;

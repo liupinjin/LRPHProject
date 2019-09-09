@@ -14,10 +14,10 @@ import static android.R.attr.start;
  * Created by maojianhui on 2018/6/29.
  */
 
-public class VideoConnextReceiver extends BroadcastReceiver {
+public class VideoConnectReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent){
-//        Toast.makeText(context,"received in VideoConnextReceiver",Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context,"received in VideoConnectReceiver",Toast.LENGTH_SHORT).show();
         Bundle bundle=intent.getExtras();
         Intent intent1=new Intent(context.getApplicationContext(),VideoConnect.class);
 

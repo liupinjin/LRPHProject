@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.app.R;
 import com.app.adapter.PhoneRecyclerViewAdapter;
 import com.app.db.MyDatabaseHelper;
-import com.app.model.Farmilymember;
+import com.app.model.Familymember;
 import com.app.model.MessageEvent;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
@@ -54,7 +54,7 @@ public class FriendCallActivity extends BaseActivity {
     private int screenHeight;//屏幕高度
     private int callPosition;
     MyDatabaseHelper dbHelper;
-    Farmilymember far;
+    Familymember far;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +95,7 @@ public class FriendCallActivity extends BaseActivity {
                 String name = cursor.getString(cursor.getColumnIndex("name"));
                 String phonenumber = cursor.getString(cursor.getColumnIndex("phonenumber"));
                 String avatorurl = cursor.getString(cursor.getColumnIndex("avatorurl"));
-                far = new Farmilymember(name, phonenumber, avatorurl);
+                far = new Familymember(name, phonenumber, avatorurl);
                 farmilymemberList.add(far);
                 adapter.notifyDataSetChanged();
                 Log.d("tongxunlu", name + " " + phonenumber);

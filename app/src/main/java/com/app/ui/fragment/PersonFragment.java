@@ -23,6 +23,7 @@ import com.app.UserInfoManager;
 import com.app.Util;
 import com.app.model.PNUserInfo;
 import com.app.sip.SipInfo;
+import com.app.ui.CloudAlbum;
 import com.app.ui.FamilyCircleActivity;
 import com.app.ui.SaomaActivity;
 import com.app.ui.ServiceCallSet;
@@ -132,8 +133,8 @@ public class PersonFragment extends BaseFragment implements View.OnClickListener
                  * grant permissions
                  * @param activity
                  */
-//                startActivity(new Intent(getActivity(), CloudAlbum.class));
-                ToastUtils.showToastShort("该功能即将上线");
+                startActivity(new Intent(getActivity(), CloudAlbum.class));
+//                ToastUtils.showToastShort("该功能即将上线");
 //                showPhotoDialog();
                 break;
 //            case R.id.re_psd:
