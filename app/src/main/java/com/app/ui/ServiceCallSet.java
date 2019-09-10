@@ -80,7 +80,7 @@ public class ServiceCallSet extends BaseActivity {
         String call3 = pref.getString("call3", "");
         et_call3.setText(call3);
 
-
+        getServiceCall();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -96,7 +96,7 @@ public class ServiceCallSet extends BaseActivity {
         }
         mGetCallRequest = new GetCallRequest();
         mGetCallRequest.addUrlParam("id",UserInfoManager.getUserInfo().id);
-        mChangeCallRequest.setRequestListener(new RequestListener<CallModel>() {
+        mGetCallRequest.setRequestListener(new RequestListener<CallModel>() {
             @Override
             public void onComplete() {
 
@@ -105,10 +105,15 @@ public class ServiceCallSet extends BaseActivity {
             @Override
             public void onSuccess(CallModel result) {
 
-                    if(result==null){
+                    if(result==null||result.mData==null){
                         return;
                     }
-                    String string = result.mData.mPhones.get(0);
+                    String house = result.mData.mPhones.get(0);
+                    String order = result.mData.mPhones.get(1);
+                    String property = result.mData.mPhones.get(2);
+                et_call1.setText(house);
+                et_call2.setText(order);
+                et_call3.setText(property);
 
             }
 
@@ -156,9 +161,7 @@ public class ServiceCallSet extends BaseActivity {
                             return;
                         }
                         ToastUtils.showToast("服务电话修改成功");
-                        et_call1.setText(HouseKeepingCall);
-                        et_call2.setText(OrderingCall);
-                        et_call3.setText(PropertyCall);
+
                     }
 
                     @Override
