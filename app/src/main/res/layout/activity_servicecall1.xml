@@ -31,16 +31,10 @@
 
         <EditText
             android:id="@+id/et_call1"
-            android:layout_width="120dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="120dp"/>
-        <Button
-            android:id="@+id/bt_set1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:text="设置"
-            android:background="#ffffff" />
+
     </RelativeLayout>
     <View
         android:layout_width="match_parent"
@@ -64,17 +58,10 @@
 
         <EditText
             android:id="@+id/et_call2"
-            android:layout_width="120dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="120dp"/>
-        <Button
-            android:id="@+id/bt_set2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="设置"
-            android:background="#ffffff"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_marginLeft="120dp"/>
+
     </RelativeLayout>
 
     <View
@@ -99,18 +86,22 @@
 
         <EditText
             android:id="@+id/et_call3"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="120dp"/>
-        <Button
-            android:id="@+id/bt_set3"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:text="设置"
-            android:background="#ffffff"/>
+            android:layout_marginRight="20dp"
+            android:layout_marginStart="120dp"/>
 
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/setcall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="设置"
+        android:background="@drawable/btn_login_selector1"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal" />
 
 
 </LinearLayout>
