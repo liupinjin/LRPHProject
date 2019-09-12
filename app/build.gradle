@@ -22,7 +22,7 @@ android {
         ndk {
             moduleName "serial_port"
             ldLibs "log"
-            abiFilters "armeabi"
+            abiFilters "armeabi","x86"
         }
     }
     buildTypes {
