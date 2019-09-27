@@ -58,9 +58,9 @@ public class DevBindSuccessActivity extends BaseSwipeBackActivity {
         ButterKnife.bind(this);
         changStatusIconColor(true);
         title.setText("绑定设备");
-        if (appdevid1 != null) {
+        if (devid1 != null) {
 //            tvDevnumber.setText(SipInfo.paddevId);
-            tvDevnumber.setText(appdevid1);
+            tvDevnumber.setText(devid1);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -89,7 +89,7 @@ public class DevBindSuccessActivity extends BaseSwipeBackActivity {
                         .setPositiveButton("是", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if ((appdevid1 != null) && !("".equals(appdevid1))) {
+                                if ((devid1 != null) && !("".equals(devid1))) {
                                     unBindDev();
                                 }
                             }
@@ -112,7 +112,7 @@ public class DevBindSuccessActivity extends BaseSwipeBackActivity {
         mUnBindDevRequest = new UnBindDevRequest();
         mUnBindDevRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
         mUnBindDevRequest.addUrlParam("groupid", Constant.groupid1);
-        mUnBindDevRequest.addUrlParam("devid", Constant.appdevid1);
+        mUnBindDevRequest.addUrlParam("devid", devid1);
         mUnBindDevRequest.setRequestListener(new RequestListener<PNBaseModel>() {
             @Override
             public void onComplete() {
@@ -131,7 +131,7 @@ public class DevBindSuccessActivity extends BaseSwipeBackActivity {
                     org.zoolu.sip.message.Message query = SipMessageFactory.createNotifyRequest(SipInfo.sipUser, SipInfo.toDev,
                             SipInfo.user_from, BodyFactory.createListUpdate("addsuccess"));
                     SipInfo.sipUser.sendMessage(query);
-                    appdevid1 = "";
+                    devid1 = "";
                     ToastUtils.showToastShort("解绑成功");
                     finish();
                 } else {

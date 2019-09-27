@@ -122,7 +122,7 @@ public class SaomaActivity extends BaseActivity implements View.OnClickListener 
         }
 
 
-        if ((appdevid1 != null) && !("".equals(appdevid1))){
+        if ((devid1 != null) && !("".equals(devid1))){
             finish();
          startActivity(new Intent(this, DevBindSuccessActivity.class));
         }

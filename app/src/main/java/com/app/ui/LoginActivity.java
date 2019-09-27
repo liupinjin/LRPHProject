@@ -474,6 +474,7 @@ public class LoginActivity extends BaseActivity {
         }
         mGetDevIdFromIdRequest = new GetDevIdFromIdRequest();
         mGetDevIdFromIdRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
+        Log.i(TAG, "getUserId"+UserInfoManager.getUserInfo().id);
         mGetDevIdFromIdRequest.setRequestListener(new RequestListener<Alldevid>() {
             @Override
             public void onComplete() {
@@ -489,9 +490,11 @@ public class LoginActivity extends BaseActivity {
                         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     } else {
                         appdevid = devIdLists.get(0);
+                        Log.i(TAG, "appdevid"+appdevid);
                         Constant.appdevid1 = appdevid;
                         if (!TextUtils.isEmpty(appdevid)) {
                             SipInfo.devId = appdevid;
+                            Log.i(TAG, "SipInfodevid"+SipInfo.devId);
                             SipURL local_dev = new SipURL(SipInfo.devId, SipInfo.serverIp, SipInfo.SERVER_PORT_DEV);
                             SipInfo.dev_from = new NameAddress(SipInfo.devId, local_dev);
                             new Thread(devConnecting).start();

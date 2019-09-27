@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.app.R;
 import com.app.UserInfoManager;
 import com.app.model.CallModel;
+import com.app.model.Constant;
 import com.app.model.PNBaseModel;
 import com.app.request.ChangeCallRequest;
 import com.app.request.GetCallRequest;
@@ -80,7 +81,6 @@ public class ServiceCallSet extends BaseActivity {
 //
 //        String call3 = pref.getString("call3", "");
 //        et_call3.setText(call3);
-
         getServiceCall();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//因为不是所有的系统都可以设置颜色的，在4.4以下就不可以。。有的说4.1，所以在设置的时候要检查一下系统版本是否是4.1以上
@@ -97,23 +97,27 @@ public class ServiceCallSet extends BaseActivity {
             return;
         }
         mGetCallRequest = new GetCallRequest();
-        mGetCallRequest.addUrlParam("id",UserInfoManager.getUserInfo().id);
+        mGetCallRequest.addUrlParam("devid",Constant.devid1);
+        Log.i("", "设备id"+Constant.devid1);
         mGetCallRequest.setRequestListener(new RequestListener<CallModel>() {
             @Override
             public void onComplete() {
 
             }
-
             @Override
             public void onSuccess(CallModel result) {
 
-                    if(result==null||result.mData==null){
+                    if(result==null){
                         return;
                     }
-                    String house = result.mData.mPhones.get(0);
-                Log.i("sss", "house: "+house);
-                    String order = result.mData.mPhones.get(1);
-                    String property = result.mData.mPhones.get(2);
+//                    String house = result.mData.mPhones.get(0);
+//                    Log.i("sss", "获取到的服务电话 "+result.mData.mPhones);
+//                    String order = result.mData.mPhones.get(1);
+//                    String property = result.mData.mPhones.get(2);
+                    ToastUtils.showToast("获取号码成功");
+                    String house = result.housekeep;
+                    String order = result.orderfood;
+                    String property = result.property;
                     et_call1.setText(house);
                     et_call2.setText(order);
                     et_call3.setText(property);
@@ -148,7 +152,8 @@ public class ServiceCallSet extends BaseActivity {
                     return;
                 }
                 mChangeCallRequest = new ChangeCallRequest();
-                mChangeCallRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
+//                mChangeCallRequest.addUrlParam("id", UserInfoManager.getUserInfo().id);
+                mChangeCallRequest.addUrlParam("devid", Constant.devid1);
                 mChangeCallRequest.addUrlParam("housekeep", HouseKeepingCall);
                 mChangeCallRequest.addUrlParam("orderfood", OrderingCall);
                 mChangeCallRequest.addUrlParam("property", PropertyCall);
