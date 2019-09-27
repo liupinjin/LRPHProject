@@ -3,7 +3,6 @@ package com.app.ui;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.TextPaint;
 import android.util.Log;
 import android.view.View;
@@ -12,14 +11,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.app.R;
-import com.app.UserInfoManager;
 import com.app.model.CallModel;
 import com.app.model.Constant;
-import com.app.model.PNBaseModel;
 import com.app.request.ChangeCallRequest;
 import com.app.request.GetCallRequest;
 import com.app.sip.SipInfo;
@@ -27,8 +23,6 @@ import com.punuo.sys.app.activity.BaseActivity;
 import com.punuo.sys.app.httplib.HttpManager;
 import com.punuo.sys.app.httplib.RequestListener;
 import com.punuo.sys.app.util.ToastUtils;
-
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -107,20 +101,22 @@ public class ServiceCallSet extends BaseActivity {
             @Override
             public void onSuccess(CallModel result) {
 
-                    if(result==null){
-                        return;
-                    }
+                if (result == null || result.mData == null || result.mData.isEmpty()) {
+                    return;
+                }
 //                    String house = result.mData.mPhones.get(0);
 //                    Log.i("sss", "获取到的服务电话 "+result.mData.mPhones);
 //                    String order = result.mData.mPhones.get(1);
 //                    String property = result.mData.mPhones.get(2);
-                    ToastUtils.showToast("获取号码成功");
-                    String house = result.housekeep;
-                    String order = result.orderfood;
-                    String property = result.property;
-                    et_call1.setText(house);
-                    et_call2.setText(order);
-                    et_call3.setText(property);
+
+                ToastUtils.showToast("获取号码成功");
+                CallModel.Data data = result.mData.get(0);
+                String house = data.housekeep;
+                String order = data.orderfood;
+                String property = data.property;
+                et_call1.setText(house);
+                et_call2.setText(order);
+                et_call3.setText(property);
 
             }
 

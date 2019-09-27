@@ -5,27 +5,24 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class CallModel extends PNBaseModel {
-//    @SerializedName("data")
-//    public Data mData;
+    @SerializedName("data")
+    public List<Data> mData;
 //
-//    public static class Data {
-//        @SerializedName("phones")
-//        public List<String> mPhones;
-//    }
+    public static class Data {
+        @SerializedName("id")
+        public int id;
 
-    @SerializedName("id")
-    public int id;
+        @SerializedName("devid")
+        public String devid;
 
-    @SerializedName("devid")
-    public String devid;
+        @SerializedName("housekeep")
+        public String housekeep;
 
-    @SerializedName("housekeep")
-    public String housekeep;
+        @SerializedName("orderfood")
+        public String orderfood;
 
-    @SerializedName("orderfood")
-    public String orderfood;
-
-    @SerializedName("property")
-    public String property;
+        @SerializedName("property")
+        public String property;
+    }
 
 }
